@@ -1,6 +1,5 @@
 #!/usr/local/bin/perl
 # Show the left-side menu of Virtualmin domains, plus modules
-use Data::Dumper;
 
 $trust_unknown_referers = 1;
 require "virtual-server-theme/virtual-server-theme-lib.pl";
@@ -12,7 +11,7 @@ popup_header("Virtualmin");
 print "<script type='text/javascript' src='$gconfig{'webprefix'}/unauthenticated/toggleview.js'></script>\n";
 
 # Find out which modules we have
-$hasvirt = &foreign_available("virtual-server");
+$hasvirt = foreign_available("virtual-server");
 if ($hasvirt) {
 	%minfo = get_module_info("virtual-server");
 	%vconfig = foreign_config("virtual-server");
@@ -24,17 +23,17 @@ $hasvm2 = foreign_available("server-manager");
 # Show the hosting provider logo
 if ($hasvirt) {
 	foreign_require("virtual-server", "virtual-server-lib.pl");
-	$is_master = &virtual_server::master_admin();
+	$is_master = virtual_server::master_admin();
 	}
 if ($hasvm2) {
 	foreign_require("server-manager", "server-manager-lib.pl");
 	}
-if (defined(virtual_server::get_provider_link)) {
+if (defined(&virtual_server::get_provider_link)) {
 	(undef, $image, $link) = virtual_server::get_provider_link();
 	}
-if (!$image && defined(server_manager::get_provider_link)) {
-	(undef, $image, $link) = server_manager::get_provider_link();
-	}
+if (!$image && defined(&server_manager::get_provider_link)) {
+        (undef, $image, $link) = server_manager::get_provider_link();
+        }
 if ($image) {
 	print "<a href='$link' target='_new'>" if ($link);
 	print "<center><img src='$image' alt=''></center>";
@@ -43,7 +42,7 @@ if ($image) {
 
 # Work out the user's email address
 if ($hasmail) {
-	foreign_require("mailbox", "mailbox-lib.pl");
+	&foreign_require("mailbox", "mailbox-lib.pl");
 	($fromaddr) = mailbox::split_addresses(
 			mailbox::get_preferred_from_address());
 	}
