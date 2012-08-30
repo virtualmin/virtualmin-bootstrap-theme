@@ -1,0 +1,6 @@
+desc=Virtualmin Bootstrap Theme
+webmin=1
+version=0.1
+usermin=1
+depends=1.590
+usermin_depends=1.510
