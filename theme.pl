@@ -381,78 +381,36 @@ sub theme_ui_tabs_start
 {
 my ($tabs, $name, $sel, $border) = @_;
 my $rv;
-if (!$main::ui_hidden_start_donejs++) {
-  $rv .= &ui_hidden_javascript();
-  }
-
-# Build list of tab titles and names
-my $tabnames = "[".join(",", map { "\"".&quote_escape($_->[0])."\"" } @$tabs)."]";
-my $tabtitles = "[".join(",", map { "\"".&quote_escape($_->[1])."\"" } @$tabs)."]";
-$rv .= "<script>\n";
-$rv .= "document.${name}_tabnames = $tabnames;\n";
-$rv .= "document.${name}_tabtitles = $tabtitles;\n";
-$rv .= "</script>\n";
-
-# Output the tabs
-my $imgdir = "$gconfig{'webprefix'}/images";
-$rv .= &ui_hidden($name, $sel)."\n";
-$rv .= "<table border=0 cellpadding=0 cellspacing=0 class='ui_tabs'>\n";
-$rv .= "<tr><td bgcolor=#ffffff colspan=".(scalar(@$tabs)*2+1).">";
-if ($ENV{'HTTP_USER_AGENT'} !~ /msie/i) {
-	# For some reason, the 1-pixel space above the tabs appears huge on IE!
-	$rv .= "<img src=$imgdir/1x1.gif>";
-	}
-$rv .= "</td></tr>\n";
-$rv .= "<tr>\n";
-$rv .= "<td bgcolor=#ffffff width=1><img src=$imgdir/1x1.gif></td>\n";
-foreach my $t (@$tabs) {
-	if ($t ne $tabs[0]) {
-		# Spacer
-		$rv .= "<td width=2 bgcolor=#ffffff class='ui_tab_spacer'>".
-		       "<img src=$imgdir/1x1.gif></td>\n";
-		}
-	my $tabid = "tab_".$t->[0];
-	$rv .= "<td id=${tabid} class='ui_tab'>";
-	$rv .= "<table cellpadding=0 cellspacing=0 border=0><tr>";
-	if ($t->[0] eq $sel) {
-		# Selected tab
-		$rv .= "<td valign=top class='tabSelected'>".
-		       "<img src=$imgdir/lc2.gif alt=\"\"></td>";
-		$rv .= "<td class='tabSelected' nowrap>".
-		       "&nbsp;<b>$t->[1]</b>&nbsp;</td>";
-		$rv .= "<td valign=top class='tabSelected'>".
-		       "<img src=$imgdir/rc2.gif alt=\"\"></td>";
-		}
-	else {
-		# Other tab (which has a link)
-		$rv .= "<td valign=top class='tabUnselected'>".
-		       "<img src=$imgdir/lc1.gif alt=\"\"></td>";
-		$rv .= "<td class='tabUnselected' nowrap>".
-		       "&nbsp;<a href='$t->[2]' ".
-		       "onClick='return select_tab(\"$name\", \"$t->[0]\")'>".
-		       "$t->[1]</a>&nbsp;</td>";
-		$rv .= "<td valign=top class='tabUnselected'>".
-		       "<img src=$imgdir/rc1.gif ".
-		       "alt=\"\"></td>";
-		$rv .= "</td>\n";
-		}
-	$rv .= "</tr></table>";
-	$rv .= "</td>\n";
-	}
-$rv .= "<td bgcolor=#ffffff width=1><img src=$imgdir/1x1.gif></td>\n";
-$rv .= "</table>\n";
-
-if ($border) {
-	# All tabs are within a grey box
-	$rv .= "<table width=100% cellpadding=0 cellspacing=0 ".
-	       "class='ui_tabs_box'>\n";
-	$rv .= "<tr> <td bgcolor=#ffffff rowspan=3 width=1><img src=$imgdir/1x1.gif></td>\n";
-	$rv .= "<td $cb colspan=3 height=2><img src=$imgdir/1x1.gif></td> </tr>\n";
-	$rv .= "<tr> <td $cb width=2><img src=$imgdir/1x1.gif></td>\n";
-	$rv .= "<td valign=top>";
-	}
 $main::ui_tabs_selected = $sel;
+
+print "<ul class='nav nav-tabs'>\n";
+foreach my $t (@$tabs) {
+	my $tabid = "tab_".$t->[0];
+	my $defclass = $t->[0] eq $main::ui_tabs_selected ?
+                        'active' : '';
+	$rv .= "<li class='ui_tab $defclass'><a href='#$tabid' data-toggle='tab'>$t->[1]</a></li>\n";
+}
+$rv .= "</ul>\n<div class='tab-content'>\n";	
 return $rv;
+}
+
+sub theme_ui_tabs_start_tab
+{
+my ($name, $tab) = @_;
+my $defclass = $tab eq $main::ui_tabs_selected ?
+                        'active' : '';
+my $rv = "<div id='tab_$tab' class='tab-pane $defclass ui_tabs_start'>\n";
+return $rv;
+}
+
+sub theme_ui_tabs_end_tab
+{
+return "</div>\n";
+}
+
+sub theme_ui_tabs_end
+{
+return "</div>\n";
 }
 
 # theme_ui_columns_start(&headings, [width-percent], [noborder], [&tdtags], [title])
