@@ -40,7 +40,7 @@ if (!defined($in{'open'})) {
 	}
 %open = map { $_, indexof($_, @auto) >= 0 ? 2 : 1 } @open;
 
-header(undef);
+popup_header(undef);
 
 if ($hasvirt || $hasvm2) {
 	# Show link for editing what appears
@@ -1022,7 +1022,7 @@ if ($hasvirt) {
 		}
 	}
 
-&footer();
+footer();
 
 # status_grid(@services)
 # Returns HTML for a table of service statuses and actions

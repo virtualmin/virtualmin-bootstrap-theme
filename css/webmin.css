@@ -22,3 +22,21 @@ ui_hidden
     position: absolute;
     top: -1px;
 }
+.linkwithicon {
+  position: relative;
+  white-space: nowrap;
+  left: 2px;
+  width: 16px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.linkwithicon img, .mode img {
+  margin-bottom: -2px;
+}
+.aftericon {
+  display: inline;
+}
+.ui_form label
+{
+  display:inline-block;
+}

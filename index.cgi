@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "virtual-server-theme/bootstrap-theme-lib.pl";
 &ReadParse();
 
 # Work out which module to open by default
@@ -105,8 +105,8 @@ if ($upperframe =~ /\$LEVEL|\$\{LEVEL/) {
 # Show frameset
 &PrintHeader();
 $cols = &get_left_frame_width();
-$frame1 = "<frame name=left src='$left' scrolling=auto>";
-$frame2 = "<frame name=right src='$goto' noresize scrolling=auto>";
+$frame1 = "<div id='left' class='span4 sidebar'></div>"; # src='$left'
+$frame2 = "<div id='right' class='span8'></div>"; # src='$goto'
 $fscols = "$cols,*";
 if ($current_lang_info->{'rtl'} || $current_lang eq "ar") {
 	($frame1, $frame2) = ($frame2, $frame1);
@@ -119,34 +119,23 @@ print "<head> <title>$title</title> </head>\n";
 
 # Upper custom frame
 if ($upperframe) {
-	print "<frameset rows='$upperrows,*' border=0>\n";
+	#print "<frameset rows='$upperrows,*' border=0>\n";
 	if ($upperframe =~ /^\//) {
 		# Local file to serve
-		print "<frame name=top src='top.cgi' scrolling=auto>\n";
+		print "<div id='top' class='navbar navbar-fixed-top'></div>\n"; # src='top.cgi'
 		}
 	else {
 		# Absolute URL
-		print "<frame name=top src='$upperframe' scrolling=auto>\n";
+		print "<div id='top class='navbar navbar-fixed-top'></div>\n"; # src='$upperframe'
 		}
 	}
 
-# Left and right frames
-print "<frameset cols='$fscols' border=0>\n";
+# Left and right sections
+print "<div class='container'>\n";
+print "<div class='row'>\n";
 print $frame1,"\n";
 print $frame2,"\n";
-
-# What if no frames?
-print "<noframes>\n";
-print "<body>\n";
-print "<p>This page uses frames, but your browser doesn't support them.</p>\n";
-
-print "</body>\n";
-print "</noframes>\n";
-
-# End of the frames and page
-if ($upperframe) {
-	print "</frameset>\n";
-	}
-print "</frameset>\n";
+print "</div>\n";
+print "</div>\n";
 print "</html>\n";
 

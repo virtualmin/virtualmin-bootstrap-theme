@@ -38,13 +38,13 @@ sub theme_ui_pre_footer
 my $rv;
 $rv .= "</div><p>\n";
 # XXX figure out where this ought to be... get rid of all the extras.
-$rv .= <<EOL;
-    <!-- Javascript ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.js"></script>
-</body></html>
-EOL
+#$rv .= <<EOL;
+#    <!-- Javascript ================================================== -->
+#    <!-- Placed at the end of the document so the pages load faster -->
+#    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
+#    <script src="/bootstrap/js/bootstrap.js"></script>
+#EOL
+$rv .= "</body></html>\n";
 return $rv;
 }
 
@@ -524,11 +524,7 @@ sub theme_ui_hidden_table_start
 {
 my ($heading, $tabletags, $cols, $name, $status, $tds, $rightheading) = @_;
 my $rv;
-if (!$main::ui_hidden_start_donejs++) {
-  $rv .= &ui_hidden_javascript();
-  }
 my $divid = "hiddendiv_$name";
-#my $openerid = "hiddenopener_$name";
 my $defclass = $status ? 'in' : ''; # Open or closed
 
 $rv .= <<EOL;
@@ -540,20 +536,6 @@ $rv .= <<EOL;
 <div id="$divid" class="accordion-body $defclass collapse">
 <div class="accordion-inner">
 EOL
-
-#$rv .= "<table class='ui_table' $tabletags>\n";
-#if (defined($heading) || defined($rightheading)) {
-#	$rv .= "<thead><tr>";
-#	if (defined($heading)) {
-#		$rv .= "<td><a href=\"javascript:hidden_opener('$divid', '$openerid')\" id='$openerid'><img border=0 src='$gconfig{'webprefix'}/images/$defimg'></a> <a href=\"javascript:hidden_opener('$divid', '$openerid')\" class='ui-hidden-table-title'><b>$heading</b></a></td>";
-#		}
-#        if (defined($rightheading)) {
-#                $rv .= "<td align=right>$rightheading</td>";
-#                $colspan++;
-#                }
-#	$rv .= "</tr> </thead>\n";
-#	}
-#$rv .= "<tbody><tr> <td colspan=$colspan><div class='$defclass' id='$divid'><table width=100%>\n";
 $main::ui_table_cols = $cols || 4;
 $main::ui_table_pos = 0;
 $main::ui_table_default_tds = $tds;
@@ -567,13 +549,6 @@ sub theme_ui_hidden_table_end
 {
 my ($name) = @_;
 my $rv = "</div></div></div>\n";
-#local $rv = "</table></div></td></tr></tbody></table>\n";
-#if ( $WRAPPER_OPEN == 1 ) {
-#	$WRAPPER_OPEN--;
-#	#$rv .= "</div>\n";
-#	$rv .= "</td></tr></table>\n";
-#	}
-#elsif ($WRAPPER_OPEN) { $WRAPPER_OPEN--; }
 return $rv;
 }
 
@@ -771,13 +746,15 @@ for($i=0; $i+1<@_; $i+=2) {
 		}
 	}
 print "<br>\n";
-	print <<EOL;
-    <!-- Javascript ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.js"></script>
-</body></html>
-EOL
+#	print <<EOL;
+#    <!-- Javascript ================================================== -->
+#    <!-- Placed at the end of the document so the pages load faster -->
+#    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
+#    <script src="/bootstrap/js/bootstrap.js"></script>
+#    <script src="/js/index.js"></script>
+#</body></html>
+#EOL
+print"</body></html>\n";
 }
 
 # Don't show virtualmin menu

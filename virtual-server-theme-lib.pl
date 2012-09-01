@@ -17,9 +17,9 @@ sub get_left_frame_width
 {
 local $sects = &get_right_frame_sections();
 return $sects->{'fsize'} ? $sects->{'fsize'} :
-       &get_product_name() eq 'usermin' ? 200 :
+       &get_product_name() eq 'usermin' ? 220 :
        &foreign_available("server-manager") &&
-       &foreign_available("virtual-server") ? 280 : 260;
+       &foreign_available("virtual-server") ? 300 : 280;
 }
 
 # list_virtualmin_theme_overlays()
@@ -173,8 +173,6 @@ else {
 	}
 return ($hasvirt, $level, $hasvm2);
 }
-
-
 
 1;
 

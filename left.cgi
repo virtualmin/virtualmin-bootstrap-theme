@@ -2,7 +2,7 @@
 # Show the left-side menu of Virtualmin domains, plus modules
 
 $trust_unknown_referers = 1;
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/virtual-server-theme-lib.pl";
 ReadParse();
 @admincats = ( "tmpl", "create", "backup" );
 %gaccess = get_module_acl(undef, "");
@@ -211,7 +211,7 @@ elsif ($hasvm2) {
 	}
 print "<hr>\n";
 
-$selwidth = (get_left_frame_width() - 70)."px";
+$selwidth = (get_left_frame_width() - 80)."px";
 if ($mode eq "virtualmin" && @doms) {
 	# Show Virtualmin servers this user can edit, plus links for various
 	# functions within each
@@ -303,7 +303,7 @@ if ($mode eq "virtualmin" && @doms) {
                                         ($b->{'title'} || $b->{'desc'})} @incat;
 			}
 		foreach my $b (@incat) {
-			print_virtualmin_link($b);
+			print_virtualmin_link($b, 'leftlink');
 			}
 		print_category_closer();
 		}
@@ -368,14 +368,14 @@ if ($mode eq "virtualmin") {
 					       $incat[0]->{'catname'},
 			                       'global-accordion');
 			foreach my $l (@incat) {
-				print_virtualmin_link($l);
+				print_virtualmin_link($l, 'leftlink');
 				}
 			print_category_closer();
 			}
 		else {
 			# Show with icons
 			foreach my $l (@incat) {
-				print_virtualmin_link($l, 'aftericon', 1);
+				print_virtualmin_link($l, 'aftericon leftlink', 1);
 				}
 			}
 		}
@@ -829,7 +829,7 @@ if ($icon) {
 	}
 print "<div class='$cls'>" if $cls;
 print "<b>" if ($l->{'icon'} eq 'index');
-print "<a href='$l->{'url'}' target=$t>$l->{'title'}</a>";
+print "<a href='$l->{'url'}' target=$t>$l->{'title'}</a><br>";
 print "</b>" if ($l->{'icon'} eq 'index');
 print "</div>" if $cls;
 if ($icon) {
