@@ -1,5 +1,6 @@
 #!/usr/local/bin/perl
 # Show the left-side menu of Virtualmin domains, plus modules
+use JSON::XS;
 
 $trust_unknown_referers = 1;
 require "bootstrap-theme/virtual-server-theme-lib.pl";
@@ -7,8 +8,9 @@ ReadParse();
 @admincats = ( "tmpl", "create", "backup" );
 %gaccess = get_module_acl(undef, "");
 
+my %tmpl_vars;
+
 popup_header("Virtualmin");
-print "<script type='text/javascript' src='$gconfig{'webprefix'}/unauthenticated/toggleview.js'></script>\n";
 
 # Find out which modules we have
 $hasvirt = foreign_available("virtual-server");
@@ -193,6 +195,7 @@ if ($fromaddr) {
 else {
 	# Show login
 	print text('left_login', $remote_user),"<br>\n";
+	$tmpl_vars{'remote_user'}=$remote_user;
 	}
 if (@doms) {
 	# Show Virtualmin login level
@@ -778,6 +781,13 @@ if (($mode eq "virtualmin" && $hasvirt ||
 	print "</form>\n";
 	}
 
+my $tmpl_json = JSON::XS->new->utf8->encode(\%tmpl_vars);
+print <<EOL;
+<script type="text/javascript">
+  var tmpl = $tmpl_json;
+</script>
+EOL
+
 footer();
 
 # print_category_opener(name, &allcats, label)
@@ -795,8 +805,6 @@ $label = $c eq "others" ? $text{'left_others'} : $label;
 # Show link to close or open catgory
 print "<div class='accordion-heading'>\n";
 print "<a class='accordion-toggle' data-toggle='collapse' data-parent='#$parent' data-target='#$c'> $label </a>\n";
-#print "<a href=\"javascript:toggleview('$c','toggle$c')\" id='toggle$c'><img border='0' src='images/closed.gif' alt='[+]'></a>\n";
-#print "<div class='aftericon'><a href=\"javascript:toggleview('$c','toggle$c')\" id='toggletext$c'><font color='#000000'>$label</font></a></div></div>\n";
 print "</div>\n";
 print "<div id='$c' class='accordion-body collapse'>\n";
 print "  <div class='accordion-inner'>\n";
@@ -855,6 +863,5 @@ else {
 	}
 $rv =~ s/ /&nbsp;/g;
 return $rv;
-
 }
 

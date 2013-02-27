@@ -276,7 +276,7 @@ sub theme_prehead
 print "<script>\n";
 print "var rowsel = new Array();\n";
 print "</script>\n";
-print "<script type='text/javascript' src='$gconfig{'webprefix'}/unauthenticated/sorttable.js'></script>\n";
+#print "<script type='text/javascript' src='$gconfig{'webprefix'}/unauthenticated/sorttable.js'></script>\n";
 if ($ENV{'HTTP_USER_AGENT'} =~ /Chrome/) {
 	print "<style type=\"text/css\">\n";
 	print "textarea,pre { font-size:120%; }\n";
