@@ -1,6 +1,6 @@
 $(function() {
-  $('#left').load('/left.cgi', null, handler() );
-  $('#right').load('/right.cgi', null, handler() );
+  $('#left').load('/left.cgi');
+  $('#right').load('/right.cgi');
 
   // Attach events to a hrefs so they load in the right div (left or right)
   // .leftlink a, .mode a, .linkwithicon a
@@ -9,7 +9,7 @@ $(function() {
     if(!target) { target = 'left'; } 
     var href = $(this).prop('href');
     console.log("target = ", target);
-    $( '#' + target ).load( href, handler() );
+    $.get( href, function(data) { handler(data, href, target) });
     event.preventDefault();
   });
   // Attach events to a hrefs so they load in the right div (mostly right),
@@ -19,19 +19,23 @@ $(function() {
     if(!target) { target = 'right'; }
     var href = $(this).prop('href');
     console.log(href);
-    $( '#' + target ).load( href, handler() );
+    $.get( href, function(data) { handler(data, href, target) });
     event.preventDefault();
   });
 });
 
 // handle modifying links, and attaching events
 // href - The URL that was loaded that triggered the handler callback
-var handler = function (loaded_href) {
+// target = left or right (must be ID, as # will be appended
+var handler = function (data, href, target) {
+  // Insert data into div
+  $( '#' + target ).html(data);
+
+  console.log("href = ", href);
   // Convert relative URLs in #right to include directory
-  if(loaded_href){
-    var uri = $(loaded_href).uri();
-    var base_path = uri.directory() + '/';
-    $('#right a:uri(is: relative)').attr('href', basepath+$(this));
-  }
+  var base_path = URI(href).directory();
+  //var base_path = uri.directory() + '/';
+  console.log(base_path);
+  $('#right a:uri(is: relative)').attr('href', base_path+'/'+$(this).attr('href'));
 };
 
