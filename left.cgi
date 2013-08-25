@@ -3,7 +3,7 @@
 use JSON::XS;
 
 $trust_unknown_referers = 1;
-require "bootstrap-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 ReadParse();
 @admincats = ( "tmpl", "create", "backup" );
 %gaccess = get_module_acl(undef, "");
