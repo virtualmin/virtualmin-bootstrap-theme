@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Show a form for configuring what gets dislayed on the right frame
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 ($hasvirt, $level, $hasvm2) = &get_virtualmin_user_level();
 $sects = &get_right_frame_sections();
 !$sects->{'global'} || &virtual_server::master_admin() ||

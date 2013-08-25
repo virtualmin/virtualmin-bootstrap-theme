@@ -2,7 +2,7 @@
 # Display a form for editing the preferences in a Usermin module, one section
 # at a time.
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 require './config-lib.pl';
 &ReadParse();
 $m = $in{'module'} || $ARGV[0];

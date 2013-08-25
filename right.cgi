@@ -2,7 +2,7 @@
 # Show server or domain information
 
 $trust_unknown_referers = 1;
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 &ReadParse();
 use Time::Local;
 

@@ -17,7 +17,7 @@ $hasvirt = foreign_available("virtual-server");
 if ($hasvirt) {
 	%minfo = get_module_info("virtual-server");
 	%vconfig = foreign_config("virtual-server");
-	$hasvirt = 0 if ($minfo{'version'} < 2.99);
+	$hasvirt = 0 if ($minfo{'version'} < 4.01);
 	}
 $hasmail = foreign_available("mailbox");
 $hasvm2 = foreign_available("server-manager");

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Show a form for changing the theme overlay
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 
 # Get the user and themes
 &foreign_require("acl", "acl-lib.pl");

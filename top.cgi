@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl
 # Output contents of top frame file
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 
 $hasvirt = &foreign_available("virtual-server");
 if ($hasvirt) {

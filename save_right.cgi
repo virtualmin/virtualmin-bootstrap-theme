@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Update visible right-frame sections
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 &ReadParse();
 &error_setup($text{'edright_err'});
 &load_theme_library();

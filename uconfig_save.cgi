@@ -2,7 +2,7 @@
 # config_save.cgi
 # Save inputs from config.cgi
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 require './config-lib.pl';
 &ReadParse();
 $m = $in{'module'};

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Update the theme overlay
 
-require "virtual-server-theme/virtual-server-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 &ReadParse();
 ($gtheme) = split(/\s+/, $gconfig{'theme'});
 
