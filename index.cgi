@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl
 
-require "virtual-server-theme/bootstrap-theme-lib.pl";
+require "bootstrap-theme/bootstrap-theme-lib.pl";
 &ReadParse();
 
 # Work out which module to open by default

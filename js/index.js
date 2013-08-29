@@ -1,6 +1,8 @@
 $(function() {
-  $('#left').load('/left.cgi');
-  $('#right').load('/right.cgi');
+  $.get("/left.cgi", function(data) { handler(data, '/left.cgi', 'left') });
+  //$('#left').load('/left.cgi');
+  //$('#right').load('/right.cgi');
+  $.get("/right.cgi", function(data) { handler(data, '/right.cgi', 'right') });
 
   // Attach events to a hrefs so they load in the right div (left or right)
   // .leftlink a, .mode a, .linkwithicon a
@@ -12,7 +14,7 @@ $(function() {
     $.get( href, function(data) { handler(data, href, target) });
     event.preventDefault();
   });
-  // Attach events to a hrefs so they load in the right div (mostly right),
+  // Attach events to hrefs so they load in the right div (mostly right),
   // without interfering with accordions, tabs, tables, etc.
   $('#right').on("click", '.accordion-inner a', function(event){
     var target = $(this).prop('target');
@@ -36,6 +38,9 @@ var handler = function (data, href, target) {
   var base_path = URI(href).directory();
   //var base_path = uri.directory() + '/';
   console.log(base_path);
-  $('#right a:uri(is: relative)').attr('href', base_path+'/'+$(this).attr('href'));
+  $('#right a:uri(is: relative)').each(function() {
+    var cur_href = $(this).attr("href");
+    $(this).attr("href", base_path+"/"+cur_href);
+  });
 };
 
