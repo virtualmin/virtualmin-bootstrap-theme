@@ -1,5 +1,5 @@
 # Virtualmin Bootstrap Theme
-# Icons copyright David Vignoni, all other theme elements copyright 2005-2012
+# Icons copyright David Vignoni, all other theme elements copyright 2005-2013
 # Virtualmin, Inc.
 
 $main::cloudmin_no_create_links = 1;
@@ -39,8 +39,6 @@ my $rv;
 $rv .= "</div><p>\n";
 # XXX figure out where this ought to be... get rid of all the extras.
 #$rv .= <<EOL;
-#    <!-- Javascript ================================================== -->
-#    <!-- Placed at the end of the document so the pages load faster -->
 #    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
 #    <script src="/bootstrap/js/bootstrap.js"></script>
 #EOL
@@ -333,19 +331,19 @@ my ($label, $value, $cols, $tds) = @_;
 $cols ||= 1;
 $tds ||= $main::ui_table_default_tds;
 my $rv;
-if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
-    $main::ui_table_pos != 0) {
+#if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
+#    $main::ui_table_pos != 0) {
     # If the requested number of cols won't fit in the number
     # remaining, start a new row
-    $rv .= "</tr>\n";
-    $main::ui_table_pos = 0;
-    }
-$rv .= "<tr class='ui_form_pair'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
-$rv .= "<td class='ui_form_label' $tds->[0]><b>$label</b></td>\n" if (defined($label));
-$rv .= "<td class='ui_form_value' colspan=$cols $tds->[1]>$value</td>\n";
+#    $rv .= "</div>\n";
+#    $main::ui_table_pos = 0;
+#    }
+$rv .= "<div class='ui_form_pair row'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
+$rv .= "<div class='ui_form_label col-md-2'><p><strong>$label</strong></p></div>\n" if (defined($label));
+$rv .= "<div class='ui_form_value col-md-4'><p>$value</p></div>\n";
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
 if ($main::ui_table_pos%$main::ui_table_cols == 0) {
-    $rv .= "</tr>\n";
+    $rv .= "</div>\n";
     $main::ui_table_pos = 0;
     }
 return $rv;
@@ -519,7 +517,8 @@ return $rv;
 
 # theme_ui_hidden_table_start(heading, [tabletags], [cols], name, status,
 #                             [&default-tds], [rightheading])
-# A table with a heading and table inside, and which is collapsible
+# An accordion group (or just single hideable section) with a heading and 
+# content section inside, which is collapsible
 sub theme_ui_hidden_table_start
 {
 my ($heading, $tabletags, $cols, $name, $status, $tds, $rightheading) = @_;
@@ -1019,27 +1018,21 @@ $rv .= &ui_columns_end();
 return $rv;
 }
 
-=yui
+=pod
+=head1 Bootstrap
 
-Functions for generating YUI CSS grids markup.
+Functions for generating Bootstrap CSS grids markup.
 
 =cut
 
-# ui_yui_grid_start(id, type)
-# Return a yui grid opening div.
-# Available types are:
-# g - 1/2,1/2
-# gb - 1/3, 1/3, 1/3
-# gc - 2/3, 1/3
-# gd - 1/3, 2/3
-# ge - 3/4, 1/4
-# gf - 1/4, 3/4
-sub theme_ui_yui_grid_start {
+# ui_bs_grid_start(id, type)
+# Return a boostrap grid row opening div.
+sub theme_ui_bs_grid_start {
 	my ($id, $type) = @_;
-	return "<div id='grid_$id' class='yui-$type'>\n";
+	return "<div id='grid_$id' class='row'>\n";
 }
 
-sub theme_ui_yui_grid_end {
+sub theme_ui_bs_grid_end {
 	my ($id) = @_;
 	return "</div> <!-- grid_$id -->\n";
 }
@@ -1056,5 +1049,25 @@ sub theme_ui_yui_grid_section_end {
 	return "</div> <!-- grid_$id -->\n";
 }
 
+# ui_hlink(text, page, module, width, height)
+# Returns HTML for a link that when clicked on pops up a window for a Webmin
+# help page. The parameters are :
+# text - Text for the link.
+# page - Help page code, such as 'intro'.
+# module - Module the help page is in. Defaults to the current module.
+# width - Width of the help popup window. Defaults to 600 pixels.
+# height - Height of the help popup window. Defaults to 400 pixels.
+
+# The actual help pages are in each module's help sub-directory, in files with
+# .html extensions.
+sub theme_hlink {
+my $mod = $_[2] ? $_[2] : &get_module_name();
+my $width = $_[3] || $tconfig{'help_width'} || $gconfig{'help_width'} || 600;
+my $height = $_[4] || $tconfig{'help_height'} || $gconfig{'help_height'} || 400;
+return "<a class='ui_hlink' onClick='window.open(\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\", \"help\", \"toolbar=no,menubar=no,scrollbars=yes,width=$width,height=$height,resizable=yes\"); return false' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">$_[0]</a>";
+}
+
+}
+}
 1;
 

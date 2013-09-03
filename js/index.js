@@ -1,8 +1,8 @@
 $(function() {
-  $.get("/left.cgi", function(data) { handler(data, '/left.cgi', 'left') });
+  $.get("/left.cgi", function(data) { loader(data, '/left.cgi', 'left') });
   //$('#left').load('/left.cgi');
   //$('#right').load('/right.cgi');
-  $.get("/right.cgi", function(data) { handler(data, '/right.cgi', 'right') });
+  $.get("/right.cgi", function(data) { loader(data, '/right.cgi', 'right') });
 
   // Attach events to a hrefs so they load in the right div (left or right)
   // .leftlink a, .mode a, .linkwithicon a
@@ -11,7 +11,7 @@ $(function() {
     if(!target) { target = 'left'; } 
     var href = $(this).prop('href');
     console.log("target = ", target);
-    $.get( href, function(data) { handler(data, href, target) });
+    $.get( href, function(data) { loader(data, href, target) });
     event.preventDefault();
   });
   // Attach events to hrefs so they load in the right div (mostly right),
@@ -21,7 +21,7 @@ $(function() {
     if(!target) { target = 'right'; }
     var href = $(this).prop('href');
     console.log(href);
-    $.get( href, function(data) { handler(data, href, target) });
+    $.get( href, function(data) { loader(data, href, target) });
     event.preventDefault();
   });
 });
@@ -29,7 +29,7 @@ $(function() {
 // handle modifying links, and attaching events
 // href - The URL that was loaded that triggered the handler callback
 // target = left or right (must be ID, as # will be appended
-var handler = function (data, href, target) {
+var loader = function (data, href, target) {
   // Insert data into div
   $( '#' + target ).html(data);
 

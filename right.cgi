@@ -123,7 +123,7 @@ if ($hasvirt) {
 	# See if module config needs to be checked
 	if (virtual_server::need_config_check() &&
 	    virtual_server::can_check_config()) {
-		print "<div class='alert'>\n";
+		print "<div class='alert alert-warning'>\n";
 		print ui_form_start("virtual-server/check.cgi");
 		print "<b>$text{'index_needcheck'}</b><p>\n";
 		print ui_submit($text{'index_srefresh'});
@@ -421,17 +421,11 @@ if ($level == 0) {		# Master admin
 			}
 		print ui_hidden_table_start($text{'right_statusheader'},
 		      "width=100%", 4, "status", $status_open);
-		#print theme_ui_yui_grid_start('rightstat', 'g'); # 50/50 split
-		#print theme_ui_yui_grid_section_start('rightstat_left', 'first');
-		print "<table class='ui_table'><tr><td width='49%' valign=top>\n";
+		print "<div class='row'><div class='col-md-6'>\n";
 		print status_grid(@ss[0 .. $mid]);
-		print "</td><td width='49%' valign=top>\n";
-		#print theme_ui_yui_grid_section_end('rightstat_left');
-		#print theme_ui_yui_grid_section_start('rightstat_right');
+		print "</div><div class='col-md-6'>\n";
 		print status_grid(@ss[$mid+1 .. $#ss]);
-		print "</td></tr></table>\n";
-		#print theme_ui_yui_grid_section_end('rightstat_right');
-		#print theme_ui_yui_grid_end('rightstat');
+		print "</div></div>\n";
 		print ui_hidden_table_end('rightstat');
 		}
 
