@@ -336,6 +336,7 @@ $tds ||= $main::ui_table_default_tds;
 # 2 cols with label and value would be row, md-4, md-8, /row
 # If tds has widths, we need to fit that into grid sizes, somehow.
 # Bootstrap grid has 12 slots.
+my $colwidth = 4; 
 if ($main::ui_table_cols == 4 && defined ($label)) {
 	$colwidth = 2;
 }
