@@ -16,7 +16,7 @@ $(function() {
   });
   // Attach events to hrefs so they load in the right div (mostly right),
   // without interfering with accordions, tabs, tables, etc.
-  $('#right').on("click", '.accordion-inner a', function(event){
+  $('#right').on("click", 'a', function(event){
     var target = $(this).prop('target');
     if(!target) { target = 'right'; }
     var href = $(this).prop('href');
@@ -33,7 +33,6 @@ var loader = function (data, href, target) {
   // Insert data into div
   $( '#' + target ).html(data);
 
-  console.log("href = ", href);
   // Convert relative URLs in #right to include directory
   var base_path = URI(href).directory();
   //var base_path = uri.directory() + '/';

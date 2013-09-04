@@ -302,20 +302,20 @@ if (defined($main::ui_table_cols)) {
 my $rv;
 my $colspan = 1;
 
-$rv .= "<table class='well' $tabletags>\n";
+$rv .= "<div class='panel panel-default' $tabletags>\n";
 if (defined($heading) || defined($rightheading)) {
-        $rv .= "<thead><tr>";
+		$rv .= "<div class='panel-heading'>\n";
         if (defined($heading)) {
-                $rv .= "<td><b>$heading</b></td>"
+                $rv .= "<h4>$heading</h4>"
                 }
         if (defined($rightheading)) {
-                $rv .= "<td align=right>$rightheading</td>";
+                $rv .= "<h4 class='pull-right'>$rightheading</h4>";
                 $colspan++;
                 }
-        $rv .= "</tr></thead>\n";
+		$rv .= "</div>\n";
         }
-$rv .= "<tbody> <tr class='ui_table_body'> <td colspan=$colspan>".
-       "<table width=100%>\n";
+$rv .= "<div class='panel-body'>\n";
+# XXX fixme see where cols makes a difference at this level and fix it somehow
 $main::ui_table_cols = $cols || 4;
 $main::ui_table_pos = 0;
 $main::ui_table_default_tds = $tds;
@@ -330,17 +330,36 @@ sub theme_ui_table_row
 my ($label, $value, $cols, $tds) = @_;
 $cols ||= 1;
 $tds ||= $main::ui_table_default_tds;
+# Heuristically figure out the right grid layout...
+# 4 cols with labels and values would be row, md-2, md-4, md-2, md-4, /row
+# 1 cols with just a value would be 12
+# 2 cols with label and value would be row, md-4, md-8, /row
+# If tds has widths, we need to fit that into grid sizes, somehow.
+# Bootstrap grid has 12 slots.
+if ($main::ui_table_cols == 4 && defined ($label)) {
+	$colwidth = 2;
+}
+elsif ($main::ui_table_cols == 2) {
+	$colwidth = 4;
+}
+elsif ($main::ui_table_cols == 1) {
+	$colwidth = 12;
+}
+
 my $rv;
-#if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
-#    $main::ui_table_pos != 0) {
+if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
+    $main::ui_table_pos != 0) {
     # If the requested number of cols won't fit in the number
     # remaining, start a new row
-#    $rv .= "</div>\n";
-#    $main::ui_table_pos = 0;
-#    }
+    $rv .= "</div>\n";
+    $main::ui_table_pos = 0;
+    }
+
 $rv .= "<div class='ui_form_pair row'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
-$rv .= "<div class='ui_form_label col-md-2'><p><strong>$label</strong></p></div>\n" if (defined($label));
-$rv .= "<div class='ui_form_value col-md-4'><p>$value</p></div>\n";
+if (defined($label)) {
+	$rv .= "<div class='ui_form_label col-md-$colwidth'><p><strong>$label</strong></p></div>\n";
+} 
+$rv .= "<div class='ui_form_value col-md-" . $colwidth*2 . "'><p>$value</p></div>\n";
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
 if ($main::ui_table_pos%$main::ui_table_cols == 0) {
     $rv .= "</div>\n";
@@ -368,7 +387,7 @@ else {
   $main::ui_table_pos = undef;
   $main::ui_table_default_tds = undef;
   }
-$rv .= "</tbody></table></td></tr></table>\n";
+$rv .= "</div>\n";
 return $rv;
 }
 
