@@ -244,15 +244,14 @@ sub theme_prebody
 {
 if ($script_name =~ /session_login.cgi/) {
 	# Generate CSS link
-	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/unauthenticated/bootstrap.css'>\n";
-	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/unauthenticated/bootstrap-responsive.css'>\n";
+#	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/bootstrap/css/bootstrap.min.css'>\n";
 #	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/unauthenticated/virtual-server-style.css'>\n";
-	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/css/webmin.css'>\n";
-	print "<!--[if IE]>\n";
-	print "<style type=\"text/css\">\n";
-	print "table.formsection, table.ui_table, table.loginform { border-collapse: collapse; }\n";
-	print "</style>\n";
-	print "<![endif]-->\n";
+#	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/css/webmin.css'>\n";
+#	print "<!--[if IE]>\n";
+#	print "<style type=\"text/css\">\n";
+#	print "table.formsection, table.ui_table, table.loginform { border-collapse: collapse; }\n";
+#	print "</style>\n";
+#	print "<![endif]-->\n";
 	}
 if (get_module_name() eq "virtual-server") {
 	# No need for Module Index link, as we have the left-side frame
@@ -263,23 +262,22 @@ if (get_module_name() eq "virtual-server") {
 sub theme_prehead
 {
 	# Generate CSS link
-	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/unauthenticated/bootstrap.css'>\n";
-	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/unauthenticated/bootstrap-responsive.css'>\n";
+#	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/bootstrap/css/bootstrap.min.css'>\n";
 #	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/unauthenticated/virtual-server-style.css'>\n";
-	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/css/webmin.css'>\n";
-	print "<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->\n";
-	print "<!--[if lt IE 9]>]\n";
-	print "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js\n'></script>\n";
-	print "<![endif]-->\n";
-print "<script>\n";
-print "var rowsel = new Array();\n";
-print "</script>\n";
+#	print "<link rel='stylesheet' type='text/css' href='$gconfig{'webprefix'}/css/webmin.css'>\n";
+#	print "<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->\n";
+#	print "<!--[if lt IE 9]>]\n";
+#	print "<script src='http://html5shim.googlecode.com/svn/trunk/html5.js\n'></script>\n";
+#	print "<![endif]-->\n";
+#print "<script>\n";
+#print "var rowsel = new Array();\n";
+#print "</script>\n";
 #print "<script type='text/javascript' src='$gconfig{'webprefix'}/unauthenticated/sorttable.js'></script>\n";
-if ($ENV{'HTTP_USER_AGENT'} =~ /Chrome/) {
-	print "<style type=\"text/css\">\n";
-	print "textarea,pre { font-size:120%; }\n";
-	print "</style>\n";
-	}
+#if ($ENV{'HTTP_USER_AGENT'} =~ /Chrome/) {
+#	print "<style type=\"text/css\">\n";
+#	print "textarea,pre { font-size:120%; }\n";
+#	print "</style>\n";
+#	}
 }
 
 sub theme_popup_prehead
@@ -336,7 +334,10 @@ $tds ||= $main::ui_table_default_tds;
 # 2 cols with label and value would be row, md-4, md-8, /row
 # If tds has widths, we need to fit that into grid sizes, somehow.
 # Bootstrap grid has 12 slots.
-my $colwidth = 4; 
+my $colwidth = 6; # XXX This is messy. I keep finding edge cases where fails.
+if (defined ($label)) {
+	$colwidth = 4;
+}
 if ($main::ui_table_cols == 4 && defined ($label)) {
 	$colwidth = 2;
 }
@@ -547,13 +548,16 @@ my $divid = "hiddendiv_$name";
 my $defclass = $status ? 'in' : ''; # Open or closed
 
 $rv .= <<EOL;
-<div class="accordion-group">
-<div class="accordion-header">
-<a class="accordion-toggle" href="#$divid" data-toggle="collapse"> $heading </a>
+<div class="panel-group" id='#$divid'>
+<div class="panel panel-default">
+<div class="panel-heading">
+<h4 class="panel-title">
+  <a class="accordion-toggle" href="#$divid" data-toggle="collapse">$heading</a>
+</h4>
 </div>
 
-<div id="$divid" class="accordion-body $defclass collapse">
-<div class="accordion-inner">
+<div id="$divid" class="panel-collapse $defclass collapse">
+<div class="panel-body">
 EOL
 $main::ui_table_cols = $cols || 4;
 $main::ui_table_pos = 0;

@@ -119,7 +119,8 @@ $sid = $server ? $server->{'id'} : undef;
 	$sects->{'nowebmin'} == 1 ||
 	  ($sects->{'nowebmin'} == 2 && !$is_master) &&
 	  $mode ne $product ? ( ) : ( $product ));
-if (@has > 1) {
+#if (@has > 1) {
+if ( 0 ) { # XXX Temporarily skip this...need to re-add in index.html
 	print "<div class='mode'>";
 	foreach $m (@has) {
 		if ($m ne $mode) {
@@ -290,8 +291,8 @@ if ($mode eq "virtualmin" && @doms) {
 
 	# Show others by category (except those for creation, which appear
 	# at the top)
-	print "<div id='cats-accordion' class='accordion'>\n";
-	print "<div class='accordion-group'>\n";
+	print "<div id='cats-accordion' class='panel-group'>\n";
+	print "<div class='panel panel-default'>\n";
 	my @cats = unique(map { $_->{'cat'} } @buts);
 	foreach my $c (@cats) {
 		next if ($c eq 'objects' || $c eq 'create');
@@ -360,8 +361,8 @@ if ($mode eq "virtualmin") {
 	# Show Virtualmin global links
 	my @buts = virtual_server::get_all_global_links();
 	my @tcats = unique(map { $_->{'cat'} } @buts);
-	print "<div id='global-accordion' class='accordion'>\n";
-        print "<div class='accordion-group'>\n";
+	print "<div id='global-accordion' class='panel-group'>\n";
+        print "<div class='panel panel-default'>\n";
 
 	foreach my $tc (@tcats) {
 		my @incat = grep { $_->{'cat'} eq $tc } @buts;
@@ -472,9 +473,9 @@ if ($mode eq "mail") {
 		      " target=right>$star$fname$umsg</a></div>\n";
 		}
 
-	# Show search box
-	print "<div class='leftlink'>$text{'left_search'} ",
-	      ui_textbox("search", undef, 15),"</div>\n";
+	# Show search box XXX make search work right across Webmin/Virtualmin/Usermin/Cloudmin
+#	print "<div class='leftlink'>$text{'left_search'} ",
+#	      ui_textbox("search", undef, 15),"</div>\n";
 
 	# Show manage folders, mail preferences and change password links
 	%mconfig = %mailbox::config;
@@ -550,8 +551,8 @@ if ($mode eq "vm2" && $server) {
 
 	# Work out action categories, and show those under each
 	my @cats = sort { $a cmp $b } &unique(map { $_->{'cat'} } @actions);
-	print "<div id='action-accordion' class='accordion'>\n";
-	print "<div class='accordion-group'>\n";
+	print "<div id='action-accordion' class='panel-group'>\n";
+	print "<div class='panel panel-default'>\n";
 
 	foreach my $c (@cats) {
 		my @incat = grep { $_->{'cat'} eq $c } @actions;
@@ -671,8 +672,8 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 	# Work out what modules and categories we have
 	@cats = get_visible_modules_categories();
 	@catnames = map { $_->{'code'} } @cats;
-	print "<div id='webmin-accordion' class='accordion'>\n";
-	print "<div class='accordion-group'>\n";
+	print "<div id='webmin-accordion' class='panel-group'>\n";
+	print "<div class='panel panel-default'>\n";
 
 	if ($gconfig{"notabs_${base_remote_user}"} == 2 ||
 	    $gconfig{"notabs_${base_remote_user}"} == 0 && $gconfig{'notabs'}) {
@@ -711,17 +712,18 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 	}
 
 # Show system information link
-print "<div class='linkwithicon'><img src='images/gohome.png' alt=''>\n";
+# XXX COnvert to the home icon in the upper navbar
+#print "<div class='linkwithicon'><img src='images/gohome.png' alt=''>\n";
 if ($mode eq "vm2") {
 	$sparam = $server ? "&$server->{'id'}" : "";
-	print "<div class='aftericon'><a target=right href='right.cgi?open=system&open=vm2servers&open=vm2limits&open=updates&open=owner$sparam'>$text{'left_home3'}</a></div></div>\n";
+#	print "<div class='aftericon'><a target=right href='right.cgi?open=system&open=vm2servers&open=vm2limits&open=updates&open=owner$sparam'>$text{'left_home3'}</a></div></div>\n";
 	}
 elsif (get_product_name() eq 'usermin') {
-	print "<div class='aftericon'><a target=right href='right.cgi?open=system&open=common'>$text{'left_home2'}</a></div></div>\n";
+#	print "<div class='aftericon'><a target=right href='right.cgi?open=system&open=common'>$text{'left_home2'}</a></div></div>\n";
 	}
 else {
 	$dparam = $d ? "&amp;dom=$d->{'id'}" : "";
-	print "<div class='aftericon'><a target=right href='right.cgi?open=system&auto=status&open=updates&open=reseller$dparam'>$text{'left_home'}</a></div></div>\n";
+#	print "<div class='aftericon'><a target=right href='right.cgi?open=system&auto=status&open=updates&open=reseller$dparam'>$text{'left_home'}</a></div></div>\n";
 	}
 
 # Show refresh modules like
@@ -731,17 +733,18 @@ if ($mode eq "webmin" && foreign_available("webmin")) {
 	}
 
 # Show logout link
+# XXX Move into index navbar logout icon
 &get_miniserv_config(\%miniserv);
 if ($miniserv{'logout'} && !$ENV{'SSL_USER'} && !$ENV{'LOCAL_USER'} &&
     $ENV{'HTTP_USER_AGENT'} !~ /webmin/i) {
-	print "<div class='linkwithicon'><img src='images/stock_quit.png' alt=''>\n";
+#	print "<div class='linkwithicon'><img src='images/stock_quit.png' alt=''>\n";
 	if ($main::session_id) {
-		print "<div class='aftericon'><a target=_top href='session_login.cgi?logout=1'>$text{'main_logout'}</a></div>";
+#		print "<div class='aftericon'><a target=_top href='session_login.cgi?logout=1'>$text{'main_logout'}</a></div>";
 		}
 	else {
-		print "<div class='aftericon'><a target=_top href='switch_user.cgi'>$text{'main_switch'}</a></div>";
+#		print "<div class='aftericon'><a target=_top href='switch_user.cgi'>$text{'main_switch'}</a></div>";
 		}
-	print "</div>\n";
+#	print "</div>\n";
 	}
 
 # Show link back to original Webmin server
@@ -803,11 +806,11 @@ $others .= "&amp;mode=$mode";
 $label = $c eq "others" ? $text{'left_others'} : $label;
 
 # Show link to close or open catgory
-print "<div class='accordion-heading'>\n";
-print "<a class='accordion-toggle' data-toggle='collapse' data-parent='#$parent' data-target='#$c'> $label </a>\n";
+print "<div class='panel-heading'>\n";
+print "<div class='panel-title'><a class='accordion-toggle' data-toggle='collapse' data-parent='#$parent' data-target='#$c'> $label </a></div>\n";
 print "</div>\n";
-print "<div id='$c' class='accordion-body collapse'>\n";
-print "  <div class='accordion-inner'>\n";
+print "<div id='$c' class='panel-collapse collapse'>\n";
+print "  <div class='panel-body'>\n";
 }
 
 sub print_category_closer

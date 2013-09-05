@@ -1084,8 +1084,9 @@ sub bar_chart
 {
 my ($total, $used, $blue) = @_;
 my $rv;
-$rv .= sprintf "<div class='progress'><div class='bar bar-info' style='width: %s%%;'> </div>",
-  int($bar_width*$used/$total)+1;
+# XXX Fixme: We need span sr-only for accessibility
+my $used_value = int($bar_width*$used/$total)+1;
+$rv .= sprintf "<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='$used_value' aria-valuemin='0' aria-valuemax='100' style='width: $used_value\%;'> <span class='sr-only'>$used_value% Used</span> </div>";
 #if ($blue) {
 #  $rv .= sprintf "<div class='bar bar-success' style='width: %s%%;' ></div>",
 #    $bar_width - int($bar_width*$used/$total)-1;
@@ -1105,9 +1106,9 @@ my $w2 = int($bar_width*$used2/$total);
 my $w3 = int($bar_width*$used3/$total);
 my $w4 = int($bar_width - $w1 - $w2 - $w3);
 $rv .= "<div class='progress'>\n";
-if ($w1) {$rv .= sprintf "<div class='bar bar-success' style='width: %s%%;'> </div>", $w1;}
-if ($w2) {$rv .= sprintf "<div class='bar bar-info' style='width: %s%%;'> </div>", $w2;}
-if ($w3) {$rv .= sprintf "<div class='bar bar-warning' style='width: %s%%;'> </div>", $w3;}
+if ($w1) {$rv .= sprintf "<div class='progress-bar progress-bar-success' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100' style='width: %s%%;'> </div>", $w1;}
+if ($w2) {$rv .= sprintf "<div class='progress-bar progress-bar-info' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100' style='width: %s%%;'> </div>", $w2;}
+if ($w3) {$rv .= sprintf "<div class='progress-bar progress-bar-warning' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100' style='width: %s%%;'> </div>", $w3;}
 #if ($w4) {$rv .= sprintf "<div class='bar bar-danger' style='width: %s%%;'> </div>", $w4;}
 $rv .= "</div>";
 return $rv;

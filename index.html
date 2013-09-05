@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -17,7 +17,6 @@
         padding: 9px 0;
       }
     </style>
-    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -34,36 +33,46 @@
 
   <body>
 
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">Webmin</a>
-          <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">{{remote-user}}</a>
-            </p>
-            <ul class="nav">
-              <li class="active"><a href="#virtualmin">Virtualmin</a></li>
-              <li><a href="#webmin">Webmin</a></li>
-              <li><a href="#cloudmin">Cloudmin</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <!-- <a class="navbar-brand" href="#">Webmin</a> -->
       </div>
-    </div>
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+         <!-- <p class="navbar-text pull-right">
+           Logged in as <a href="#" class="navbar-link">{{remote-user}}</a>
+         </p> -->
+         <ul class="nav navbar-nav">
+            <li><a href="/" alt="Home"><span class="glyphicon glyphicon-home"></span></a></li>
+            <li class="active"><a href="#virtualmin">Virtualmin</a></li>
+            <li><a href="#webmin">Webmin</a></li>
+            <li><a href="#cloudmin">Cloudmin</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-right">
+            <li>
+              <form class="navbar-form navbar-left pull-right" role="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+              </form>
+            </li>
+            <li><a href="/session_login.cgi?logout=1" alt="Logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
+          </ul>
+      </div><!--/.nav-collapse -->
+    </nav>
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3">
+        <div class="col-md-3">
           <div id="left" class="sidebar-nav">
           </div><!--/div right -->
         </div><!--/span-->
-        <div class="span9">
+        <div class="col-md-9">
           <div id="right">
           </div><!--/div right-->
         </div><!--/span-->
