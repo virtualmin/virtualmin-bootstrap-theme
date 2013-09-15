@@ -24,6 +24,18 @@ $(function() {
     $.get( href, function(data) { loader(data, href, target) });
     event.preventDefault();
   });
+  // Attach events to a hrefs so they load in the right div (left or right)
+  // .leftlink a, .mode a, .submit
+  // XXX What about log out link? Needs to load into whole page..
+  $('#topnav').on("click", 'a, .mode .a, .submit', function(event){
+    var target = $(this).prop('target');
+    //if(!target) { target = 'right'; }
+    var href = $(this).prop('href');
+    console.log("target = ", target);
+    $.get( href, function(data) { loader(data, href, target) });
+    event.preventDefault();
+  });
+
 });
 
 // handle modifying links, and attaching events

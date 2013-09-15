@@ -33,7 +33,7 @@
 
   <body>
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="topnav">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
           <span class="icon-bar"></span>
@@ -48,9 +48,9 @@
          </p> -->
          <ul class="nav navbar-nav">
             <li><a href="/" alt="Home"><span class="glyphicon glyphicon-home"></span></a></li>
-            <li class="active"><a href="#virtualmin">Virtualmin</a></li>
-            <li><a href="#webmin">Webmin</a></li>
-            <li><a href="#cloudmin">Cloudmin</a></li>
+            <li class="active"><a href="/left.cgi?mode=virtualmin&dom=" target="left">Virtualmin</a></li>
+            <li><a href="/left.cgi?mode=webmin&dom=" target="left">Webmin</a></li>
+            <li><a href="/left.cgi?mode=cloudmin" target="left">Cloudmin</a></li>
           </ul>
           <ul class="nav navbar-nav pull-right">
             <li>

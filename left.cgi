@@ -733,7 +733,7 @@ if ($mode eq "webmin" && foreign_available("webmin")) {
 	}
 
 # Show logout link
-# XXX Move into index navbar logout icon
+# XXX Move logic into index navbar logout icon
 &get_miniserv_config(\%miniserv);
 if ($miniserv{'logout'} && !$ENV{'SSL_USER'} && !$ENV{'LOCAL_USER'} &&
     $ENV{'HTTP_USER_AGENT'} !~ /webmin/i) {
@@ -764,24 +764,25 @@ if (($mode eq "webmin" || $mode eq "usermin") &&
 print "</form>\n" if ($doneform);
 
 # Search form for Virtualmin modules only
+# XXX Move logic into navbar in index.cgi
 if (($mode eq "virtualmin" && $hasvirt ||
      $mode eq "vm2" && $hasvm2) && $gaccess{'webminsearch'} ne '0') {
-	print "<form action=webmin_search.cgi target=right style='display:inline'>\n";
-	print "<div class='leftlink'>$text{'left_search'} ",
-	      ui_textbox("search", undef, 15),"</div>\n";
+#	print "<form action=webmin_search.cgi target=right style='display:inline'>\n";
+#	print "<div class='leftlink'>$text{'left_search'} ",
+#	      ui_textbox("search", undef, 15),"</div>\n";
 	@searchmods = ( );
 	if ($mode eq "virtualmin") {
-		push(@searchmods, "virtual-server", @virtual_server::plugins);
+#		push(@searchmods, "virtual-server", @virtual_server::plugins);
 		}
 	if ($mode eq "vm2") {
-		push(@searchmods, "server-manager", @server_manager::plugins);
+#		push(@searchmods, "server-manager", @server_manager::plugins);
 		}
 	foreach my $m (@searchmods) {
-		print ui_hidden("mod", $m);
+#		print ui_hidden("mod", $m);
 		}
-	print ui_hidden("title", $text{'left_vmsearch'});
-	print ui_hidden("dom", $d->{'id'}) if ($d);
-	print "</form>\n";
+#	print ui_hidden("title", $text{'left_vmsearch'});
+#	print ui_hidden("dom", $d->{'id'}) if ($d);
+#	print "</form>\n";
 	}
 
 my $tmpl_json = JSON::XS->new->utf8->encode(\%tmpl_vars);

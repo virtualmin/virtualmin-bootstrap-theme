@@ -171,12 +171,89 @@ sub theme_ui_textbox
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
 $size = &ui_max_text_width($size);
-return "<input type='text' class='ui_textbox' name=\"".&quote_escape($name)."\" ".
+return "<input type='text' class='form-control ui_textbox' name=\"".&quote_escape($name)."\" ".
        "value=\"".&quote_escape($value)."\" ".
        "size=$size ".($dis ? "disabled=true" : "").
        ($max ? " maxlength=$max" : "").
        " ".$tags.
        ">";
+}
+
+sub theme_ui_password
+{
+my ($name, $value, $size, $dis, $max, $tags) = @_;
+$size = &ui_max_text_width($size);
+return "<input class='form-control ui_password' ".
+       "type=password name=\"".&quote_escape($name)."\" ".
+       "value=\"".&quote_escape($value)."\" ".
+       "size=$size ".($dis ? "disabled=true" : "").
+       ($max ? " maxlength=$max" : "").
+       " ".$tags.
+       ">";
+}
+
+sub theme_ui_button
+{
+my ($label, $name, $dis, $tags) = @_;
+return "<button type='button' class='btn btn-default".
+       ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
+       " value=\"".&quote_escape($label)."\"".
+       ($dis ? " disabled=true" : "").
+       ($tags ? " ".$tags : "").">\n";
+}
+
+sub virtualmin_ui_show_cron_time
+{
+return &theme_virtualmin_ui_show_cron_time(@_)
+    if (defined(&theme_virtualmin_ui_show_cron_time));
+local ($name, $job, $offmsg) = @_;
+&foreign_require("cron", "cron-lib.pl");
+local $rv;
+local $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
+local $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
+local $button = "<input type=button onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\">\n";
+local $hidden = $mode == 2 ?
+    join(" ", $job->{'mins'}, $job->{'hours'},
+          $job->{'days'}, $job->{'months'}, $job->{'weekdays'}) : "";
+return &ui_radio_table($name, $mode,
+     [ $offmsg ? ( [ 0, $offmsg ] ) : ( ),
+       $cron::config{'vixie_cron'} ? (
+       [ 1, $text{'cron_special'},
+           &ui_select($name."_special", $job->{'special'},
+              [ map { [ $_, $cron::text{'edit_special_'.$_} ] }
+                ('hourly', 'daily', 'weekly', 'monthly', 'yearly')
+              ]) ] ) : ( ),
+       [ 2, $text{'cron_complex'},
+           &ui_textbox($name."_complex", $complex, 40, 0, undef,
+                  "readonly=true")." ".$button ],
+     ]).&ui_hidden($name."_hidden", $hidden);
+}
+
+# XXX UGLY! Needs to be updated to load into a popup within the page, so we
+# have CSS and JavaScript available.
+sub theme_virtualmin_ui_show_cron_time
+{
+local ($name, $job, $offmsg) = @_;
+&foreign_require("cron", "cron-lib.pl");
+local $rv;
+local $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
+local $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
+local $button = "<button type='button' class='btn btn-default' onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"/virtual-server/cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\"><span class='glyphicon glyphicon-time'></span></button>\n";
+local $hidden = $mode == 2 ?
+    join(" ", $job->{'mins'}, $job->{'hours'},
+          $job->{'days'}, $job->{'months'}, $job->{'weekdays'}) : "";
+return &ui_radio_table($name, $mode,
+     [ $offmsg ? ( [ 0, $offmsg ] ) : ( ),
+       $cron::config{'vixie_cron'} ? (
+       [ 1, $text{'cron_special'},
+           &ui_select($name."_special", $job->{'special'},
+              [ map { [ $_, $cron::text{'edit_special_'.$_} ] }
+                ('hourly', 'daily', 'weekly', 'monthly', 'yearly')
+              ]) ] ) : ( ),
+       [ 2, $text{'cron_complex'},
+           &ui_textbox($name."_complex", $complex, 40, 0, undef,
+                  "readonly=true")." ".$button ],
+     ]).&ui_hidden($name."_hidden", $hidden);
 }
 
 # theme_select_domain(&domain)
@@ -389,7 +466,7 @@ else {
   $main::ui_table_pos = undef;
   $main::ui_table_default_tds = undef;
   }
-$rv .= "</div>\n";
+$rv .= "</div></div>\n";
 return $rv;
 }
 
@@ -409,7 +486,7 @@ foreach my $t (@$tabs) {
                         'active' : '';
 	$rv .= "<li class='ui_tab $defclass'><a href='#$tabid' data-toggle='tab'>$t->[1]</a></li>\n";
 }
-$rv .= "</ul>\n<div class='tab-content'>\n";	
+$rv .= "</ul>\n<div class='tab-content'>\n";
 return $rv;
 }
 
@@ -898,7 +975,7 @@ $size = &ui_max_text_width($size);
 $rv .= &ui_radio($name."_def", $value eq '' ? 1 : 0,
                  [ [ 1, $opt1, "onClick='$dis1'" ],
                    [ 0, $opt2 || " ", "onClick='$dis2'" ] ], $dis)."\n";
-$rv .= "<input class='ui_opt_textbox' name=\"".&quote_escape($name)."\" ".
+$rv .= "<input class='form-control ui_opt_textbox' name=\"".&quote_escape($name)."\" ".
        "type='text' size=$size value=\"".&quote_escape($value)."\" ".
        ($dis ? "disabled=true" : "").
        ($max ? " maxlength=$max" : "").
@@ -1091,7 +1168,75 @@ my $height = $_[4] || $tconfig{'help_height'} || $gconfig{'help_height'} || 400;
 return "<a class='ui_hlink' onClick='window.open(\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\", \"help\", \"toolbar=no,menubar=no,scrollbars=yes,width=$width,height=$height,resizable=yes\"); return false' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">$_[0]</a>";
 }
 
+sub theme_ui_select
+{
+my ($name, $value, $opts, $size, $multiple, $missing, $dis, $js) = @_;
+my $rv;
+$rv .= "<select class='form-control ui_select' name=\"".&quote_escape($name)."\"".
+       ($size ? " size=$size" : "").
+       ($multiple ? " multiple" : "").
+       ($dis ? " disabled=true" : "")." ".$js.">\n";
+my ($o, %opt, $s);
+my %sel = ref($value) ? ( map { $_, 1 } @$value ) : ( $value, 1 );
+foreach $o (@$opts) {
+    $o = [ $o ] if (!ref($o));
+    $rv .= "<option value=\"".&quote_escape($o->[0])."\"".
+           ($sel{$o->[0]} ? " selected" : "")." ".$o->[2].">".
+           ($o->[1] || $o->[0])."\n";
+    $opt{$o->[0]}++;
+    }
+foreach $s (keys %sel) {
+    if (!$opt{$s} && $missing) {
+        $rv .= "<option value=\"".&quote_escape($s)."\"".
+               "selected>".($s eq "" ? "&nbsp;" : $s)."\n";
+        }
+    }
+$rv .= "</select>\n";
+return $rv;
 }
+
+sub theme_ui_textarea
+{
+my ($name, $value, $rows, $cols, $wrap, $dis, $tags) = @_;
+$cols = &ui_max_text_width($cols, 1);
+return "<textarea class='form-control ui_textarea' name=\"".&quote_escape($name)."\" ".
+       "rows=$rows cols=$cols".($wrap ? " wrap=$wrap" : "").
+       ($dis ? " disabled=true" : "").
+       ($tags ? " $tags" : "").">".
+       &html_escape($value).
+       "</textarea>";
 }
+
+=head2 theme_ui_alert_box(msg, class)
+
+Returns HTML for an alert box, with background color determined by $class.
+
+$msg contains any text or HTML to be contained within the alert box, and
+can include forms.
+
+Classes of alert:
+
+=item success - green
+
+=item info - blue
+
+=item warning - yellow
+
+=item danger - red
+
+=cut
+
+sub theme_ui_alert_box
+{
+my ($msg, $class) = @_;
+my $rv;
+
+$rv .= "<div class='alert alert-$class'>";
+$rv .= "$msg\n";
+$rv .= "</div>\n";
+
+return $rv;
+}
+
 1;
 
