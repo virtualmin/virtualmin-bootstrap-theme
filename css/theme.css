@@ -1,0 +1,52 @@
+.container-full {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ui_icons_table {
+  display: inline-block;
+  list-style: none outside none;
+  margin: 20px 0 10px;
+  padding: 0;
+  text-align: center;
+}
+.ui_icons_table li {
+    background-color: #F9F9F9;
+    background-image: linear-gradient(to bottom, #FAFAFA 0%, #EDEDED 100%);
+    background-repeat: repeat-x;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    line-height: 14px;
+    margin: 0 10px 10px;
+    padding: 0 10px;
+    vertical-align: middle;
+}
+.ui_icons_table li {
+    width: 120px;
+    min-height: 120px;
+}
+.ui_icons_table li a {
+    padding: 5px 5px 5px 5px;
+}
+.ui_icons_table li:hover {
+    background-color: #FDFDFD;
+    background-image: linear-gradient(to bottom, #FDFDFD 0%, #F5F5F5 100%);
+    background-repeat: repeat-x;
+}
+.ui_icons_table li {
+    padding: 0;
+}
+.ui_icons_table li a {
+    color: #666666;
+    display: block;
+    text-align: center !important;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+.ui_icons_table li:active {
+    background-image: linear-gradient(to bottom, #EEEEEE 0%, #F4F4F4 100%);
+    background-repeat: repeat-x;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2) inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+

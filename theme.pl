@@ -13,11 +13,93 @@ $main::basic_virtualmin_menu = 1;
 $main::nocreate_virtualmin_menu = 1;
 $main::nosingledomain_virtualmin_mode = 1;
 
-# Global state for wrapper XXX Wrapper going away
-# if 0, wrapper isn't on, add one and open it, if 1 close it, if 2+, subtract
-# but don't close
-$WRAPPER_OPEN = 0;
-$COLUMNS_WRAPPER_OPEN = 0;
+# theme_header
+sub theme_header
+{
+#return if ($main::done_webmin_header++);
+my $ll;
+my $charset = defined($main::force_charset) ? $main::force_charset
+                        : &get_charset();
+#$module_name = &get_module_name();
+if (@_ > 0) {
+    my $title = &get_html_title($_[0]);
+	#print $_[7] if ($_[7]);
+    print &get_html_status_line(0);
+    }
+my $dir = $current_lang_info->{'dir'} ? "dir=\"$current_lang_info->{'dir'}\""
+                     : "";
+print "<div class='container'>\n";
+
+if (@_ > 1) {
+    my %this_module_info = &get_module_info(&get_module_name());
+    print "<div class='header'><tr>\n";
+    if ($gconfig{'sysinfo'} == 2 && $remote_user) {
+		print "<div class='row'>\n";
+        print "<div id='headln1' class='col-md-12'>\n";
+        print &get_html_status_line(1);
+        print "</div></div>\n";
+        }
+    	print "<div class='row'>\n";
+    	# Title is just text
+    	print "<div id='headln2l' class='col-md-8'><h2>",$_[0],"</h2>";
+        print "<h4>$_[9]</h4>\n" if ($_[9]);
+        print "</div>\n";
+        }
+    print "<div id='headln2r' class='col-md4 pull-right'>";
+    if ($ENV{'HTTP_WEBMIN_SERVERS'} && !$tconfig{'framed'}) {
+        print "<a href='$ENV{'HTTP_WEBMIN_SERVERS'}'>",
+              "$text{'header_servers'}</a><br>\n";
+        }
+    if (!$_[5] && !$tconfig{'noindex'}) {
+        my @avail = &get_available_module_infos(1);
+        my $nolo = $ENV{'ANONYMOUS_USER'} ||
+                  $ENV{'SSL_USER'} || $ENV{'LOCAL_USER'} ||
+                  $ENV{'HTTP_USER_AGENT'} =~ /webmin/i;
+        if ($gconfig{'gotoone'} && $main::session_id && @avail == 1 &&
+            !$nolo) {
+            print "<a href='$gconfig{'webprefix'}/session_login.cgi?logout=1'>",
+                  "$text{'main_logout'}</a><br>";
+            }
+        elsif ($gconfig{'gotoone'} && @avail == 1 && !$nolo) {
+            print "<a href=$gconfig{'webprefix'}/switch_user.cgi>",
+                  "$text{'main_switch'}</a><br>";
+            }
+        elsif (!$gconfig{'gotoone'} || @avail > 1) {
+            print "<a href='$gconfig{'webprefix'}/?cat=",
+                  $this_module_info{'category'},
+                  "'>$text{'header_webmin'}</a><br>\n";
+            }
+        }
+    if (!$_[4] && !$tconfig{'nomoduleindex'}) {
+        my $idx = $this_module_info{'index_link'};
+        my $mi = $module_index_link || "/".&get_module_name()."/$idx";
+        my $mt = $module_index_name || $text{'header_module'};
+        print "<a href=\"$gconfig{'webprefix'}$mi\">$mt</a><br>\n";
+        }
+    if (ref($_[2]) eq "ARRAY" && !$ENV{'ANONYMOUS_USER'} &&
+        !$tconfig{'nohelp'}) {
+        print &hlink($text{'header_help'}, $_[2]->[0], $_[2]->[1]),
+              "<br>\n";
+        }
+    elsif (defined($_[2]) && !$ENV{'ANONYMOUS_USER'} &&
+           !$tconfig{'nohelp'}) {
+        print &hlink($text{'header_help'}, $_[2]),"<br>\n";
+        }
+    if ($_[3]) {
+        my %access = &get_module_acl();
+        if (!$access{'noconfig'} && !$config{'noprefs'}) {
+            my $cprog = $user_module_config_directory ?
+                    "uconfig.cgi" : "config.cgi";
+            print "<a href=\"$gconfig{'webprefix'}/$cprog?",
+                  &get_module_name()."\">",
+                  $text{'header_config'},"</a><br>\n";
+            }
+        }
+	print "$_[6]\n" if ($_[6]);
+    print "</div>\n";
+    print "</div></div>\n"; # .header
+	print "<div class='module-content'>\n"; # to allow selection of links
+}
 
 # theme_ui_post_header([subtext])
 # Returns HTML to appear directly after a standard header() call
@@ -26,8 +108,7 @@ sub theme_ui_post_header
 my ($text) = @_;
 my $rv;
 $rv .= "<div class='ui_post_header'>$text</div>\n" if (defined($text));
-#$rv .= "<div class='section'>\n";
-$rv .= "<p>" if (!defined($text));
+#$rv .= "<p>" if (!defined($text));
 return $rv;
 }
 
@@ -36,7 +117,8 @@ return $rv;
 sub theme_ui_pre_footer
 {
 my $rv;
-$rv .= "</div><p>\n";
+$rv .= "</div>\n"; # .module-content
+$rv .= "</div><p>\n"; # .container-full?
 # XXX figure out where this ought to be... get rid of all the extras.
 #$rv .= <<EOL;
 #    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
@@ -61,18 +143,18 @@ sub theme_icons_table
 my ($i, $need_tr);
 my $cols = $_[3] ? $_[3] : 4;
 my $per = int(100.0 / $cols);
-print "<table id='main' width=100% cellpadding=5 class='icons_table'>\n";
+print "<div class='panel panel-default'>\n";
+print "<div class='panel-body'>\n";
+print "<ul class='ui_icons_table'>\n";
 for($i=0; $i<@{$_[0]}; $i++) {
-	if ($i%$cols == 0) { print "<tr>\n"; }
-	print "<td width=$per% align=center valign=top>\n";
+	print "<li>\n";
 	&generate_icon($_[2]->[$i], $_[1]->[$i], $_[0]->[$i],
 		       $_[4], $_[5], $_[6], $_[7]->[$i], $_[8]->[$i]);
-	print "</td>\n";
-        if ($i%$cols == $cols-1) { print "</tr>\n"; }
-        }
-while($i++%$cols) { print "<td width=$per%></td>\n"; $need_tr++; }
-print "</tr>\n" if ($need_tr);
-print "</table>\n";
+	print "</li>\n";
+    }
+print "</ul>\n" if ($need_tr);
+print "</div>\n"; # .panel-body
+print "</div>\n"; # .icons_table .panel-default
 }
 
 sub theme_generate_icon
@@ -81,22 +163,22 @@ my $w = !defined($_[4]) ? "width=48" : $_[4] ? "width=$_[4]" : "";
 my $h = !defined($_[5]) ? "height=48" : $_[5] ? "height=$_[5]" : "";
 if ($tconfig{'noicons'}) {
 	if ($_[2]) {
-		print "$_[6]<a href=\"$_[2]\" $_[3]>$_[1]</a>$_[7]\n";
+		print "$_[6]<a href=\"/$module_name/$_[2]\" $_[3]>$_[1]</a>$_[7]\n";
 		}
 	else {
 		print "$_[6]$_[1]$_[7]\n";
 		}
 	}
 elsif ($_[2]) {
-	print "<table><tr><td width=48 height=48>\n",
-	      "<a href=\"$_[2]\" $_[3]><img src=\"$_[0]\" alt=\"\" border=0 ",
-	      "$w $h></a></td></tr></table>\n";
-	print "$_[6]<a href=\"$_[2]\" $_[3]>$_[1]</a>$_[7]\n";
+	print "<div class='ui_icon'>\n",
+	      "<a href=\"/$module_name/$_[2]\" $_[3]><img src=\"/$module_name/$_[0]\" alt=\"\" border=0 ",
+	      "$w $h></a></div><br>\n";
+	print "$_[6]<a href=\"/$module_name/$_[2]\" $_[3]>$_[1]</a>$_[7]\n";
 	}
 else {
-	print "<table><tr><td width=48 height=48>\n",
-	      "<img src=\"$_[0]\" alt=\"\" border=0 $w $h>",
-	      "</td></tr></table>\n$_[6]$_[1]$_[7]\n";
+	print "<div class='ui_icon'>\n",
+	      "<img src=\"/module_name/$_[0]\" alt=\"\" border=0 $w $h>",
+	      "</div>\n$_[6]$_[1]$_[7]\n";
 	}
 }
 
@@ -104,7 +186,7 @@ else {
 # Called by Virtualmin after a domain is updated, to refresh the left menu
 sub theme_post_save_domain
 {
-local ($d, $action) = @_;
+my ($d, $action) = @_;
 # Refresh left side, in case options have changed
 print "<script>\n";
 if ($action eq 'create') {
@@ -131,7 +213,7 @@ print "</script>\n";
 # Called by Cloudmin after a server is updated, to refresh the left menu
 sub theme_post_save_server
 {
-local ($s, $action) = @_;
+my ($s, $action) = @_;
 if ($action eq 'create' || $action eq 'delete' ||
     !$done_theme_post_save_server++) {
 	print "<script>\n";
@@ -145,7 +227,7 @@ if ($action eq 'create' || $action eq 'delete' ||
 # left menu.
 sub theme_select_server
 {
-local ($server) = @_;
+my ($server) = @_;
 print <<EOF;
 <script>
 if (window.parent && window.parent.frames[0]) {
@@ -206,13 +288,13 @@ sub virtualmin_ui_show_cron_time
 {
 return &theme_virtualmin_ui_show_cron_time(@_)
     if (defined(&theme_virtualmin_ui_show_cron_time));
-local ($name, $job, $offmsg) = @_;
+my ($name, $job, $offmsg) = @_;
 &foreign_require("cron", "cron-lib.pl");
-local $rv;
-local $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
-local $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
-local $button = "<input type=button onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\">\n";
-local $hidden = $mode == 2 ?
+my $rv;
+my $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
+my $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
+my $button = "<input type=button onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\">\n";
+my $hidden = $mode == 2 ?
     join(" ", $job->{'mins'}, $job->{'hours'},
           $job->{'days'}, $job->{'months'}, $job->{'weekdays'}) : "";
 return &ui_radio_table($name, $mode,
@@ -233,13 +315,13 @@ return &ui_radio_table($name, $mode,
 # have CSS and JavaScript available.
 sub theme_virtualmin_ui_show_cron_time
 {
-local ($name, $job, $offmsg) = @_;
+my ($name, $job, $offmsg) = @_;
 &foreign_require("cron", "cron-lib.pl");
-local $rv;
-local $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
-local $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
-local $button = "<button type='button' class='btn btn-default' onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"/virtual-server/cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\"><span class='glyphicon glyphicon-time'></span></button>\n";
-local $hidden = $mode == 2 ?
+my $rv;
+my $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
+my $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
+my $button = "<button type='button' class='btn btn-default' onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"/virtual-server/cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\"><span class='glyphicon glyphicon-time'></span></button>\n";
+my $hidden = $mode == 2 ?
     join(" ", $job->{'mins'}, $job->{'hours'},
           $job->{'days'}, $job->{'months'}, $job->{'weekdays'}) : "";
 return &ui_radio_table($name, $mode,
@@ -261,7 +343,7 @@ return &ui_radio_table($name, $mode,
 # the left menu.
 sub theme_select_domain
 {
-local ($d) = @_;
+my ($d) = @_;
 print <<EOF;
 <script>
 if (window.parent && window.parent.frames[0]) {
@@ -285,7 +367,7 @@ EOF
 # may be 'create', 'delete', 'modify' or 'read'
 sub theme_post_save_folder
 {
-local ($folder, $action) = @_;
+my ($folder, $action) = @_;
 my $ref;
 if ($action eq 'create' || $action eq 'delete' || $action eq 'modify') {
 	# Always refresh
@@ -545,7 +627,7 @@ return $rv;
 sub theme_ui_columns_row
 {
 $theme_ui_columns_row_toggle = $theme_ui_columns_row_toggle ? '0' : '1';
-local ($cols, $tdtags) = @_;
+my ($cols, $tdtags) = @_;
 my $rv;
 $rv .= "<tr class='ui_columns_row row$theme_ui_columns_row_toggle' onMouseOver=\"this.className='mainhigh'\" onMouseOut=\"this.className='mainbody row$theme_ui_columns_row_toggle'\">\n";
 my $i;
@@ -656,7 +738,7 @@ return $rv;
 # Adds support for row highlighting to the normal select all
 sub theme_select_all_link
 {
-local ($field, $form, $text) = @_;
+my ($field, $form, $text) = @_;
 $form = int($form);
 $text ||= $text{'ui_selall'};
 return "<a class='select_all' href='#' onClick='f = document.forms[$form]; ff = f.$field; ff.checked = true; r = document.getElementById(\"row_\"+ff.id); if (r) { r.className = \"mainsel\" }; for(i=0; i<f.$field.length; i++) { ff = f.${field}[i]; if (!ff.disabled) { ff.checked = true; r = document.getElementById(\"row_\"+ff.id); if (r) { r.className = \"mainsel\" } } } return false'>$text</a>";
@@ -666,7 +748,7 @@ return "<a class='select_all' href='#' onClick='f = document.forms[$form]; ff = 
 # Adds support for row highlighting to the normal invert selection
 sub theme_select_invert_link
 {
-local ($field, $form, $text) = @_;
+my ($field, $form, $text) = @_;
 $form = int($form);
 $text ||= $text{'ui_selinv'};
 return "<a class='select_invert' href='#' onClick='f = document.forms[$form]; ff = f.$field; ff.checked = !f.$field.checked; r = document.getElementById(\"row_\"+ff.id); if (r) { r.className = ff.checked ? \"mainsel\" : \"mainbody\" }; for(i=0; i<f.$field.length; i++) { ff = f.${field}[i]; if (!ff.disabled) { ff.checked = !ff.checked; r = document.getElementById(\"row_\"+ff.id); if (r) { r.className = ff.checked ? \"mainsel\" : \"mainbody row\"+((i+1)%2) } } } return false'>$text</a>";
@@ -677,11 +759,11 @@ return "<a class='select_invert' href='#' onClick='f = document.forms[$form]; ff
 # XXX can delete after Usermin 1.400
 sub theme_select_status_link
 {
-local ($name, $formno, $folder, $mail, $start, $end, $status, $label) = @_;
+my ($name, $formno, $folder, $mail, $start, $end, $status, $label) = @_;
 $formno = int($formno);
-local @sel;
+my @sel;
 for(my $i=$start; $i<=$end; $i++) {
-	local $read = &get_mail_read($folder, $mail->[$i]);
+	my $read = &get_mail_read($folder, $mail->[$i]);
 	if ($status == 0) {
 		push(@sel, ($read&1) ? 0 : 1);
 		}
@@ -701,7 +783,7 @@ return "<a class='select_status' href='#' onClick='$js'>$label</a>";
 
 sub theme_select_rows_link
 {
-local ($field, $form, $text, $rows) = @_;
+my ($field, $form, $text, $rows) = @_;
 $form = int($form);
 my $js = "var sel = { ".join(",", map { "\"".&quote_escape($_)."\":1" } @$rows)." }; ";
 $js .= "for(var i=0; i<document.forms[$form].${field}.length; i++) { var ff = document.forms[$form].${field}[i]; var r = document.getElementById(\"row_\"+ff.id); ff.checked = sel[ff.value]; if (r) { r.className = ff.checked ? \"mainsel\" : \"mainbody row\"+((i+1)%2) } } ";
@@ -712,7 +794,7 @@ return "<a class='select_rows' href='#' onClick='$js'>$text</a>";
 sub theme_ui_checked_columns_row
 {
 $theme_ui_columns_row_toggle = $theme_ui_columns_row_toggle ? '0' : '1';
-local ($cols, $tdtags, $checkname, $checkvalue, $checked, $disabled, $tags) = @_;
+my ($cols, $tdtags, $checkname, $checkvalue, $checked, $disabled, $tags) = @_;
 my $rv;
 my $cbid = &quote_escape(quotemeta("${checkname}_${checkvalue}"));
 my $rid = &quote_escape(quotemeta("row_${checkname}_${checkvalue}"));
@@ -745,7 +827,7 @@ return $rv;
 
 sub theme_ui_radio_columns_row
 {
-local ($cols, $tdtags, $checkname, $checkvalue, $checked) = @_;
+my ($cols, $tdtags, $checkname, $checkvalue, $checked) = @_;
 my $rv;
 my $cbid = &quote_escape(quotemeta("${checkname}_${checkvalue}"));
 my $rid = &quote_escape(quotemeta("row_${checkname}_${checkvalue}"));
@@ -1161,7 +1243,7 @@ sub theme_ui_yui_grid_section_end {
 
 # The actual help pages are in each module's help sub-directory, in files with
 # .html extensions.
-sub theme_hlink {
+sub theme_ui_hlink {
 my $mod = $_[2] ? $_[2] : &get_module_name();
 my $width = $_[3] || $tconfig{'help_width'} || $gconfig{'help_width'} || 600;
 my $height = $_[4] || $tconfig{'help_height'} || $gconfig{'help_height'} || 400;

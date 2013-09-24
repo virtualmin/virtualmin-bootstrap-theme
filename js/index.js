@@ -1,30 +1,31 @@
-$(function() {
-  $.get("/left.cgi", function(data) { loader(data, '/left.cgi', 'left') });
-  //$('#left').load('/left.cgi');
-  //$('#right').load('/right.cgi');
-  $.get("/right.cgi", function(data) { loader(data, '/right.cgi', 'right') });
+(function () {
+"use strict";
 
-  // Attach events to a hrefs so they load in the right div (left or right)
+$(function() {
+  $.get("/left.cgi", function(data) { loader(data, '/left.cgi', 'left'); });
+  $.get("/right.cgi", function(data) { loader(data, '/right.cgi', 'right'); });
+
+  // Attach events to left menu a hrefs
   // .leftlink a, .mode a, .linkwithicon a
   $('#left').on("click", '.leftlink a, .mode a, .linkwithicon a', function(event){
     var target = $(this).prop('target');
     if(!target) { target = 'left'; } 
     var href = $(this).prop('href');
     console.log("target = ", target);
-    $.get( href, function(data) { loader(data, href, target) });
+    $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });
   // Attach events to hrefs so they load in the right div (mostly right),
   // without interfering with accordions, tabs, tables, etc.
-  $('#right').on("click", '.panel-body a', function(event){
+  $('#right').on("click", '.module-content .tab-content a, .module-content .panel-body a, .header a', function(event){
     var target = $(this).prop('target');
     if(!target) { target = 'right'; }
     var href = $(this).prop('href');
     console.log(href);
-    $.get( href, function(data) { loader(data, href, target) });
+    $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });
-  // Attach events to a hrefs so they load in the right div (left or right)
+  // Attach events to navbar hrefs
   // .leftlink a, .mode a, .submit
   // XXX What about log out link? Needs to load into whole page..
   $('#topnav').on("click", 'a, .mode .a, .submit', function(event){
@@ -32,7 +33,7 @@ $(function() {
     //if(!target) { target = 'right'; }
     var href = $(this).prop('href');
     console.log("target = ", target);
-    $.get( href, function(data) { loader(data, href, target) });
+    $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });
 
@@ -47,11 +48,13 @@ var loader = function (data, href, target) {
 
   // Convert relative URLs in #right to include directory
   var base_path = URI(href).directory();
+
   //var base_path = uri.directory() + '/';
-  console.log(base_path);
-  $('#right a:uri(is: relative)').each(function() {
-    var cur_href = $(this).attr("href");
-    $(this).attr("href", base_path+"/"+cur_href);
-  });
+  //console.log(base_path);
+  //$('#right .module-content a:uri(is: relative)').each(function() {
+  //  var cur_href = $(this).attr("href");
+  //  $(this).attr("href", base_path+"/"+cur_href);
+  //});
 };
 
+}());

@@ -33,22 +33,21 @@ print "Content-type: text/html\n\n";
 print <<EOF;
     <!DOCTYPE HTML>
     <!-- styles -->
-    <link href="/unauthenticated/bootstrap.css" rel="stylesheet">
+    <link href="/unauthenticated/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
         padding-bottom: 40px;
       }
+	  .ui-login {
+        width: 400px;
+        margin: 0 auto;
+      }
     </style>
-    <link href="/unauthenticated/bootstrap-responsive.css" rel="stylesheet">
 EOF
 
-if ($tconfig{'inframe'}) {
-	# Framed themes lose original page
-	$in{'page'} = "/";
-	}
-
-print "<div class='ui-login'>\n";
+print "<div class='container'>\n";
+print "<div class='ui-login well'>\n";
 if (defined($in{'failed'})) {
 	print "<h3>$text{'session_failed'}</h3><p>\n";
 	}
@@ -70,13 +69,11 @@ else {
 	$host = &html_escape($host);
 	}
 print <<EOF;
-<div class="container">
-	<div class="well">
 			<fieldset>
         			<label for="user">$text{'session_user'}</label>
-				<input type="text" size="20" name="user" id="user_field" value="$in{'failed'}" /><p>
+				<input type="text" size="20" name="user" id="user_field" class='form-control' value="$in{'failed'}" /><p>
 				<label for="pass">$text{'session_pass'}</label>
-				<input name="pass" size="20" id="pass_field" type="password" />
+				<input name="pass" size="20" id="pass_field" class='form-control' type="password" />
 				<p>
 EOF
 if ($vconfig{'theme_image'}) {
@@ -99,6 +96,6 @@ EOF
 #print "<tr> <td colspan=2 align=center>",
 #      &text($gconfig{'nohostname'} ? 'session_mesg2' : 'session_mesg',
 #	    "<tt>$host</tt>"),"</td> </tr>\n";
-print "</form></div>\n";
+print "</form></div></div>\n";
 print "$text{'session_postfix'}\n";
 
