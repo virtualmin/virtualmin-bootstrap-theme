@@ -5,6 +5,13 @@ $(function() {
   $.get("/left.cgi", function(data) { loader(data, '/left.cgi', 'left'); });
   $.get("/right.cgi", function(data) { loader(data, '/right.cgi', 'right'); });
 
+  // Print errors in a warning box in the right div
+  $.ajaxSetup({
+    error: function(xhr, status, error) {
+      $('#right').replaceWith("<div class='alert alert-danger'>An AJAX error occured: " + status + "\nError: " + error + "</div>");
+    }
+  });
+
   // Attach events to left menu a hrefs
   // .leftlink a, .mode a, .linkwithicon a
   $('#left').on("click", '.leftlink a, .mode a, .linkwithicon a', function(event){

@@ -18,9 +18,10 @@ sub theme_header
 {
 #return if ($main::done_webmin_header++);
 my $ll;
+print "<!DOCTYPE html>\n";
 my $charset = defined($main::force_charset) ? $main::force_charset
                         : &get_charset();
-#$module_name = &get_module_name();
+$module_name = &get_module_name();
 if (@_ > 0) {
     my $title = &get_html_title($_[0]);
 	#print $_[7] if ($_[7]);
