@@ -8,7 +8,7 @@ $(function() {
   // Print errors in a warning box in the right div
   $.ajaxSetup({
     error: function(xhr, status, error) {
-      $('#right').replaceWith("<div class='alert alert-danger'>An AJAX error occured: " + status + "\nError: " + error + "</div>");
+      $('#right').prepend("<div class='alert alert-danger'>An AJAX error occured: " + status + "\nError: " + error + "</div>");
     }
   });
 
