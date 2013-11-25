@@ -692,7 +692,7 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 			# Show category opener, plus modules under it
 			print_category_opener($c->{'code'}, \@catnames,
 				$c->{'unused'} ?
-				"<font color=#888888>$c->{'desc'}</font>" :
+				"$c->{'desc'}" :
 				$c->{'desc'},
 			        'webmin-accordion');
 			#print "<div class='itemhidden' id='$c->{'code'}'>";

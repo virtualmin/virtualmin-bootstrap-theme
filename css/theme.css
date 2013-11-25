@@ -1,14 +1,13 @@
 .container-full {
-  margin: 0 auto;
-  width: 100%;
+    margin: 0 auto;
+    width: 100%;
 }
-
 .ui_icons_table {
-  display: inline-block;
-  list-style: none outside none;
-  margin: 20px 0 10px;
-  padding: 0;
-  text-align: center;
+    display: inline-block;
+    list-style: none outside none;
+    margin: 20px 0 10px;
+    padding: 0;
+    text-align: center;
 }
 .ui_icons_table li {
     background-color: #F9F9F9;
@@ -40,7 +39,6 @@
 }
 .ui_icons_table li a {
     color: #666666;
-    display: block;
     text-align: center !important;
     text-shadow: 0 1px 0 #FFFFFF;
 }

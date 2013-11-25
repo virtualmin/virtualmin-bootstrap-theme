@@ -161,25 +161,12 @@ sub theme_generate_icon
 {
 my $w = !defined($_[4]) ? "width=48" : $_[4] ? "width=$_[4]" : "";
 my $h = !defined($_[5]) ? "height=48" : $_[5] ? "height=$_[5]" : "";
-if ($tconfig{'noicons'}) {
-	if ($_[2]) {
-		print "$_[6]<a href=\"/$module_name/$_[2]\" $_[3]>$_[1]</a>$_[7]\n";
-		}
-	else {
-		print "$_[6]$_[1]$_[7]\n";
-		}
-	}
-elsif ($_[2]) {
-	print "<div class='ui_icon'>\n",
-	      "<a href=\"/$module_name/$_[2]\" $_[3]><img src=\"/$module_name/$_[0]\" alt=\"\" border=0 ",
-	      "$w $h></a></div><br>\n";
-	print "$_[6]<a href=\"/$module_name/$_[2]\" $_[3]>$_[1]</a>$_[7]\n";
-	}
-else {
-	print "<div class='ui_icon'>\n",
-	      "<img src=\"/module_name/$_[0]\" alt=\"\" border=0 $w $h>",
-	      "</div>\n$_[6]$_[1]$_[7]\n";
-	}
+
+print "<a href=\"/$module_name/$_[2]\" $_[3]>",
+      "<div class='ui_icon'>\n",
+	  "<img src=\"/$module_name/$_[0]\" alt=\"\" border=0 ",
+      "$w $h></div><br>\n";
+print "$_[1]</a>\n";
 }
 
 # theme_post_save_domain(&domain, action)
@@ -1317,6 +1304,38 @@ $rv .= "<div class='alert alert-$class'>";
 $rv .= "$msg\n";
 $rv .= "</div>\n";
 
+return $rv;
+}
+
+=head2 theme_ui_form_start(script, method, [target], [tags])
+
+Returns HTML for the start of a a form that submits to some script. The
+parameters are :
+
+=item script - CGI script to submit to, like save.cgi.
+
+=item method - HTTP method, which must be one of 'get', 'post' or 'form-data'. If form-data is used, the target CGI must call ReadParseMime to parse parameters.
+
+=item target - Optional target window or frame for the form.
+
+=item tags - Additional HTML attributes for the form tag.
+
+=cut
+sub theme_ui_form_start
+{
+$ui_formcount ||= 0;
+my ($script, $method, $target, $tags) = @_;
+# add directory, unless already starts with a /
+$script = "/" . get_module_name . "/$script";# unless $script ~= /^\//;
+my $rv;
+$rv .= "<form class='ui_form' action='".&html_escape($script)."' ".
+    ($method eq "post" ? "method=post" :
+     $method eq "form-data" ?
+        "method=post enctype=multipart/form-data" :
+        "method=get").
+    ($target ? " target=$target" : "").
+        " ".$tags.
+       ">\n";
 return $rv;
 }
 

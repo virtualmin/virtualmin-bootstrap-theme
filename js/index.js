@@ -25,6 +25,35 @@ $(function() {
     $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });
+
+  $('#right').on('submit', '.ui_form', function(event){
+    var target = $(this).prop('target');
+    if(!target) { target = 'right'; }
+    if ( $(this).attr('enctype') == 'multipart/form-data' ) {
+      var formData = new FormData($(this)[0]);
+      $.ajax({
+        processData: false,
+        contentType: false,
+        data: formData,
+        type: $(this).attr('method'),
+        url: $(this).attr('action'),
+        success: function(response) {
+          $('#' + target).html(response);
+        }
+      });
+    } else {
+      $.ajax({
+        data: $(this).serialize(),
+        type: $(this).attr('method'),
+        url: $(this).attr('action'),
+        success: function(response) {
+          $('#' + target).html(response);
+        }
+      });
+    }
+    event.preventDefault();
+  });
+    
   // Attach events to navbar hrefs
   // .leftlink a, .mode a, .submit
   // XXX What about log out link? Needs to load into whole page..
@@ -36,7 +65,6 @@ $(function() {
     $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });
-
 });
 
 // handle modifying links, and attaching events
