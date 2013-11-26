@@ -68,7 +68,8 @@ $(function() {
     var target = $(this).prop('target');
     //if(!target) { target = 'right'; }
     var href = $(this).prop('href');
-    console.log("target = ", target);
+    $(this).parent().parent().find('.active').removeClass('active');
+    $(this).parent().addClass('active');
     $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });

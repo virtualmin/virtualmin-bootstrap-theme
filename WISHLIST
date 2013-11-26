@@ -1,0 +1,31 @@
+Things desired in Webmin core that would make theme development much easier
+and faster, and would allow us to achieve cool new things. Numbers are the
+guesstimated difficulty out of 10 and time to implement in days.
+
+4/3   - header function consolidation and simplification.
+
+9/30  - Removal of tables from all of Webmin's ui-lib, except when presenting
+        tabular data. Convert to much simpler CSS components, striving for 
+        semantic meaning when possible.
+
+6/15  - Remove piecemeal JavaScript and replace with code in index.js or a
+        library file. Use jQuery to reduce size and complexity. Current
+        code is error-prone and triggers failures in AJAX apps (causing
+        the JavaScript to stop, which prevents events from being attached).
+
+10/60 - Convert pages into discrete components, so that tables of data can be
+        updated in realtime and/or independently from the rest of the page.
+ 
+8/30  - Make it possible to get JSON out of tabular data sources. i.e. a
+        MySQL table should be able to be updated in realtime and without
+        having to redraw the whole table. Depends on previous item, at least
+        for the modules that need this ability.
+
+5/30  - ui-lib simplification. I dunno exactly what this means, but my theme
+        functions are vastly shorter than the equivalent ui-lib functions, in
+        almost every case. It'd be wise to standardize on those and merge them
+        down to the core ui-lib, modernizing the codebase, and simplfiying
+        future development. It breaks backward compatibility, probably
+        and requires Jamie to work with CSS rather than tables on everything 
+        in the future.
+

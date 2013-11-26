@@ -49,10 +49,10 @@ if ($hasvirt || $hasvm2) {
 	    $hasvirt && virtual_server::master_admin() ||
 	    $hasvm2) {
 		print "<div align=right>";
-		@links = ( "<a href='edit_right.cgi'>$text{'right_edit'}</a>" );
+		@links = ( "<a href='/edit_right.cgi' target='right'>$text{'right_edit'}</a>" );
 		if ($hasvirt && virtual_server::master_admin()) {
 			# Refresh collected info
-			push(@links, "<a href='recollect.cgi'>".
+			push(@links, "<a href='/right.cgi' target='right'>".
 				     "$text{'right_recollect'}</a>");
 			}
 		@overlays = &list_virtualmin_theme_overlays();
