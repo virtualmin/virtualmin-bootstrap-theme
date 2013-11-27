@@ -187,33 +187,34 @@ elsif ($mode eq "mail") {
 	$doneform = 1;
 	}
 
-# Show login and Virtualmin access level
-if ($fromaddr) {
-	# Show email address and real name
-	print $fromaddr->[1],"<br>\n" if ($fromaddr->[1]);
-	print $fromaddr->[0],"\n";
-	}
-else {
-	# Show login
-	print text('left_login', $remote_user),"<br>\n";
-	$tmpl_vars{'remote_user'}=$remote_user;
-	}
-if (@doms) {
-	# Show Virtualmin login level
-	$level = virtual_server::master_admin() ? $text{'left_master'} :
-		 virtual_server::reseller_admin() ? $text{'left_reseller'} :
-		 virtual_server::extra_admin() ? $text{'left_extra'} :
-		 $virtual_server::single_domain_mode ? $text{'left_single'} :
-						       $text{'left_user'};
-	print "$level<br>\n";
-	}
-elsif ($hasvm2) {
-	# Show Cloudmin login level
-	$level = $server_manager::access{'owner'} ? $text{'left_owner'}
-						  : $text{'left_master2'};
-	print "$level<br>\n";
-	}
-print "<hr>\n";
+# Show login and Virtualmin access level XXX Roll into index, so it can be
+# in the navbar
+#if ($fromaddr) {
+#	# Show email address and real name
+#	print $fromaddr->[1],"<br>\n" if ($fromaddr->[1]);
+#	print $fromaddr->[0],"\n";
+#	}
+#else {
+#	# Show login
+#	print text('left_login', $remote_user),"<br>\n";
+#	$tmpl_vars{'remote_user'}=$remote_user;
+#	}
+#if (@doms) {
+#	# Show Virtualmin login level
+#	$level = virtual_server::master_admin() ? $text{'left_master'} :
+#		 virtual_server::reseller_admin() ? $text{'left_reseller'} :
+#		 virtual_server::extra_admin() ? $text{'left_extra'} :
+#		 $virtual_server::single_domain_mode ? $text{'left_single'} :
+#						       $text{'left_user'};
+#	print "$level<br>\n";
+#	}
+#elsif ($hasvm2) {
+#	# Show Cloudmin login level
+#	$level = $server_manager::access{'owner'} ? $text{'left_owner'}
+#						  : $text{'left_master2'};
+#	print "$level<br>\n";
+#	}
+#print "<hr>\n";
 
 $selwidth = (get_left_frame_width() - 80)."px";
 if ($mode eq "virtualmin" && @doms) {
@@ -753,13 +754,13 @@ if ($ENV{'HTTP_WEBMIN_SERVERS'}) {
 	print "<div class='aftericon'><a target=_top href='$ENV{'HTTP_WEBMIN_SERVERS'}'>$text{'header_servers'}</a></div></div>";
 	}
 
-
-if (($mode eq "webmin" || $mode eq "usermin") &&
-    $gaccess{'webminsearch'} ne '0') {
-	# Show module/help search form
-	print $text{'left_search'},"&nbsp;";
-	print ui_textbox("search", undef, 15);
-	}
+# In navbar now XXX fix permission checking so it works right there; in index
+#if (($mode eq "webmin" || $mode eq "usermin") &&
+#    $gaccess{'webminsearch'} ne '0') {
+#	# Show module/help search form
+#	print $text{'left_search'},"&nbsp;";
+#	print ui_textbox("search", undef, 15);
+#	}
 
 print "</form>\n" if ($doneform);
 

@@ -33,7 +33,8 @@ $(function() {
     event.preventDefault();
   });
 
-  $('#right').on('submit', '.ui_form', function(event){
+  //$('#right').on('submit', '.ui_form', function(event){
+  $('.container-full').on('submit', '.ui_form, .navbar-form', function(event){
     var target = $(this).prop('target');
     if(!target) { target = 'right'; }
     if ( $(this).attr('enctype') == 'multipart/form-data' ) {
@@ -64,12 +65,21 @@ $(function() {
   // Attach events to navbar hrefs
   // .leftlink a, .mode a, .submit
   // XXX What about log out link? Needs to load into whole page..
-  $('#topnav').on("click", 'a, .mode .a, .submit', function(event){
+  $('#topnav').on("click", '#mode a, .submit', function(event){
     var target = $(this).prop('target');
     //if(!target) { target = 'right'; }
     var href = $(this).prop('href');
     $(this).parent().parent().find('.active').removeClass('active');
     $(this).parent().addClass('active');
+    $.get( href, function(data) { loader(data, href, target); });
+    event.preventDefault();
+  });
+
+  // Dropdown menus in navbar
+  $('#topnav').on("click", "#settings_drop a, #profile_drop a, #refresh", function(event){
+    var target = $(this).prop('target');
+    if(!target) { target = 'right'; }
+    var href = $(this).prop('href');
     $.get( href, function(data) { loader(data, href, target); });
     event.preventDefault();
   });

@@ -42,7 +42,8 @@ if (!defined($in{'open'})) {
 
 popup_header(undef);
 
-if ($hasvirt || $hasvm2) {
+# XXX disabled. This logic needs to move into index
+if ( 0 && $hasvirt || $hasvm2) {
 	# Show link for editing what appears
 	$sects = get_right_frame_sections();
 	if (!$sects->{'global'} ||

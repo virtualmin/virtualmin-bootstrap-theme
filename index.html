@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="bootstrap/css/united-bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
     <style type="text/css">
       body {
@@ -48,22 +48,39 @@
          <!-- <p class="navbar-text pull-right">
            Logged in as <a href="#" class="navbar-link">{{remote-user}}</a>
          </p> -->
-         <ul class="nav navbar-nav">
-            <li><a href="/right.cgi" target="right" alt="Home"><span class="glyphicon glyphicon-home"></span></a></li>
+         <ul class="nav navbar-nav" id="mode">
             <li class="active"><a href="/left.cgi?mode=virtualmin&dom=" target="left">Virtualmin</a></li>
             <li><a href="/left.cgi?mode=webmin&dom=" target="left">Webmin</a></li>
             <li><a href="/left.cgi?mode=cloudmin" target="left">Cloudmin</a></li>
           </ul>
           <ul class="nav navbar-nav pull-right">
             <li>
-              <form class="navbar-form navbar-left pull-right" role="search">
+              <form class="navbar-form navbar-left pull-right" role="search" method="post" action="/webmin_search.cgi" target="right">
                 <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Search">
+                  <input type="text" class="form-control" placeholder="Search" name="search">
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
               </form>
             </li>
-            <li><a href="/session_login.cgi?logout=1" alt="Logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
+            <li><a id="vm_docs" href="http://www.virtualmin.com/documentation" title="Virtualmin Documentation" alt="Virtualmin Documentation" target="_blank"><span class="glyphicon glyphicon-book"></span></a></li>
+            <li><a id="refresh" href="/right.cgi" target="right" title="Refresh System Information" alt="Refresh System Information"><span class="glyphicon glyphicon-refresh"></span></a></li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="Settings" alt="Settings">
+                <span class="glyphicon glyphicon-cog"></span>
+              </a>
+              <ul id="settings_drop" class="dropdown-menu pull-right" role="menu" aria-labelledby="settings_drop">
+                <li><a href="/edit_right.cgi" target="right">Configure this page</a></li>
+                <li><a href="/change-user/" target="right">Change Language and Theme</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="User Menu" alt="User Menu">Login: root</a>
+              <ul id="profile_drop" class="dropdown-menu pull-right" role="menu" aria-labelledby="profile_drop">
+                <li><a href="/acl/edit_user.cgi?user=root" target="right">Profile</a></li>
+                <li><a href="/mailboxes/list_mail.cgi?user=root" target="right">Read Messages</a></li>
+              </ul>
+            </li>
+            <li><a id="logout" href="/session_login.cgi?logout=1" title="Logout" alt="Logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
           </ul>
       </div><!--/.nav-collapse -->
     </nav>
@@ -82,7 +99,7 @@
     <hr>
 
     <footer>
-      <p>&copy; Virtualmin, Inc. 2005-2013</p>
+      <p>&copy; <a href="http://www.virtualmin.com" target="_blank">Virtualmin, Inc.</a> 2005-2013</p>
     </footer>
 
     </div>
