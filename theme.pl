@@ -237,6 +237,12 @@ if (window.parent && window.parent.frames[0]) {
 EOF
 }
 
+sub theme_ui_link
+{
+my ($href, $text, $class) = @_;
+return ("<a class='ui_link $class' href='".get_module_name."/$href'>$text</a>");
+}
+
 sub theme_ui_textbox
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
@@ -650,11 +656,11 @@ sub theme_ui_grid_table
 my ($elements, $cols, $width, $tds, $tabletags, $title) = @_;
 return "" if (!@$elements);
 
-my $rv = "<table class='well' " 
-       . ($width ? " width=$width%" : " width=100%")
-       . ($tabletags ? " ".$tabletags : "")
-       . "><tr><td>\n";
-$rv .= "<table class='ui_table ui_grid_table'"
+#my $rv = "<table class='well' " 
+#       . ($width ? " width=$width%" : " width=100%")
+#       . ($tabletags ? " ".$tabletags : "")
+#       . "><tr><td>\n";
+my $rv .= "<table class='ui_table ui_grid_table table table-striped'"
      . ($width ? " width=$width%" : "")
      . ($tabletags ? " ".$tabletags : "")
      . ">\n";
@@ -679,7 +685,7 @@ if ($i%$cols) {
   }
 $rv .= "</table>\n";
 $rv .= "</tbody>\n";
-$rv .= "</td></tr></table>\n"; # wrapper
+#$rv .= "</td></tr></table>\n"; # wrapper
 return $rv;
 }
 
@@ -1327,7 +1333,10 @@ sub theme_ui_form_start
 $ui_formcount ||= 0;
 my ($script, $method, $target, $tags) = @_;
 # add directory, unless already starts with a /
-$script = "/" . get_module_name . "/$script";# unless $script ~= /^\//;
+unless ( $script =~ /^\// )
+{
+  $script = "/" . get_module_name . "/$script";
+}
 my $rv;
 $rv .= "<form class='ui_form' action='".&html_escape($script)."' ".
     ($method eq "post" ? "method=post" :

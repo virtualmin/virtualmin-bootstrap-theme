@@ -574,7 +574,7 @@ if ($level == 0) {		# Master admin
 			      $vserial{'SerialNumber'} ]);
 		push(@lics, [ $text{'right_vkey'},
 			      $vserial{'LicenseKey'} ]);
-		push(@lbuts, [ "virtual-server/licence.cgi",
+		push(@lbuts, [ "/virtual-server/licence.cgi",
 			       $text{'right_vlcheck'} ]);
 
 		# Add allowed domain counts
@@ -626,7 +626,7 @@ if ($level == 0) {		# Master admin
 			      $sserial{'SerialNumber'} ]);
 		push(@lics, [ $text{'right_skey'},
 			      $sserial{'LicenseKey'} ]);
-		push(@lbuts, [ "server-manager/licence.cgi",
+		push(@lbuts, [ "/server-manager/licence.cgi",
 			       $text{'right_slcheck'} ]);
 
 		# Add allowed system counts

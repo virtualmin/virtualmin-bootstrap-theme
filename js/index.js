@@ -24,7 +24,7 @@ $(function() {
   });
   // Attach events to hrefs so they load in the right div (mostly right),
   // without interfering with accordions, tabs, tables, etc.
-  $('#right').on("click", '.module-content .tab-content a, .module-content .panel-body a, .header a', function(event){
+  $('#right').on("click", '.module-content .tab-content a, .panel-body a, .header a, .table a', function(event){
     var target = $(this).prop('target');
     if(!target) { target = 'right'; }
     var href = $(this).prop('href');

@@ -2,6 +2,15 @@ Things desired in Webmin core that would make theme development much easier
 and faster, and would allow us to achieve cool new things. Numbers are the
 guesstimated difficulty out of 10 and time to implement in days.
 
+6/8   - fix ui_grid_table; it is currently used in two very distinct ways:
+        1. as a table with tabular data (i.e. BIND index 'Existing DNS Zones')
+        2. as a holding container for columns of links and such (i.e.
+        security-updates in the "States to display" pile of links)
+        This makes it impossible to style, so every non-tabular data use of
+        ui_grid_table needs a new ui function that represents what it's for.
+        Tabular use of it needs to be cleaned up, as well, as it is wrapped
+        in several unnecessary tables, making it impossible to style cleanly.
+
 4/3   - header function consolidation and simplification.
 
 9/30  - Removal of tables from all of Webmin's ui-lib, except when presenting
