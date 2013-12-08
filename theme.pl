@@ -243,6 +243,68 @@ my ($href, $text, $class) = @_;
 return ("<a class='ui_link $class' href='".get_module_name."/$href'>$text</a>");
 }
 
+sub theme_ui_form_columns_table
+{
+my ($cgi, $buttons, $selectall, $others, $hiddens,
+       $heads, $width, $data, $types, $nosort, $title, $emptymsg, $formno) = @_;
+my $rv;
+
+# Build links
+my @leftlinks = map { ui_link("$_->[0]", $_->[1]) }
+               grep { $_->[2] ne 'right' } @$others;
+my @rightlinks = map { ui_link("$_->[0]", $_->[1]) }
+               grep { $_->[2] eq 'right' } @$others;
+my $links;
+
+# Add select links
+if (@$data) {
+    if ($selectall) {
+        my $cbname;
+        foreach my $r (@$data) {
+            foreach my $c (@$r) {
+                if (ref($c) && $c->{'type'} eq 'checkbox') {
+                    $cbname = $c->{'name'};
+                    last;
+                    }
+                }
+            }
+        if ($cbname) {
+            unshift(@leftlinks, &select_all_link($cbname, $formno),
+                    &select_invert_link($cbname, $formno));
+            }
+        }
+    }
+
+# Turn to HTML
+if (@rightlinks) {
+    $links = &ui_grid_table([ &ui_links_row(\@leftlinks),
+                  &ui_links_row(\@rightlinks) ], 2, 100,
+                    [ undef, "align=right" ]);
+    }
+elsif (@leftlinks) {
+    $links = &ui_links_row(\@leftlinks);
+    }
+
+# Start the form, if we need one
+if (@$data) {
+    $rv .= &ui_form_start($cgi, "post");
+    foreach my $h (@$hiddens) {
+        $rv .= &ui_hidden(@$h);
+        }
+
+# Add the table
+$rv .= &ui_columns_table($heads, $width, $data, $types, $nosort, $title,
+             $emptymsg);
+
+# Add form end
+$rv .= $links;
+if (@$data) {
+    $rv .= &ui_form_end($buttons);
+    }
+
+return $rv;
+}
+
 sub theme_ui_textbox
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
