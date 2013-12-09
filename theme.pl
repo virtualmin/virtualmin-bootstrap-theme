@@ -291,6 +291,8 @@ if (@$data) {
     foreach my $h (@$hiddens) {
         $rv .= &ui_hidden(@$h);
         }
+    $rv .= $links;
+    }
 
 # Add the table
 $rv .= &ui_columns_table($heads, $width, $data, $types, $nosort, $title,

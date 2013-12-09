@@ -125,7 +125,7 @@ if ($hasvirt) {
 	if (virtual_server::need_config_check() &&
 	    virtual_server::can_check_config()) {
 		print "<div class='alert alert-warning'>\n";
-		print ui_form_start("virtual-server/check.cgi");
+		print ui_form_start("/virtual-server/check.cgi");
 		print "<b>$text{'index_needcheck'}</b><p>\n";
 		print ui_submit($text{'index_srefresh'});
 		print ui_form_end();
