@@ -45,11 +45,11 @@ if (@sections > 1) {
 	$in{'section'} = $sections[$idx]->[0];
 
 	# We have some sections .. show a menu to select
-	print &ui_form_start("config.cgi");
+	print &ui_form_start("/config.cgi", "get", "right", "id='config_section_form'");
 	print &ui_hidden("module", $m),"\n";
 	print $text{'config_section'},"\n";
 	print &ui_select("section", $in{'section'}, \@sections,
-			 1, 0, 0, 0, "onChange='form.submit()'");
+			 1, 0, 0, 0, "id='config_section'");
 	print &ui_submit($text{'config_change'});
 	print "&nbsp;&nbsp;\n";
 	print &ui_submit($text{'config_nprev'}, "nprev");
@@ -59,7 +59,7 @@ if (@sections > 1) {
 	$sname = " ($s->[1])";
 	}
 
-print &ui_form_start("config_save.cgi", "post");
+print &ui_form_start("/config_save.cgi", "post");
 print &ui_hidden("module", $m),"\n";
 print &ui_hidden("section", $in{'section'}),"\n";
 if ($s) {

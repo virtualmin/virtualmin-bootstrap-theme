@@ -33,6 +33,7 @@ $(function() {
     event.preventDefault();
   });
 
+  // Form submit buttons
   //$('#right').on('submit', '.ui_form', function(event){
   $('.container-full').on('submit', '.ui_form, .navbar-form', function(event){
     var target = $(this).prop('target');
@@ -61,10 +62,15 @@ $(function() {
     }
     event.preventDefault();
   });
+
+  // Config section select dropdown menu XXX make prev and next buts work.
+  //$('#config_section').change(function() { XXX Why doesn't this work?
+  $('#right').on('change', '#config_section', function(event) {
+    $('#config_section_form').trigger('submit');
+  });
     
   // Attach events to navbar hrefs
   // .leftlink a, .mode a, .submit
-  // XXX What about log out link? Needs to load into whole page..
   $('#topnav').on("click", '#mode a, .submit', function(event){
     var target = $(this).prop('target');
     //if(!target) { target = 'right'; }

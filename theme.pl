@@ -788,7 +788,7 @@ return $rv;
 sub theme_ui_hidden_table_end
 {
 my ($name) = @_;
-my $rv = "</div></div></div>\n";
+my $rv = "</div></div></div></div>\n";
 return $rv;
 }
 
