@@ -124,12 +124,11 @@ if ($hasvirt) {
 	# See if module config needs to be checked
 	if (virtual_server::need_config_check() &&
 	    virtual_server::can_check_config()) {
-		print "<div class='alert alert-warning'>\n";
-		print ui_form_start("/virtual-server/check.cgi");
-		print "<b>$text{'index_needcheck'}</b><p>\n";
-		print ui_submit($text{'index_srefresh'});
-		print ui_form_end();
-		print "</div>\n";
+		my $check = ui_form_start("/virtual-server/check.cgi");
+		$check .= "<p><b>$text{'index_needcheck'}</b></p><p>\n";
+		$check .= ui_submit($text{'index_srefresh'});
+		$check .= ui_form_end();
+        print (ui_alert_box($check, "warning"));
 		}
 	}
 
@@ -150,9 +149,7 @@ if (foreign_check("webmin")) {
 		@notifs = webmin::get_webmin_notifications(1);
 		}
 	if (@notifs) {
-		print "<table width=100%><tr bgcolor=#ffee00><td align=center>";
-		print @notifs;
-		print "</td></tr></table>\n";
+		print ui_alert_box(@notifs, "warning");
 		}
 	}
 
