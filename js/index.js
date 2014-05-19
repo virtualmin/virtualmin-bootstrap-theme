@@ -35,7 +35,7 @@ $(function() {
 
   // Form submit buttons
   //$('#right').on('submit', '.ui_form', function(event){
-  $('.container-full').on('submit', '.ui_form, .navbar-form', function(event){
+  $('.container-fluid').on('submit', '.ui_form, .navbar-form', function(event){
     var target = $(this).prop('target');
     if(!target) { target = 'right'; }
     if ( $(this).attr('enctype') == 'multipart/form-data' ) {
