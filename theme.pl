@@ -29,7 +29,7 @@ if (@_ > 0) {
     }
 my $dir = $current_lang_info->{'dir'} ? "dir=\"$current_lang_info->{'dir'}\""
                      : "";
-print "<div class='container'>\n";
+#print "<div class='container'>\n";
 
 if (@_ > 1) {
     my %this_module_info = &get_module_info(&get_module_name());
@@ -119,7 +119,8 @@ sub theme_ui_pre_footer
 {
 my $rv;
 $rv .= "</div>\n"; # .module-content
-$rv .= "</div><p>\n"; # .container-full?
+#$rv .= "</div>\n"; # .container-full?
+$rv .= "</p>\n";
 # XXX figure out where this ought to be... get rid of all the extras.
 #$rv .= <<EOL;
 #    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
