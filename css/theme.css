@@ -54,3 +54,48 @@ footer {
   padding-top: 40px;
   text-align: center;
 }
+
+.loading {
+    background: url("../images/loading.gif") no-repeat scroll center 100px #1A1A1A;
+    border-radius: 8px;
+    height: 100%;
+    margin: 0 0 0 -7px;
+    opacity: 0.6;
+    position: absolute;
+    width: 100%;
+    display: none;
+    z-index: 9999;
+    min-height: 260px;
+    top: 0;
+    right: 0;
+}
+
+#right{
+    padding-top: 9px;
+}
+
+.navbar-form.navbar-left.pull-right {
+  margin-bottom: 0;
+  margin-top: 6px;
+}
+
+.domainmenu .goArrow {
+  display: none;
+}
+
+.btn {
+    margin: 3px;
+}
+
+#left .leftlink {
+  margin: 4px 7px;
+}
+
+.linkwithicon > img {
+  float: left;
+  margin: 6px 0 0 10px;
+}
+
+.aftericon.leftlink {
+  float: left;
+}
