@@ -20,7 +20,7 @@ Make a symbolic link in your Webmin installation directory:
   
   And, if your perl is installed in /usr/bin (this applies to almost everyone), do this:
   
-  # find . -name "*.cgi" -type f -exec sed -i "s/#!\/usr\/local\/bin\/perl/#!\/usr\/bin\/perl/g" {} \;
+  # find . -name "*.cgi" -type f -exec sed -i 's/#!\/usr\/local\/bin\/perl/#!\/usr\/bin\/perl/g' {} \;
   
 Install the JSON::XS Perl module (this should be readily available from most OS software repos). The package name on 
 CentOS/Fedora/RHEL is perl-JSON-XS, and on Debian/Ubuntu it is libjson-xs-perl. This module is used to encode/decode JSON
