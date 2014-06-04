@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>Webmin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,107 +8,119 @@
     <meta name="author" content="">
 
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jquery.mCustomScrollbar.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="../assets/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-  </head>
+</head>
 
-  <body>
-  <div class="container-fluid">
+<body>
+    <div class="container-fluid">
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="topnav">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <!-- <a class="navbar-brand" href="#">Webmin</a> -->
-      </div>
-      <div class="collapse navbar-collapse navbar-ex1-collapse">
-         <!-- <p class="navbar-text pull-right">
-           Logged in as <a href="#" class="navbar-link">{{remote-user}}</a>
-         </p> -->
-         <ul class="nav navbar-nav" id="mode">
-            <li class="active"><a href="/left.cgi?mode=virtualmin&dom=" target="left">Virtualmin</a></li>
-            <li><a href="/left.cgi?mode=webmin&dom=" target="left">Webmin</a></li>
-            <li><a href="/left.cgi?mode=cloudmin" target="left">Cloudmin</a></li>
-          </ul>
-          <ul class="nav navbar-nav pull-right">
-            <li>
-              <form class="navbar-form navbar-left pull-right" role="search" method="post" action="/webmin_search.cgi" target="right">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Search" name="search">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="topnav">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!-- <a class="navbar-brand" href="#">Webmin</a> -->
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <!-- <p class="navbar-text pull-right">
+                  Logged in as <a href="#" class="navbar-link">{{remote-user}}</a>
+                </p> -->
+                <ul class="nav navbar-nav" id="mode">
+                    <li class="active"><a href="/left.cgi?mode=virtualmin&dom=" target="left">Virtualmin</a></li>
+                    <li><a href="/left.cgi?mode=webmin&dom=" target="left">Webmin</a></li>
+                    <li><a href="/left.cgi?mode=cloudmin" target="left">Cloudmin</a></li>
+                </ul>
+                <ul class="nav navbar-nav" id="rightNav">
+                    <li>
+                        <div class="navbar-left pull-right" id="navSearch">
+                            <form class="navbar-form" role="search" method="post" action="/webmin_search.cgi" target="right">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Search" name="search">
+                                </div>
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </form>
+                        </div>
+                    </li>
+                    <li>
+                        <a id="vm_docs" href="http://www.virtualmin.com/documentation" title="Virtualmin Documentation" alt="Virtualmin Documentation" target="_blank">
+                            <span class="glyphicon glyphicon-book"></span>
+                            <span class="hiddenTitle">Documentation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="refresh" href="/right.cgi" target="right" title="Refresh System Information" alt="Refresh System Information">
+                            <span class="glyphicon glyphicon-refresh"></span>
+                            <span class="hiddenTitle">Refresh System Info</span>
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="Settings" alt="Settings">
+                            <span class="glyphicon glyphicon-cog"></span>
+                            <span class="hiddenTitle">Settings</span>
+                        </a>
+                        <ul id="settings_drop" class="dropdown-menu pull-right" role="menu" aria-labelledby="settings_drop">
+                            <li><a href="/edit_right.cgi" target="right">Configure this page</a></li>
+                            <li><a href="/change-user/" target="right">Change Language and Theme</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="User Menu" alt="User Menu">
+                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="visibleTitle">root</span>
+                        </a>
+                        <ul id="profile_drop" class="dropdown-menu pull-right" role="menu" aria-labelledby="profile_drop">
+                            <li><a href="/acl/edit_user.cgi?user=root" target="right">Profile</a></li>
+                            <li><a href="/mailboxes/list_mail.cgi?user=root" target="right">Read Messages</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a id="logout" href="/session_login.cgi?logout=1" title="Logout" alt="Logout">
+                            <span class="glyphicon glyphicon-log-out"></span>
+                            <span class="hiddenTitle">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </nav>
+
+        <div class="row-fluid" id="mainContainer">
+            <div class="col-md-3" id="leftSide">
+                <div class="loading" style="display: block;"></div>
+                <div class="innerScroll">
+                    <div id="leftContent"></div>
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-              </form>
-            </li>
-            <li><a id="vm_docs" href="http://www.virtualmin.com/documentation" title="Virtualmin Documentation" alt="Virtualmin Documentation" target="_blank"><span class="glyphicon glyphicon-book"></span></a></li>
-            <li><a id="refresh" href="/right.cgi" target="right" title="Refresh System Information" alt="Refresh System Information"><span class="glyphicon glyphicon-refresh"></span></a></li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="Settings" alt="Settings">
-                <span class="glyphicon glyphicon-cog"></span>
-              </a>
-              <ul id="settings_drop" class="dropdown-menu pull-right" role="menu" aria-labelledby="settings_drop">
-                <li><a href="/edit_right.cgi" target="right">Configure this page</a></li>
-                <li><a href="/change-user/" target="right">Change Language and Theme</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="User Menu" alt="User Menu">Login: root</a>
-              <ul id="profile_drop" class="dropdown-menu pull-right" role="menu" aria-labelledby="profile_drop">
-                <li><a href="/acl/edit_user.cgi?user=root" target="right">Profile</a></li>
-                <li><a href="/mailboxes/list_mail.cgi?user=root" target="right">Read Messages</a></li>
-              </ul>
-            </li>
-            <li><a id="logout" href="/session_login.cgi?logout=1" title="Logout" alt="Logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
-          </ul>
-      </div><!--/.nav-collapse -->
-    </nav>
+            </div>
+            <div class="col-md-9" id="rightSide">
+                <div class="loading" style="display: block;"></div>
+                <div class="innerScroll">
+                    <div id="rightContent"></div>
+                </div>
+            </div>
+        </div><!--/row-->
 
-    <div class="row-fluid">
-      <div class="col-md-3">
-          <div id="left" class="sidebar-nav">
-              <div class="loading" style="display: block;"></div>
-          </div><!--/div left -->
-      </div><!--/span-->
-      <div class="col-md-9">
-          <div id="right">
-              <div class="loading" style="display: block;"></div>
-          </div><!--/div right-->
-      </div><!--/span-->
-    </div><!--/row-->
-
-    <hr>
-
-    <footer>
-      <p>&copy; <a href="http://www.virtualmin.com" target="_blank">Virtualmin, Inc.</a> 2005-2013</p>
-    </footer>
+        <footer>
+            <p>&copy; <a href="http://www.virtualmin.com" target="_blank">Virtualmin, Inc.</a> 2005-2014</p>
+        </footer>
 
     </div>
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/uri.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="js/index.js"></script>
-  </body>
+</body>
 </html>
 
