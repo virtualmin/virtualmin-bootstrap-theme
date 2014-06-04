@@ -50,7 +50,7 @@
         });
 
         // Dropdown menus in navbar
-        $('#topnav').on("click", "#settings_drop a, #profile_drop a, #refresh", function(event) {
+        $('#topnav').on("click", "#settings_drop a, #profile_drop a, #home", function(event) {
             var target = $(this).prop('target');
             var href = $(this).prop('href');
             requestGet(href, !target ? 'right' : target);

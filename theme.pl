@@ -793,6 +793,22 @@ my $rv = "</div></div></div></div>\n";
 return $rv;
 }
 
+sub theme_ui_hidden_start
+{
+my ($title, $name, $status, $url) = @_;
+my $rv;
+my $divid = "hiddendiv_$name";
+$rv .= "<button type='button' data-toggle='collapse' data-target='\#$divid'>$title</button>\n";
+$rv .= "<div class='$defclass collapse' id='$divid'>\n";
+return $rv;
+}
+
+sub theme_ui_hidden_end
+{
+my ($name) = @_;
+return "</div> <!-- $name hidden_end -->\n";
+}
+
 # theme_select_all_link(field, form, text)
 # Adds support for row highlighting to the normal select all
 sub theme_select_all_link
@@ -1007,80 +1023,6 @@ if (get_module_name() eq "virtual-server" && $orig eq "" &&
 	$url = "$1/right.cgi";
 	}
 print "Location: $url\n\n";
-}
-
-# theme_ui_hidden_javascript()
-# Returns <script> and <style> sections for hiding functions and CSS
-sub theme_ui_hidden_javascript
-{
-my $rv;
-my $imgdir = "$gconfig{'webprefix'}/images";
-
-$rv = <<EOF;
-<style>
-.opener_shown {display:inline}
-.opener_hidden {display:none}
-</style>
-<script>
-// Open or close a hidden section
-function hidden_opener(divid, openerid)
-{
-var divobj = document.getElementById(divid);
-var openerobj = document.getElementById(openerid);
-if (divobj.className == 'opener_shown') {
-  divobj.className = 'opener_hidden';
-  openerobj.innerHTML = '<img border=0 src=$imgdir/closed.gif>';
-  }
-else {
-  divobj.className = 'opener_shown';
-  openerobj.innerHTML = '<img border=0 src=$imgdir/open.gif>';
-  }
-}
-
-// Show a tab
-function select_tab(name, tabname, form)
-{
-var tabnames = document[name+'_tabnames'];
-var tabtitles = document[name+'_tabtitles'];
-for(var i=0; i<tabnames.length; i++) {
-  var tabobj = document.getElementById('tab_'+tabnames[i]);
-  var divobj = document.getElementById('div_'+tabnames[i]);
-  var title = tabtitles[i];
-  if (tabnames[i] == tabname) {
-    // Selected table
-    tabobj.innerHTML = '<table cellpadding=0 cellspacing=0><tr>'+
-		       '<td valign=top class=\\'tabSelected\\'>'+
-		       '<img src=$imgdir/lc2.gif alt=""></td>'+
-		       '<td class=\\'tabSelected\\' nowrap>'+
-		       '&nbsp;<b>'+title+'</b>&nbsp;</td>'+
-	               '<td valign=top class=\\'tabSelected\\'>'+
-		       '<img src=$imgdir/rc2.gif alt=""></td>'+
-		       '</tr></table>';
-    divobj.className = 'opener_shown';
-    }
-  else {
-    // Non-selected tab
-    tabobj.innerHTML = '<table cellpadding=0 cellspacing=0><tr>'+
-		       '<td valign=top class=\\'tabUnselected\\'>'+
-		       '<img src=$imgdir/lc1.gif alt=""></td>'+
-		       '<td class=\\'tabUnselected\\' nowrap>'+
-                       '&nbsp;<a href=\\'\\' onClick=\\'return select_tab("'+
-		       name+'", "'+tabnames[i]+'")\\'>'+title+'</a>&nbsp;</td>'+
-		       '<td valign=top class=\\'tabUnselected\\'>'+
-    		       '<img src=$imgdir/rc1.gif alt=""></td>'+
-		       '</tr></table>';
-    divobj.className = 'opener_hidden';
-    }
-  }
-if (document.forms[0] && document.forms[0][name]) {
-  document.forms[0][name].value = tabname;
-  }
-return false;
-}
-</script>
-EOF
-
-return $rv;
 }
 
 # XXX Need to set Save buttons to class btn-primary
