@@ -3,7 +3,14 @@
 
     $(document).ready(function() {
         requestGet("/left.cgi", 'left');
-        requestGet("/right.cgi", 'right');
+        var uri = new URI();
+        if (uri.fragment() != "") {
+            var newUri = new URI(uri.fragment());
+            requestGet(uri.pathname(newUri.pathname()).query(newUri.query()).hash('').toString(), 'right');
+        } else {
+            requestGet("/right.cgi", 'right');
+        }
+        
 
         // Attach events to left menu a hrefs
         // .leftlink a, .mode a, .linkwithicon a
@@ -16,7 +23,7 @@
 
         // Attach events to hrefs so they load in the right div (mostly right),
         // without interfering with accordions, tabs, tables, etc.
-        $('#rightContent').on("click", 'a:not([href^=""],[href^="mailto:"],[href^="#"])', function (event) {
+        $('#rightContent').on("click", 'a:not([href^=""],[href^="mailto:"],[href^="#"],[href^="javascript:"])', function (event) {
             var target = $(this).prop('target');
             var href = $(this).prop('href');
             var onClick = $(this).attr('onclick');
@@ -70,6 +77,19 @@
                 enable: true
             }
         });
+
+        $(window).bind('popstate',
+            function(event) {
+                var state = event.originalEvent.state;
+                if (state != null) {
+                    if (state.type == 'get') {
+                        requestGet(state.url, state.panel, true);
+                    } else if (state.type == 'post') {
+                        // We don't want user to accidentally send the data already posted by hitting back button
+                        printError('As a security precaution, we will not resend posted data.');
+                    }
+                }
+            });
     });
 
     // Set columns height to correct size
@@ -84,17 +104,21 @@
     };
 
     // Print errors in a warning box in the right div
-    var printError = function(status, error) {
-        $('#rightContent').prepend("<div class='alert alert-danger'>An AJAX error occured: " + status + "\nError: " + error + "</div>");
+    var printError = function(error) {
+        $('#rightContent').prepend("<div class='alert alert-danger'>An AJAX error occured: " + error + "</div>");
     };
 
     // Send a GET request and update the panel
-    var requestGet = function(href, target) {
+    var requestGet = function(href, target, noHistory) {
         showLoading(target);
         if (requestInProgress[target]) {
             return;
         }
         requestInProgress[target] = true;
+        if (target == 'right' && !noHistory) {
+            var uri = new URI(href);
+            history.pushState({ type: 'get', url: href, panel: target }, document.title, (new URI()).query('').hash('').fragment(uri.pathname() + uri.search()));
+        }
         $.ajax({
             url: href,
             success: function (response) {
@@ -109,19 +133,23 @@
             error: function (xhr, status, error) {
                 hideLoading(target);
                 requestInProgress[target] = false;
-                printError(status, error);
+                printError(error);
             }
         });
     };
 
     // Send a POST request for a form and update the panel
-    var requestPost = function(form, target) {
+    var requestPost = function (form, target, noHistory) {
         showLoading(target);
         if (requestInProgress[target]) {
             return;
         }
         requestInProgress[target] = true;
         var href = form.attr('action');
+        if (target == 'right' && !noHistory) {
+            var uri = new URI(href);
+            history.pushState({ type: 'post', url: href, panel: target }, document.title, (new URI()).query('').hash('').fragment(uri.pathname() + uri.search()));
+        }
         var method = form.attr('method');
         if (form.attr('enctype') == 'multipart/form-data') {
             var formData = new FormData(form[0]);
@@ -143,7 +171,7 @@
                 error: function (xhr, status, error) {
                     hideLoading(target);
                     requestInProgress[target] = false;
-                    printError(status, error);
+                    printError(error);
                 }
             });
         } else {
@@ -163,7 +191,7 @@
                 error: function (xhr, status, error) {
                     hideLoading(target);
                     requestInProgress[target] = false;
-                    printError(status, error);
+                    printError(error);
                 }
             });
         }
@@ -232,9 +260,9 @@
                 $(this).attr('href', href.substring(0, lastIndex + 1) + $(this).attr('href'));
             });
 
-            // Hack to fix back buttons with javascript:history.back(); href
-            $('#rightContent a[href^="javascript:history.back"]').each(function () {
-                $(this).attr('href', lastLoadedUrlRight);
+            // Hack to fix empty anchers
+            $('#rightContent a[href^=""]').each(function () {
+                $(this).attr('href', '/right.cgi');
             });
 
             // Hack to fix relative form urls - Fix edit virtual server
