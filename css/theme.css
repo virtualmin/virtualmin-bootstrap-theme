@@ -156,7 +156,7 @@ footer {
     .innerScroll {
         min-height: 260px;
         max-height: 99999px !important;
-        padding-right: 0;
+        padding-right: 0 !important;
     }
 
     .loading {
