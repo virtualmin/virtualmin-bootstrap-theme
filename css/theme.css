@@ -131,6 +131,10 @@ footer {
   padding-right: 10px;
 }
 
+#headln2r {
+  margin-right: 15px;
+}
+
 .domainmenu select {
     width: 100% !important;
 }
