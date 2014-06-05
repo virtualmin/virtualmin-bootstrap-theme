@@ -126,7 +126,7 @@ footer {
 }
 
 .innerScroll {
-  overflow: auto !important;
+  overflow: auto;
   overflow-x: hidden;
   padding-right: 10px;
 }

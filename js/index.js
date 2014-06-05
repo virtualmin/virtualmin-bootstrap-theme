@@ -78,6 +78,17 @@
         //    }
         //});
 
+
+        $("#leftSide").mouseleave(function () {
+            $("#leftSide .innerScroll").css({ 'padding-right': (getScrollBarWidth() + 10) + 'px', 'overflow': 'hidden' });
+        });
+
+        $("#leftSide").mouseenter(function () {
+            $("#leftSide .innerScroll").css({ 'padding-right': '10px', 'overflow': 'auto' });
+        });
+
+        $("#leftSide").mouseleave();
+
         $(window).bind('popstate',
             function(event) {
                 var state = event.originalEvent.state;
@@ -208,6 +219,18 @@
     // Hide the loading hud - Currently only fires when an error occurred
     var hideLoading = function (target) {
         $('#' + target + 'Side .loading').fadeOut(200);
+    };
+
+    // Get scrollbar width
+    var scrollWidthCache;
+    function getScrollBarWidth() {
+        if (scrollWidthCache === undefined) {
+            var $outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body'),
+                widthWithScroll = $('<div>').css({ width: '100%' }).appendTo($outer).outerWidth();
+            $outer.remove();
+            scrollWidthCache = 100 - widthWithScroll;
+        }
+        return scrollWidthCache;
     };
 
     // Change right panel html
