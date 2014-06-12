@@ -9,7 +9,7 @@ $sects = &get_right_frame_sections();
 
 &ui_print_header(undef, $text{'edright_title'}, "", undef, 0, 1, 1);
 
-print &ui_form_start("save_right.cgi", "post");
+print &ui_form_start("/save_right.cgi", "post");
 print &ui_table_start($text{'edright_header'}, undef ,2);
 
 # Visible sections
