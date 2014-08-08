@@ -244,6 +244,12 @@ my ($href, $text, $class) = @_;
 return ("<a class='ui_link $class' href='".get_module_name."/$href'>$text</a>");
 }
 
+sub theme_ui_img
+{
+my ($src, $alt, $title, $class, $tags) = @_;
+return ("<img src='".get_module_name."/".$src."' class='ui_img".($class ? " ".$class : "")."' alt='$alt' ".($title ? "title='$title'" : "").($tags ? " ".$tags : "").">");
+}
+
 sub theme_ui_form_columns_table
 {
 my ($cgi, $buttons, $selectall, $others, $hiddens,
