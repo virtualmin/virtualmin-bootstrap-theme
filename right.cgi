@@ -385,7 +385,7 @@ if ($level == 0) {		# Master admin
 		      "width=100%", 1,
               "updates", $open{'updates'});
 
-		print ui_form_start("security-updates/update.cgi");
+		print ui_form_start("/security-updates/update.cgi");
 		print text(
 			@poss > 1 ? 'right_upcount' : 'right_upcount1',
 			scalar(@poss),
