@@ -55,7 +55,7 @@ elsif ($in{'logout'}) {
 	print "<h3>$text{'session_logout'}</h3><p>\n";
 	}
 elsif ($in{'timed_out'}) {
-	print "<h3>",&text('session_timed_out', int($in{'timed_out'}/60)),"</h3><p>\n";
+	print "<h3>Session timed out.</h3><p>\n";
 	}
 print "$text{'session_prefix'}\n";
 print "<form action=$gconfig{'webprefix'}/session_login.cgi method=post>\n";
