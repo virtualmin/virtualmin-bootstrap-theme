@@ -672,7 +672,7 @@ push(@classes, "table table-striped");
 $rv .= "<table".(@classes ? " class='".join(" ", @classes)."'" : "").
     (defined($width) ? " width=$width%" : "").">\n";
 if ($title) {
-  $rv .= "<thead> <tr $tb class='ui_columns_heading'>".
+  $rv .= "<thead> <tr class='ui_columns_heading'>".
 	 "<td colspan=".scalar(@$heads)."><b>$title</b></td>".
 	 "</tr> </thead> <tbody>\n";
   }
@@ -1206,6 +1206,28 @@ foreach my $r (@$data) {
 
 $rv .= &ui_columns_end();
 return $rv;
+}
+
+=head2 theme_ui_columns_header(&columns, &tdtags)
+
+Returns HTML for a row in a multi-column table, styled as a header. Parameters
+are the same as ui_columns_row.
+
+=cut
+sub theme_ui_columns_header
+{
+my ($cols, $tdtags) = @_;
+my $rv;
+$rv .= "<tr class='ui_columns_header'>\n";
+my $i;
+for($i=0; $i<@$cols; $i++) {
+    $rv .= "<td ".$tdtags->[$i]."><b>".
+           ($cols->[$i] eq "" ? "<br>" : $cols->[$i])."</b></td>\n";
+    }
+$rv .= "</tr>\n";
+return $rv;
+}
+
 }
 
 =pod

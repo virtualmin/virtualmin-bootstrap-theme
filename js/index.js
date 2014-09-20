@@ -69,16 +69,6 @@
         });
         calculateColumnsSize();
 
-        //$(".innerScroll").mCustomScrollbar({
-        //    theme: "dark-thin",
-        //    live: true,
-        //    mouseWheelPixels: 120,
-        //    scrollButtons: {
-        //        enable: true
-        //    }
-        //});
-
-
         $("#leftSide").mouseleave(function () {
             $("#leftSide .innerScroll").css({ 'padding-right': (getScrollBarWidth() + 10) + 'px', 'overflow': 'hidden' });
         });
@@ -111,7 +101,6 @@
                 'min-height': ($(window).height() - $('#topnav').height() - 40) + 'px'
             }
         );
-        //$(".innerScroll").mCustomScrollbar("update");
     };
 
     // Print errors in a warning box in the right div
@@ -304,7 +293,6 @@
             }
 
             calculateColumnsSize();
-            //$('#rightSide .innerScroll').mCustomScrollbar("scrollTo", 'top');
             $("#rightSide .innerScroll").animate({ scrollTop: 0 }, "slow");
             $('#rightContent').fadeTo(200, 1);
 
@@ -356,7 +344,6 @@
             }
 
             calculateColumnsSize();
-            //$('#leftSide .innerScroll').mCustomScrollbar("scrollTo", 'top');
             $("#leftSide .innerScroll").animate({ scrollTop: 0 }, "slow");
             $('#leftContent').fadeTo(200, 1);
 
