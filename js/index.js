@@ -230,7 +230,7 @@
 
         // Hiding the old content
         $('#rightContent').fadeTo(200, 0.1, function () {
-            // Prevent bad HTML to break our function - Fix edit virtual server
+            // Prevent bad HTML from halting execution - Fix edit virtual server
             try {
                 $('#rightContent').html(data);
             } catch (e) {

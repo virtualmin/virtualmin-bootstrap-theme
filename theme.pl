@@ -349,6 +349,33 @@ return "<button type='button' class='btn btn-default".
        ($tags ? " ".$tags : "").">\n";
 }
 
+sub theme_ui_buttons_start
+{
+return "<div class='col-md-12 ui_buttons_table'>\n";
+}
+
+sub theme_ui_buttons_end
+{
+return "</div> <!-- ui_buttons_table end -->\n";
+}
+
+sub theme_ui_buttons_row
+{
+my ($script, $label, $desc, $hiddens, $after, $before) = @_;
+if (ref($hiddens)) {
+    $hiddens = join("\n", map { &ui_hidden(@$_) } @$hiddens);
+    }
+return "<form action='$script' class='ui_buttons_form'>\n".
+       $hiddens.
+       "<div class='ui_buttons_row row'> ".
+       "<div class='ui_buttons_label col-md-4'>".
+       ($before ? $before." " : "").
+       &ui_submit($label).($after ? " ".$after : "")."</div>\n".
+       "<div class='ui_buttons_value col-md-8'>".
+       $desc."</div></div>\n".
+       "</form>\n";
+}
+
 sub virtualmin_ui_show_cron_time
 {
 return &theme_virtualmin_ui_show_cron_time(@_)
