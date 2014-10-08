@@ -231,10 +231,10 @@
         // Hiding the old content
         $('#rightContent').fadeTo(200, 0.1, function () {
             // Prevent bad HTML from halting execution - Fix edit virtual server
-            try {
+            //try {
                 $('#rightContent').html(data);
-            } catch (e) {
-            }
+            //} catch (e) {
+            //}
 
             // Hack to fix button table broken html - Fix edit virtual server
             $('#rightContent .ui_buttons_table button[type=submit]').click(function (event) {
@@ -320,11 +320,11 @@
 
         // Hiding the old content
         $('#leftContent').fadeTo(200, 0.1, function () {
-            // Prevent bad HTML to break our function
-            try {
+            // Prevent bad HTML to break our function - enable for production
+            //try {
                 $('#leftContent').html(data);
-            } catch (e) {
-            }
+            //} catch (e) {
+            //}
 
             // Hack to fix domain changer drop down menu
             $('.domainmenu select').removeAttr('onchange')

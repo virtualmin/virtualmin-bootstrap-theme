@@ -33,7 +33,7 @@ my $dir = $current_lang_info->{'dir'} ? "dir=\"$current_lang_info->{'dir'}\""
 
 if (@_ > 1) {
     my %this_module_info = &get_module_info(&get_module_name());
-    print "<div class='header'><tr>\n";
+    print "<div class='header'>\n";
     if ($gconfig{'sysinfo'} == 2 && $remote_user) {
 		print "<div class='row'>\n";
         print "<div id='headln1' class='col-md-12'>\n";
@@ -119,18 +119,16 @@ sub theme_ui_pre_footer
 {
 my $rv;
 $rv .= "</div>\n"; # .module-content
-#$rv .= "</div>\n"; # .container-full?
-$rv .= "</p>\n";
 # XXX figure out where this ought to be... get rid of all the extras.
 #$rv .= <<EOL;
 #    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
 #    <script src="/bootstrap/js/bootstrap.js"></script>
 #EOL
-$rv .= "</body></html>\n";
+#$rv .= "</body></html>\n";
 return $rv;
 }
 
-# ui_print_footer(args...)
+# theme_ui_print_footer(args...)
 # Print HTML for a footer with the pre-footer line. Args are the same as those
 # passed to footer()
 sub theme_ui_print_footer
@@ -154,7 +152,7 @@ for($i=0; $i<@{$_[0]}; $i++) {
 		       $_[4], $_[5], $_[6], $_[7]->[$i], $_[8]->[$i]);
 	print "</li>\n";
     }
-print "</ul>\n" if ($need_tr);
+print "</ul>\n";
 print "</div>\n"; # .panel-body
 print "</div>\n"; # .icons_table .panel-default
 }
@@ -165,9 +163,8 @@ my $w = !defined($_[4]) ? "width=48" : $_[4] ? "width=$_[4]" : "";
 my $h = !defined($_[5]) ? "height=48" : $_[5] ? "height=$_[5]" : "";
 
 print "<a href=\"/$module_name/$_[2]\" $_[3]>",
-      "<div class='ui_icon'>\n",
-	  "<img src=\"/$module_name/$_[0]\" alt=\"\" border=0 ",
-      "$w $h></div><br>\n";
+	  "<img class='ui_icon' src=\"/$module_name/$_[0]\" alt=\"\" border=0 ",
+      "$w $h><br>\n";
 print "$_[1]</a>\n";
 }
 
@@ -1253,8 +1250,6 @@ for($i=0; $i<@$cols; $i++) {
     }
 $rv .= "</tr>\n";
 return $rv;
-}
-
 }
 
 =pod
