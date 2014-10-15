@@ -568,10 +568,10 @@ $main::ui_table_default_tds = $tds;
 return $rv;
 }
 
-# ui_table_row(label, value, [cols], [&td-tags])
+# theme_ui_table_row(label, value, [cols], [&td-tags])
 # Returns HTML for a row in a table started by ui_table_start, with a 1-column
 # label and 1+ column value.
-sub theme_ui_table_row
+sub old_theme_ui_table_row
 {
 my ($label, $value, $cols, $tds) = @_;
 $cols ||= 1;
@@ -605,9 +605,9 @@ if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
     $main::ui_table_pos = 0;
     }
 
-$rv .= "<div class='ui_form_pair row'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
+$rv .= "<div class='ui_form_pair row form-group'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
 if (defined($label)) {
-	$rv .= "<div class='ui_form_label col-md-$colwidth'><p><strong>$label</strong></p></div>\n";
+	$rv .= "<label class='ui_form_label col-md-$colwidth'><p><strong>$label</strong></p></label>\n";
 } 
 $rv .= "<div class='ui_form_value col-md-" . $colwidth*2 . "'><p>$value</p></div>\n";
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
@@ -615,6 +615,22 @@ if ($main::ui_table_pos%$main::ui_table_cols == 0) {
     $rv .= "</div>\n";
     $main::ui_table_pos = 0;
     }
+return $rv;
+}
+
+sub theme_ui_table_row
+{
+my ($label, $value, $cols, $tds) = @_;
+$cols ||= 1;
+$tds ||= $main::ui_table_default_tds;
+
+my $rv;
+$rv .= "<div class='form-group ui_form_pair'>\n";
+if (defined($label)) {
+	$rv .= "<label class='ui_form_label'><p><strong>$label</strong></p></label>\n";
+} 
+$rv .= "<div class='ui_form_value'><p>$value</p></div>\n";
+$rv .= "</div>\n";
 return $rv;
 }
 
@@ -1395,7 +1411,7 @@ unless ( $script =~ /^\// )
   $script = "/" . get_module_name . "/$script";
 }
 my $rv;
-$rv .= "<form class='ui_form' action='".&html_escape($script)."' ".
+$rv .= "<form class='form-horizontal ui_form' role='form' action='".&html_escape($script)."' ".
     ($method eq "post" ? "method=post" :
      $method eq "form-data" ?
         "method=post enctype=multipart/form-data" :

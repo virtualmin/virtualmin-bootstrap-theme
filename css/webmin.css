@@ -40,3 +40,9 @@ ui_hidden
 {
   display:inline-block;
 }
+
+.ui_form_pair
+{
+  margin-left: 0px;
+  margin-right: 0px;
+}

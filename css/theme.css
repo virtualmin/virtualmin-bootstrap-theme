@@ -183,3 +183,15 @@ footer {
             display: inline-block;
         }
 }
+
+.form-horizontal .ui_form_pair
+{
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.ui_form_pair .form-control
+{
+  display: inline;
+  width: auto;
+}
