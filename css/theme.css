@@ -195,3 +195,19 @@ footer {
   display: inline;
   width: auto;
 }
+
+.ui_textbox
+{
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.form-group label
+{
+  margin: 8px;
+}
+
+.ui_form_value
+{
+  margin-left: 20px;
+}
