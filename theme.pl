@@ -607,9 +607,9 @@ if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
 
 $rv .= "<div class='ui_form_pair row form-group'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
 if (defined($label)) {
-	$rv .= "<label class='ui_form_label col-md-$colwidth'><p><strong>$label</strong></p></label>\n";
+	$rv .= "<label class='ui_form_label col-md-$colwidth'><strong>$label</strong></label><br>\n";
 } 
-$rv .= "<div class='ui_form_value col-md-" . $colwidth*2 . "'><p>$value</p></div>\n";
+$rv .= "<div class='ui_form_value col-md-" . $colwidth*2 . "'>$value</div>\n";
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
 if ($main::ui_table_pos%$main::ui_table_cols == 0) {
     $rv .= "</div>\n";
@@ -625,12 +625,28 @@ $cols ||= 1;
 $tds ||= $main::ui_table_default_tds;
 
 my $rv;
-$rv .= "<div class='form-group ui_form_pair'>\n";
+if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
+    $main::ui_table_pos != 0) {
+    # If the requested number of cols won't fit in the number
+    # remaining, start a new row
+    $rv .= "</div>\n";
+    $main::ui_table_pos = 0;
+    }
+$rv .= "<div class='row ui_table_row'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
+
+$rv .= "<div class='col-md-6 form-group ui_form_pair'>\n";
 if (defined($label)) {
-	$rv .= "<label class='ui_form_label'><p><strong>$label</strong></p></label>\n";
+	$rv .= "<label class='ui_form_label'><strong>$label</strong></label><br>\n";
 } 
-$rv .= "<div class='ui_form_value'><p>$value</p></div>\n";
+$rv .= "<div class='ui_form_value'>$value</div>\n";
 $rv .= "</div>\n";
+
+$main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
+if ($main::ui_table_pos%$main::ui_table_cols == 0) {
+    $rv .= "</div> <!-- row --> \n";
+    $main::ui_table_pos = 0;
+    }
+
 return $rv;
 }
 
