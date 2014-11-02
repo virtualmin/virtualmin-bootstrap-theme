@@ -20,24 +20,24 @@ sub theme_header
 my $ll;
 print "<!DOCTYPE html>\n";
 my $charset = defined($main::force_charset) ? $main::force_charset
-                        : &get_charset();
-$module_name = &get_module_name();
+                        : get_charset();
+$module_name = get_module_name();
 if (@_ > 0) {
-    my $title = &get_html_title($_[0]);
+    my $title = get_html_title($_[0]);
 	#print $_[7] if ($_[7]);
-    print &get_html_status_line(0);
+    print get_html_status_line(0);
     }
 my $dir = $current_lang_info->{'dir'} ? "dir=\"$current_lang_info->{'dir'}\""
                      : "";
 #print "<div class='container'>\n";
 
 if (@_ > 1) {
-    my %this_module_info = &get_module_info(&get_module_name());
+    my %this_module_info = get_module_info(get_module_name());
     print "<div class='header'>\n";
     if ($gconfig{'sysinfo'} == 2 && $remote_user) {
 		print "<div class='row'>\n";
         print "<div id='headln1' class='col-md-12'>\n";
-        print &get_html_status_line(1);
+        print get_html_status_line(1);
         print "</div></div>\n";
         }
     	print "<div class='row'>\n";
@@ -52,7 +52,7 @@ if (@_ > 1) {
               "$text{'header_servers'}</a><br>\n";
         }
     if (!$_[5] && !$tconfig{'noindex'}) {
-        my @avail = &get_available_module_infos(1);
+        my @avail = get_available_module_infos(1);
         my $nolo = $ENV{'ANONYMOUS_USER'} ||
                   $ENV{'SSL_USER'} || $ENV{'LOCAL_USER'} ||
                   $ENV{'HTTP_USER_AGENT'} =~ /webmin/i;
@@ -73,26 +73,26 @@ if (@_ > 1) {
         }
     if (!$_[4] && !$tconfig{'nomoduleindex'}) {
         my $idx = $this_module_info{'index_link'};
-        my $mi = $module_index_link || "/".&get_module_name()."/$idx";
+        my $mi = $module_index_link || "/".get_module_name()."/$idx";
         my $mt = $module_index_name || $text{'header_module'};
         print "<a href=\"$gconfig{'webprefix'}$mi\">$mt</a><br>\n";
         }
     if (ref($_[2]) eq "ARRAY" && !$ENV{'ANONYMOUS_USER'} &&
         !$tconfig{'nohelp'}) {
-        print &hlink($text{'header_help'}, $_[2]->[0], $_[2]->[1]),
+        print hlink($text{'header_help'}, $_[2]->[0], $_[2]->[1]),
               "<br>\n";
         }
     elsif (defined($_[2]) && !$ENV{'ANONYMOUS_USER'} &&
            !$tconfig{'nohelp'}) {
-        print &hlink($text{'header_help'}, $_[2]),"<br>\n";
+        print hlink($text{'header_help'}, $_[2]),"<br>\n";
         }
     if ($_[3]) {
-        my %access = &get_module_acl();
+        my %access = get_module_acl();
         if (!$access{'noconfig'} && !$config{'noprefs'}) {
             my $cprog = $user_module_config_directory ?
                     "uconfig.cgi" : "config.cgi";
             print "<a href=\"$gconfig{'webprefix'}/$cprog?",
-                  &get_module_name()."\">",
+                  get_module_name()."\">",
                   $text{'header_config'},"</a><br>\n";
             }
         }
@@ -134,8 +134,8 @@ return $rv;
 sub theme_ui_print_footer
 {
 my @args = @_;
-print &theme_ui_pre_footer();
-&footer(@args);
+print theme_ui_pre_footer();
+footer(@args);
 }
 
 sub theme_icons_table
@@ -148,7 +148,7 @@ print "<div class='panel-body'>\n";
 print "<ul class='ui_icons_table'>\n";
 for($i=0; $i<@{$_[0]}; $i++) {
 	print "<li>\n";
-	&generate_icon($_[2]->[$i], $_[1]->[$i], $_[0]->[$i],
+	generate_icon($_[2]->[$i], $_[1]->[$i], $_[0]->[$i],
 		       $_[4], $_[5], $_[6], $_[7]->[$i], $_[8]->[$i]);
 	print "</li>\n";
     }
@@ -273,39 +273,39 @@ if (@$data) {
                 }
             }
         if ($cbname) {
-            unshift(@leftlinks, &select_all_link($cbname, $formno),
-                    &select_invert_link($cbname, $formno));
+            unshift(@leftlinks, select_all_link($cbname, $formno),
+                    select_invert_link($cbname, $formno));
             }
         }
     }
 
 # Turn to HTML
 if (@rightlinks) {
-    $links = &ui_grid_table([ &ui_links_row(\@leftlinks),
-                  &ui_links_row(\@rightlinks) ], 2, 100,
+    $links = ui_grid_table([ ui_links_row(\@leftlinks),
+                  ui_links_row(\@rightlinks) ], 2, 100,
                     [ undef, "align=right" ]);
     }
 elsif (@leftlinks) {
-    $links = &ui_links_row(\@leftlinks);
+    $links = ui_links_row(\@leftlinks);
     }
 
 # Start the form, if we need one
 if (@$data) {
-    $rv .= &ui_form_start($cgi, "post");
+    $rv .= ui_form_start($cgi, "post");
     foreach my $h (@$hiddens) {
-        $rv .= &ui_hidden(@$h);
+        $rv .= ui_hidden(@$h);
         }
     $rv .= $links;
     }
 
 # Add the table
-$rv .= &ui_columns_table($heads, $width, $data, $types, $nosort, $title,
+$rv .= ui_columns_table($heads, $width, $data, $types, $nosort, $title,
              $emptymsg);
 
 # Add form end
 $rv .= $links;
 if (@$data) {
-    $rv .= &ui_form_end($buttons);
+    $rv .= ui_form_end($buttons);
     }
 
 return $rv;
@@ -314,9 +314,9 @@ return $rv;
 sub theme_ui_textbox
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
-$size = &ui_max_text_width($size);
-return "<input type='text' class='form-control ui_textbox' name=\"".&quote_escape($name)."\" ".
-       "value=\"".&quote_escape($value)."\" ".
+$size = ui_max_text_width($size);
+return "<input type='text' class='form-control ui_textbox' name=\"".quote_escape($name)."\" ".
+       "value=\"".quote_escape($value)."\" ".
        "size=$size ".($dis ? "disabled=true" : "").
        ($max ? " maxlength=$max" : "").
        " ".$tags.
@@ -326,10 +326,10 @@ return "<input type='text' class='form-control ui_textbox' name=\"".&quote_escap
 sub theme_ui_password
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
-$size = &ui_max_text_width($size);
+$size = ui_max_text_width($size);
 return "<input class='form-control ui_password' ".
-       "type=password name=\"".&quote_escape($name)."\" ".
-       "value=\"".&quote_escape($value)."\" ".
+       "type=password name=\"".quote_escape($name)."\" ".
+       "value=\"".quote_escape($value)."\" ".
        "size=$size ".($dis ? "disabled=true" : "").
        ($max ? " maxlength=$max" : "").
        " ".$tags.
@@ -340,8 +340,8 @@ sub theme_ui_button
 {
 my ($label, $name, $dis, $tags) = @_;
 return "<button type='button' class='btn btn-default".
-       ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
-       " value=\"".&quote_escape($label)."\"".
+       ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
+       " value=\"".quote_escape($label)."\"".
        ($dis ? " disabled=true" : "").
        ($tags ? " ".$tags : "").">\n";
 }
@@ -360,14 +360,14 @@ sub theme_ui_buttons_row
 {
 my ($script, $label, $desc, $hiddens, $after, $before) = @_;
 if (ref($hiddens)) {
-    $hiddens = join("\n", map { &ui_hidden(@$_) } @$hiddens);
+    $hiddens = join("\n", map { ui_hidden(@$_) } @$hiddens);
     }
 return "<form action='$script' class='ui_buttons_form'>\n".
        $hiddens.
        "<div class='ui_buttons_row row'> ".
        "<div class='ui_buttons_label col-md-4'>".
        ($before ? $before." " : "").
-       &ui_submit($label).($after ? " ".$after : "")."</div>\n".
+       ui_submit($label).($after ? " ".$after : "")."</div>\n".
        "<div class='ui_buttons_value col-md-8'>".
        $desc."</div></div>\n".
        "</form>\n";
@@ -375,29 +375,29 @@ return "<form action='$script' class='ui_buttons_form'>\n".
 
 sub virtualmin_ui_show_cron_time
 {
-return &theme_virtualmin_ui_show_cron_time(@_)
-    if (defined(&theme_virtualmin_ui_show_cron_time));
+return theme_virtualmin_ui_show_cron_time(@_)
+    if (defined(theme_virtualmin_ui_show_cron_time));
 my ($name, $job, $offmsg) = @_;
-&foreign_require("cron", "cron-lib.pl");
+foreign_require("cron", "cron-lib.pl");
 my $rv;
 my $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
-my $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
+my $complex = $mode == 2 ? cron::when_text($job, 1) : undef;
 my $button = "<input type=button onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\">\n";
 my $hidden = $mode == 2 ?
     join(" ", $job->{'mins'}, $job->{'hours'},
           $job->{'days'}, $job->{'months'}, $job->{'weekdays'}) : "";
-return &ui_radio_table($name, $mode,
+return ui_radio_table($name, $mode,
      [ $offmsg ? ( [ 0, $offmsg ] ) : ( ),
        $cron::config{'vixie_cron'} ? (
        [ 1, $text{'cron_special'},
-           &ui_select($name."_special", $job->{'special'},
+           ui_select($name."_special", $job->{'special'},
               [ map { [ $_, $cron::text{'edit_special_'.$_} ] }
                 ('hourly', 'daily', 'weekly', 'monthly', 'yearly')
               ]) ] ) : ( ),
        [ 2, $text{'cron_complex'},
-           &ui_textbox($name."_complex", $complex, 40, 0, undef,
+           ui_textbox($name."_complex", $complex, 40, 0, undef,
                   "readonly=true")." ".$button ],
-     ]).&ui_hidden($name."_hidden", $hidden);
+     ]).ui_hidden($name."_hidden", $hidden);
 }
 
 # XXX UGLY! Needs to be updated to load into a popup within the page, so we
@@ -408,23 +408,23 @@ my ($name, $job, $offmsg) = @_;
 &foreign_require("cron", "cron-lib.pl");
 my $rv;
 my $mode = !$job ? 0 : $job->{'special'} ? 1 : 2;
-my $complex = $mode == 2 ? &cron::when_text($job, 1) : undef;
+my $complex = $mode == 2 ? cron::when_text($job, 1) : undef;
 my $button = "<button type='button' class='btn btn-default' onClick='cfield = form.${name}_complex; hfield = form.${name}_hidden; chooser = window.open(\"/virtual-server/cron_chooser.cgi?complex=\"+escape(hfield.value), \"cronchooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=800,height=400\"); chooser.cfield = cfield; window.cfield = cfield; chooser.hfield = hfield; window.hfield = hfield;' value=\"...\"><span class='glyphicon glyphicon-time'></span></button>\n";
 my $hidden = $mode == 2 ?
     join(" ", $job->{'mins'}, $job->{'hours'},
           $job->{'days'}, $job->{'months'}, $job->{'weekdays'}) : "";
-return &ui_radio_table($name, $mode,
+return ui_radio_table($name, $mode,
      [ $offmsg ? ( [ 0, $offmsg ] ) : ( ),
        $cron::config{'vixie_cron'} ? (
        [ 1, $text{'cron_special'},
-           &ui_select($name."_special", $job->{'special'},
+           ui_select($name."_special", $job->{'special'},
               [ map { [ $_, $cron::text{'edit_special_'.$_} ] }
                 ('hourly', 'daily', 'weekly', 'monthly', 'yearly')
               ]) ] ) : ( ),
        [ 2, $text{'cron_complex'},
-           &ui_textbox($name."_complex", $complex, 40, 0, undef,
+           ui_textbox($name."_complex", $complex, 40, 0, undef,
                   "readonly=true")." ".$button ],
-     ]).&ui_hidden($name."_hidden", $hidden);
+     ]).ui_hidden($name."_hidden", $hidden);
 }
 
 # theme_select_domain(&domain)
@@ -464,8 +464,8 @@ if ($action eq 'create' || $action eq 'delete' || $action eq 'modify') {
 	}
 else {
 	# Only refesh if showing unread count
-	if (defined(&mailbox::should_show_unread) &&
-	    &mailbox::should_show_unread($folder)) {
+	if (defined(mailbox::should_show_unread) &&
+	    mailbox::should_show_unread($folder)) {
 		$ref = 1;
 		}
 	}
@@ -530,7 +530,7 @@ sub theme_prehead
 
 sub theme_popup_prehead
 {
-return &theme_prehead();
+return theme_prehead();
 }
 
 # ui_table_start(heading, [tabletags], [cols], [&default-tds], [right-heading])
@@ -657,7 +657,7 @@ sub theme_ui_table_end
 my $rv;
 if ($main::ui_table_cols == 4 && $main::ui_table_pos) {
   # Add an empty block to balance the table
-  $rv .= &ui_table_row(" ", " ");
+  $rv .= ui_table_row(" ", " ");
   }
 if (@main::ui_table_cols_stack) {
   $main::ui_table_cols = pop(@main::ui_table_cols_stack);
@@ -900,7 +900,7 @@ my ($name, $formno, $folder, $mail, $start, $end, $status, $label) = @_;
 $formno = int($formno);
 my @sel;
 for(my $i=$start; $i<=$end; $i++) {
-	my $read = &get_mail_read($folder, $mail->[$i]);
+	my $read = get_mail_read($folder, $mail->[$i]);
 	if ($status == 0) {
 		push(@sel, ($read&1) ? 0 : 1);
 		}
@@ -922,7 +922,7 @@ sub theme_select_rows_link
 {
 my ($field, $form, $text, $rows) = @_;
 $form = int($form);
-my $js = "var sel = { ".join(",", map { "\"".&quote_escape($_)."\":1" } @$rows)." }; ";
+my $js = "var sel = { ".join(",", map { "\"".quote_escape($_)."\":1" } @$rows)." }; ";
 $js .= "for(var i=0; i<document.forms[$form].${field}.length; i++) { var ff = document.forms[$form].${field}[i]; var r = document.getElementById(\"row_\"+ff.id); ff.checked = sel[ff.value]; if (r) { r.className = ff.checked ? \"mainsel\" : \"mainbody row\"+((i+1)%2) } } ";
 $js .= "return false;";
 return "<a class='select_rows' href='#' onClick='$js'>$text</a>";
@@ -933,9 +933,9 @@ sub theme_ui_checked_columns_row
 $theme_ui_columns_row_toggle = $theme_ui_columns_row_toggle ? '0' : '1';
 my ($cols, $tdtags, $checkname, $checkvalue, $checked, $disabled, $tags) = @_;
 my $rv;
-my $cbid = &quote_escape(quotemeta("${checkname}_${checkvalue}"));
-my $rid = &quote_escape(quotemeta("row_${checkname}_${checkvalue}"));
-my $ridtr = &quote_escape("row_${checkname}_${checkvalue}");
+my $cbid = quote_escape(quotemeta("${checkname}_${checkvalue}"));
+my $rid = quote_escape(quotemeta("row_${checkname}_${checkvalue}"));
+my $ridtr = quote_escape("row_${checkname}_${checkvalue}");
 my $mycb = $cb;
 if ($checked) {
 	$mycb =~ s/mainbody/mainsel/g;
@@ -943,14 +943,14 @@ if ($checked) {
 $mycb =~ s/class='/class='row$theme_ui_columns_row_toggle ui_checked_columns /;
 $rv .= "<tr id=\"$ridtr\" $mycb onMouseOver=\"this.className = document.getElementById('$cbid').checked ? 'mainhighsel' : 'mainhigh'\" onMouseOut=\"this.className = document.getElementById('$cbid').checked ? 'mainsel' : 'mainbody row$theme_ui_columns_row_toggle'\">\n";
 $rv .= "<td class='ui_checked_checkbox' ".$tdtags->[0].">".
-       &ui_checkbox($checkname, $checkvalue, undef, $checked, $tags." "."onClick=\"document.getElementById('$rid').className = this.checked ? 'mainhighsel' : 'mainhigh';\"", $disabled).
+       ui_checkbox($checkname, $checkvalue, undef, $checked, $tags." "."onClick=\"document.getElementById('$rid').className = this.checked ? 'mainhighsel' : 'mainhigh';\"", $disabled).
        "</td>\n";
 my $i;
 for($i=0; $i<@$cols; $i++) {
 	$rv .= "<td ".$tdtags->[$i+1].">";
 	if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
 		$rv .= "<label for=\"".
-			&quote_escape("${checkname}_${checkvalue}")."\">";
+			quote_escape("${checkname}_${checkvalue}")."\">";
 		}
 	$rv .= ($cols->[$i] !~ /\S/ ? "<br>" : $cols->[$i]);
 	if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
@@ -966,9 +966,9 @@ sub theme_ui_radio_columns_row
 {
 my ($cols, $tdtags, $checkname, $checkvalue, $checked) = @_;
 my $rv;
-my $cbid = &quote_escape(quotemeta("${checkname}_${checkvalue}"));
-my $rid = &quote_escape(quotemeta("row_${checkname}_${checkvalue}"));
-my $ridtr = &quote_escape("row_${checkname}_${checkvalue}");
+my $cbid = quote_escape(quotemeta("${checkname}_${checkvalue}"));
+my $rid = quote_escape(quotemeta("row_${checkname}_${checkvalue}"));
+my $ridtr = quote_escape("row_${checkname}_${checkvalue}");
 my $mycb = $cb;
 if ($checked) {
 	$mycb =~ s/mainbody/mainsel/g;
@@ -977,14 +977,14 @@ if ($checked) {
 $mycb =~ s/class='/class='ui_radio_columns /;
 $rv .= "<tr $mycb id=\"$ridtr\" onMouseOver=\"this.className = document.getElementById('$cbid').checked ? 'mainhighsel' : 'mainhigh'\" onMouseOut=\"this.className = document.getElementById('$cbid').checked ? 'mainsel' : 'mainbody'\">\n";
 $rv .= "<td ".$tdtags->[0]." class='ui_radio_radio'>".
-       &ui_oneradio($checkname, $checkvalue, undef, $checked, "onClick=\"for(i=0; i<form.$checkname.length; i++) { ff = form.${checkname}[i]; r = document.getElementById('row_'+ff.id); if (r) { r.className = 'mainbody' } } document.getElementById('$rid').className = this.checked ? 'mainhighsel' : 'mainhigh';\"").
+       ui_oneradio($checkname, $checkvalue, undef, $checked, "onClick=\"for(i=0; i<form.$checkname.length; i++) { ff = form.${checkname}[i]; r = document.getElementById('row_'+ff.id); if (r) { r.className = 'mainbody' } } document.getElementById('$rid').className = this.checked ? 'mainhighsel' : 'mainhigh';\"").
        "</td>\n";
 my $i;
 for($i=0; $i<@$cols; $i++) {
 	$rv .= "<td ".$tdtags->[$i+1].">";
 	if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
 		$rv .= "<label for=\"".
-			&quote_escape("${checkname}_${checkvalue}")."\">";
+			quote_escape("${checkname}_${checkvalue}")."\">";
 		}
 	$rv .= ($cols->[$i] !~ /\S/ ? "<br>" : $cols->[$i]);
 	if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
@@ -1061,7 +1061,7 @@ for($i=0; $i+1<@_; $i+=2) {
 		else {
 			print "&nbsp;|\n";
 			}
-		print "&nbsp;<a href=\"$url\">",&text('main_return', $_[$i+1]),"</a>\n";
+		print "&nbsp;<a href=\"$url\">",text('main_return', $_[$i+1]),"</a>\n";
 		}
 	}
 print "<br>\n";
@@ -1092,7 +1092,7 @@ sub theme_ui_button
 {
 my ($label, $name, $dis, $tags) = @_;
 return "<button class='btn' type='button'".
-       ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
+       ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
        " value=\"".&quote_escape($label)."\"".
        ($dis ? " disabled=true" : "").
        ($tags ? " ".$tags : "").">$label</button>\n";
@@ -1103,8 +1103,8 @@ sub theme_ui_submit
 {
 my ($label, $name, $dis, $tags) = @_; 
 return "<button class='btn ui_submit' type='submit'".
-       ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
-       " value=\"".&quote_escape($label)."\"".
+       ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
+       " value=\"".quote_escape($label)."\"".
        ($dis ? " disabled=true" : "").
        ($tags ? " ".$tags : "").">$label</button>\n";
 
@@ -1113,15 +1113,15 @@ return "<button class='btn ui_submit' type='submit'".
 sub theme_ui_opt_textbox
 {
 my ($name, $value, $size, $opt1, $opt2, $dis, $extra, $max, $tags) = @_;
-my $dis1 = &js_disable_inputs([ $name, @$extra ], [ ]);
-my $dis2 = &js_disable_inputs([ ], [ $name, @$extra ]);
+my $dis1 = js_disable_inputs([ $name, @$extra ], [ ]);
+my $dis2 = js_disable_inputs([ ], [ $name, @$extra ]);
 my $rv;
-$size = &ui_max_text_width($size);
-$rv .= &ui_radio($name."_def", $value eq '' ? 1 : 0,
+$size = ui_max_text_width($size);
+$rv .= ui_radio($name."_def", $value eq '' ? 1 : 0,
                  [ [ 1, $opt1, "onClick='$dis1'" ],
                    [ 0, $opt2 || " ", "onClick='$dis2'" ] ], $dis)."\n";
-$rv .= "<input class='form-control ui_opt_textbox' name=\"".&quote_escape($name)."\" ".
-       "type='text' size=$size value=\"".&quote_escape($value)."\" ".
+$rv .= "<input class='form-control ui_opt_textbox' name=\"".quote_escape($name)."\" ".
+       "type='text' size=$size value=\"".quote_escape($value)."\" ".
        ($dis ? "disabled=true" : "").
        ($max ? " maxlength=$max" : "").
        " ".$tags.
@@ -1188,7 +1188,7 @@ foreach my $r (@$data) {
 		}
 	$maxwidth = $cc if ($cc > $maxwidth);
 	}
-$rv .= &ui_columns_start($heads, $width, 0, \@tds, $title);
+$rv .= ui_columns_start($heads, $width, 0, \@tds, $title);
 
 # Add the data rows
 foreach my $r (@$data) {
@@ -1211,21 +1211,21 @@ foreach my $r (@$data) {
 			}
 		elsif ($c->{'type'} eq 'checkbox') {
 			# Checkbox in non-first column
-			push(@cols, &ui_checkbox($c->{'name'}, $c->{'value'},
+			push(@cols, ui_checkbox($c->{'name'}, $c->{'value'},
 					         $c->{'label'}, $c->{'checked'},
 						 $c->{'tags'},
 						 $c->{'disabled'}));
 			}
 		elsif ($c->{'type'} eq 'radio') {
 			# Radio button in non-first column
-			push(@cols, &ui_oneradio($c->{'name'}, $c->{'value'},
+			push(@cols, ui_oneradio($c->{'name'}, $c->{'value'},
 					         $c->{'label'}, $c->{'checked'},
 						 $c->{'tags'},
 						 $c->{'disabled'}));
 			}
 		elsif ($c->{'type'} eq 'group') {
 			# Header row that spans whole table
-			$rv .= &ui_columns_header([ $c->{'desc'} ],
+			$rv .= ui_columns_header([ $c->{'desc'} ],
 						  [ "colspan=$width" ]);
 			next;
 			}
@@ -1244,23 +1244,23 @@ foreach my $r (@$data) {
 		}
 	# Add the row
 	if (!$c0) {
-		$rv .= &ui_columns_row(\@cols, \@rtds);
+		$rv .= ui_columns_row(\@cols, \@rtds);
 		}
 	elsif ($c0->{'type'} eq 'checkbox') {
-		$rv .= &ui_checked_columns_row(\@cols, \@rtds, $c0->{'name'},
+		$rv .= ui_checked_columns_row(\@cols, \@rtds, $c0->{'name'},
 					       $c0->{'value'}, $c0->{'checked'},
 					       $c0->{'disabled'},
 					       $c0->{'tags'});
 		}
 	elsif ($c0->{'type'} eq 'radio') {
-		$rv .= &ui_radio_columns_row(\@cols, \@rtds, $c0->{'name'},
+		$rv .= ui_radio_columns_row(\@cols, \@rtds, $c0->{'name'},
 					     $c0->{'value'}, $c0->{'checked'},
 					     $c0->{'disabled'},
 					     $c0->{'tags'});
 		}
 	}
 
-$rv .= &ui_columns_end();
+$rv .= ui_columns_end();
 return $rv;
 }
 
@@ -1327,7 +1327,7 @@ sub theme_ui_yui_grid_section_end {
 # The actual help pages are in each module's help sub-directory, in files with
 # .html extensions.
 sub theme_ui_hlink {
-my $mod = $_[2] ? $_[2] : &get_module_name();
+my $mod = $_[2] ? $_[2] : get_module_name();
 my $width = $_[3] || $tconfig{'help_width'} || $gconfig{'help_width'} || 600;
 my $height = $_[4] || $tconfig{'help_height'} || $gconfig{'help_height'} || 400;
 return "<a class='ui_hlink' onClick='window.open(\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\", \"help\", \"toolbar=no,menubar=no,scrollbars=yes,width=$width,height=$height,resizable=yes\"); return false' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">$_[0]</a>";
@@ -1337,7 +1337,7 @@ sub theme_ui_select
 {
 my ($name, $value, $opts, $size, $multiple, $missing, $dis, $js) = @_;
 my $rv;
-$rv .= "<select class='form-control ui_select' name=\"".&quote_escape($name)."\"".
+$rv .= "<select class='form-control ui_select' name=\"".quote_escape($name)."\"".
        ($size ? " size=$size" : "").
        ($multiple ? " multiple" : "").
        ($dis ? " disabled=true" : "")." ".$js.">\n";
@@ -1345,14 +1345,14 @@ my ($o, %opt, $s);
 my %sel = ref($value) ? ( map { $_, 1 } @$value ) : ( $value, 1 );
 foreach $o (@$opts) {
     $o = [ $o ] if (!ref($o));
-    $rv .= "<option value=\"".&quote_escape($o->[0])."\"".
+    $rv .= "<option value=\"".quote_escape($o->[0])."\"".
            ($sel{$o->[0]} ? " selected" : "")." ".$o->[2].">".
            ($o->[1] || $o->[0])."\n";
     $opt{$o->[0]}++;
     }
 foreach $s (keys %sel) {
     if (!$opt{$s} && $missing) {
-        $rv .= "<option value=\"".&quote_escape($s)."\"".
+        $rv .= "<option value=\"".quote_escape($s)."\"".
                "selected>".($s eq "" ? "&nbsp;" : $s)."\n";
         }
     }
@@ -1363,12 +1363,12 @@ return $rv;
 sub theme_ui_textarea
 {
 my ($name, $value, $rows, $cols, $wrap, $dis, $tags) = @_;
-$cols = &ui_max_text_width($cols, 1);
-return "<textarea class='form-control ui_textarea' name=\"".&quote_escape($name)."\" ".
+$cols = ui_max_text_width($cols, 1);
+return "<textarea class='form-control ui_textarea' name=\"".quote_escape($name)."\" ".
        "rows=$rows cols=$cols".($wrap ? " wrap=$wrap" : "").
        ($dis ? " disabled=true" : "").
        ($tags ? " $tags" : "").">".
-       &html_escape($value).
+       html_escape($value).
        "</textarea>";
 }
 
@@ -1427,7 +1427,7 @@ unless ( $script =~ /^\// )
   $script = "/" . get_module_name . "/$script";
 }
 my $rv;
-$rv .= "<form class='form-horizontal ui_form' role='form' action='".&html_escape($script)."' ".
+$rv .= "<form class='form-horizontal ui_form' role='form' action='".html_escape($script)."' ".
     ($method eq "post" ? "method=post" :
      $method eq "form-data" ?
         "method=post enctype=multipart/form-data" :
