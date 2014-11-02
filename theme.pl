@@ -133,7 +133,7 @@ return $rv;
 # passed to footer()
 sub theme_ui_print_footer
 {
-local @args = @_;
+my @args = @_;
 print &theme_ui_pre_footer();
 &footer(@args);
 }
@@ -1020,7 +1020,7 @@ my $i;
 my $count = 0;
 my %module_info = get_module_info(get_module_name());
 for($i=0; $i+1<@_; $i+=2) {
-	local $url = $_[$i];
+	my $url = $_[$i];
 	if ($url ne '/' || !$tconfig{'noindex'}) {
 		if ($url eq '/') {
 			$url = "/?cat=$module_info{'category'}";
@@ -1079,7 +1079,7 @@ print"</body></html>\n";
 # Don't show virtualmin menu
 sub theme_redirect
 {
-local ($orig, $url) = @_;
+my ($orig, $url) = @_;
 if (get_module_name() eq "virtual-server" && $orig eq "" &&
     $url =~ /^((http|https):\/\/([^\/]+))\//) {
 	$url = "$1/right.cgi";
