@@ -2,6 +2,10 @@
 # Icons copyright David Vignoni, all other theme elements copyright 2005-2013
 # Virtualmin, Inc.
 
+use warnings;
+use strict;
+
+no warnings 'once';
 $main::cloudmin_no_create_links = 1;
 $main::cloudmin_no_edit_buttons = 1;
 $main::cloudmin_no_global_links = 1;
@@ -12,27 +16,43 @@ $main::mailbox_no_folder_button = 1;
 $main::basic_virtualmin_menu = 1;
 $main::nocreate_virtualmin_menu = 1;
 $main::nosingledomain_virtualmin_mode = 1;
+use warnings;
+
+# Globals from web-lib and ui-lib XXX Needs encapsulation in Webmin 2.0
+our %gconfig;
+our %tconfig;
+our %text;
+our $remote_user;
+our $ui_formcount;
+our $user_module_config_directory;
+our $script_name;
+our $cb; # XXX Kill this. It's old UI crap and is very clunky to use in CSS-based theme.
+
+# Cloudmin globals?
+our $done_theme_post_save_server;
+
+# Globals within theme.pl
+my $theme_ui_columns_row_toggle;
+my $theme_ui_columns_count;
 
 # theme_header
 sub theme_header
 {
 #return if ($main::done_webmin_header++);
 my $ll;
+our %config;
+my %this_module_info = get_module_info(get_module_name());
 print "<!DOCTYPE html>\n";
 my $charset = defined($main::force_charset) ? $main::force_charset
                         : get_charset();
-$module_name = get_module_name();
 if (@_ > 0) {
     my $title = get_html_title($_[0]);
 	#print $_[7] if ($_[7]);
     print get_html_status_line(0);
     }
-my $dir = $current_lang_info->{'dir'} ? "dir=\"$current_lang_info->{'dir'}\""
-                     : "";
 #print "<div class='container'>\n";
 
 if (@_ > 1) {
-    my %this_module_info = get_module_info(get_module_name());
     print "<div class='header'>\n";
     if ($gconfig{'sysinfo'} == 2 && $remote_user) {
 		print "<div class='row'>\n";
@@ -56,6 +76,7 @@ if (@_ > 1) {
         my $nolo = $ENV{'ANONYMOUS_USER'} ||
                   $ENV{'SSL_USER'} || $ENV{'LOCAL_USER'} ||
                   $ENV{'HTTP_USER_AGENT'} =~ /webmin/i;
+		no warnings 'once';
         if ($gconfig{'gotoone'} && $main::session_id && @avail == 1 &&
             !$nolo) {
             print "<a href='$gconfig{'webprefix'}/session_login.cgi?logout=1'>",
@@ -70,11 +91,12 @@ if (@_ > 1) {
                   $this_module_info{'category'},
                   "'>$text{'header_webmin'}</a><br>\n";
             }
+		use warnings;
         }
     if (!$_[4] && !$tconfig{'nomoduleindex'}) {
         my $idx = $this_module_info{'index_link'};
-        my $mi = $module_index_link || "/".get_module_name()."/$idx";
-        my $mt = $module_index_name || $text{'header_module'};
+        my $mi = "/".get_module_name()."/$idx";
+        my $mt = $text{'header_module'};
         print "<a href=\"$gconfig{'webprefix'}$mi\">$mt</a><br>\n";
         }
     if (ref($_[2]) eq "ARRAY" && !$ENV{'ANONYMOUS_USER'} &&
@@ -118,7 +140,7 @@ return $rv;
 sub theme_ui_pre_footer
 {
 my $rv;
-$rv .= "</div>\n"; # .module-content
+$rv .= "</div><!--.module-content -->\n";
 # XXX figure out where this ought to be... get rid of all the extras.
 #$rv .= <<EOL;
 #    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
@@ -162,8 +184,8 @@ sub theme_generate_icon
 my $w = !defined($_[4]) ? "width=48" : $_[4] ? "width=$_[4]" : "";
 my $h = !defined($_[5]) ? "height=48" : $_[5] ? "height=$_[5]" : "";
 
-print "<a href=\"/$module_name/$_[2]\" $_[3]>",
-	  "<img class='ui_icon' src=\"/$module_name/$_[0]\" alt=\"\" border=0 ",
+print "<a href=\"/".get_module_name()."/$_[2]\" $_[3]>",
+	  "<img class='ui_icon' src=\"/".get_module_name()."/$_[0]\" alt=\"\" border=0 ",
       "$w $h><br>\n";
 print "$_[1]</a>\n";
 }
@@ -238,13 +260,13 @@ EOF
 sub theme_ui_link
 {
 my ($href, $text, $class) = @_;
-return ("<a class='ui_link $class' href='".get_module_name."/$href'>$text</a>");
+return ("<a class='ui_link $class' href='".get_module_name()."/$href'>$text</a>");
 }
 
 sub theme_ui_img
 {
 my ($src, $alt, $title, $class, $tags) = @_;
-return ("<img src='".get_module_name."/".$src."' class='ui_img".($class ? " ".$class : "")."' alt='$alt' ".($title ? "title='$title'" : "").($tags ? " ".$tags : "").">");
+return ("<img src='".get_module_name()."/".$src."' class='ui_img".($class ? " ".$class : "")."' alt='$alt' ".($title ? "title='$title'" : "").($tags ? " ".$tags : "").">");
 }
 
 sub theme_ui_form_columns_table
@@ -336,15 +358,25 @@ return "<input class='form-control ui_password' ".
        ">";
 }
 
+# XXX Need to set Save buttons to class btn-primary
 sub theme_ui_button
 {
 my ($label, $name, $dis, $tags) = @_;
-return "<button type='button' class='btn btn-default".
+return "<button class='btn' type='button'".
        ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
-       " value=\"".quote_escape($label)."\"".
+       " value=\"".&quote_escape($label)."\"".
        ($dis ? " disabled=true" : "").
-       ($tags ? " ".$tags : "").">\n";
+       ($tags ? " ".$tags : "").">$label</button>\n";
 }
+#sub theme_ui_button
+#{
+#my ($label, $name, $dis, $tags) = @_;
+#return "<button type='button' class='btn btn-default".
+#       ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
+#       " value=\"".quote_escape($label)."\"".
+#       ($dis ? " disabled=true" : "").
+#       ($tags ? " ".$tags : "").">\n";
+#}
 
 sub theme_ui_buttons_start
 {
@@ -376,7 +408,7 @@ return "<form action='$script' class='ui_buttons_form'>\n".
 sub virtualmin_ui_show_cron_time
 {
 return theme_virtualmin_ui_show_cron_time(@_)
-    if (defined(theme_virtualmin_ui_show_cron_time));
+    if (defined(theme_virtualmin_ui_show_cron_time()));
 my ($name, $job, $offmsg) = @_;
 foreign_require("cron", "cron-lib.pl");
 my $rv;
@@ -464,7 +496,7 @@ if ($action eq 'create' || $action eq 'delete' || $action eq 'modify') {
 	}
 else {
 	# Only refesh if showing unread count
-	if (defined(mailbox::should_show_unread) &&
+	if (defined(mailbox::should_show_unread()) &&
 	    mailbox::should_show_unread($folder)) {
 		$ref = 1;
 		}
@@ -538,7 +570,7 @@ return theme_prehead();
 sub theme_ui_table_start
 {
 my ($heading, $tabletags, $cols, $tds, $rightheading) = @_;
-if (! $tabletags =~ /width/) { $tabletages .= " width=100%"; }
+if (! $tabletags =~ /width/) { $tabletags .= " width=100%"; }
 if (defined($main::ui_table_cols)) {
   # Push on stack, for nested call
   push(@main::ui_table_cols_stack, $main::ui_table_cols);
@@ -766,10 +798,6 @@ sub theme_ui_columns_end
 {
 my $rv;
 $rv = "</tbody> </table>\n";
-if ($COLUMNS_WRAPPER_OPEN == 1) { # Last wrapper
-	$rv .= "</td> </tr> </table>\n";
-	}
-$COLUMNS_WRAPPER_OPEN--;
 return $rv;
 }
 
@@ -861,7 +889,7 @@ my ($title, $name, $status, $url) = @_;
 my $rv;
 my $divid = "hiddendiv_$name";
 $rv .= "<button type='button' data-toggle='collapse' data-target='\#$divid'>$title</button>\n";
-$rv .= "<div class='$defclass collapse' id='$divid'>\n";
+$rv .= "<div class='collapse' id='$divid'>\n";
 return $rv;
 }
 
@@ -1087,16 +1115,6 @@ if (get_module_name() eq "virtual-server" && $orig eq "" &&
 print "Location: $url\n\n";
 }
 
-# XXX Need to set Save buttons to class btn-primary
-sub theme_ui_button
-{
-my ($label, $name, $dis, $tags) = @_;
-return "<button class='btn' type='button'".
-       ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
-       " value=\"".&quote_escape($label)."\"".
-       ($dis ? " disabled=true" : "").
-       ($tags ? " ".$tags : "").">$label</button>\n";
-}
 
 # XXX Need to set Save buttons to class btn-primary
 sub theme_ui_submit
@@ -1113,8 +1131,8 @@ return "<button class='btn ui_submit' type='submit'".
 sub theme_ui_opt_textbox
 {
 my ($name, $value, $size, $opt1, $opt2, $dis, $extra, $max, $tags) = @_;
-my $dis1 = js_disable_inputs([ $name, @$extra ], [ ]);
-my $dis2 = js_disable_inputs([ ], [ $name, @$extra ]);
+my $dis1 = js_disable_inputs([ $name, @{ $extra // [] } ], [ ]);
+my $dis2 = js_disable_inputs([ ], [ $name, @{ $extra // [] } ]);
 my $rv;
 $size = ui_max_text_width($size);
 $rv .= ui_radio($name."_def", $value eq '' ? 1 : 0,
@@ -1424,7 +1442,7 @@ my ($script, $method, $target, $tags) = @_;
 # add directory, unless already starts with a /
 unless ( $script =~ /^\// )
 {
-  $script = "/" . get_module_name . "/$script";
+  $script = "/" . get_module_name() . "/$script";
 }
 my $rv;
 $rv .= "<form class='form-horizontal ui_form' role='form' action='".html_escape($script)."' ".

@@ -1,5 +1,5 @@
 body {
-    padding-top: 60px;
+    padding-top: 50px;
 }
 
 #mainContainer {
@@ -95,6 +95,19 @@ footer {
     left: 0;
 }
 
+#leftSide {
+    background-color: #F4F4F4;
+    box-shadow: 3px 0px 2px 2px rgba(0, 0, 0, 0.07);
+}
+
+#leftSide.col-md-3 {
+  padding: 0px;
+}
+
+#rightSide.col-md-9 {
+  padding-right: 0px;
+}
+
 #navSearch form {
     margin-bottom: 0;
     margin-top: 6px;
@@ -108,15 +121,6 @@ footer {
     margin: 3px;
 }
 
-#leftContent .leftlink {
-    margin: 4px 7px;
-}
-
-.linkwithicon > img {
-    float: left;
-    margin: 6px 0 0 10px;
-}
-
 .aftericon.leftlink {
     float: left;
 }
@@ -128,7 +132,6 @@ footer {
 .innerScroll {
   overflow: auto;
   overflow-x: hidden;
-  padding-right: 10px;
 }
 
 #headln2r {
@@ -212,44 +215,94 @@ footer {
   margin-left: 20px;
 }
 
-.sidebar .sidebar-nav.navbar-collapse {
-  padding-right: 0;
-  padding-left: 0;
+/*
+    Component: Sidebar
+--------------------------
+*/
+.sidebar {
+  margin-bottom: 5px;
 }
-.sidebar .sidebar-search {
-  padding: 15px;
+.sidebar .sidebar-form input:focus {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border-color: transparent!important;
 }
-.sidebar ul li {
-  border-bottom: 1px solid #e7e7e7;
+.sidebar .sidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.sidebar ul li a.active {
-  background-color: #eee;
+.sidebar .sidebar-menu > li {
+  margin: 0;
+  padding: 0;
 }
-.sidebar .arrow {
-  float: right;
+.sidebar .sidebar-menu li > a {
+  padding: 12px 5px 12px 15px;
+  display: block;
 }
-.sidebar .fa.arrow:before {
-  content: "\f104";
+.sidebar .sidebar-menu > li > a > .fa,
+.sidebar .sidebar-menu > li > a > .glyphicon,
+.sidebar .sidebar-menu > li > a > .ion {
+  width: 20px;
 }
-.sidebar .active>a>.fa.arrow:before {
-  content: "\f107";
+.sidebar .sidebar-menu .treeview-menu {
+  display: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
-.sidebar .nav-second-level li,
-.sidebar .nav-third-level li {
-  border-bottom: 0!important;
+.sidebar .sidebar-menu .treeview-menu > li {
+  margin: 0;
 }
-.sidebar .nav-second-level li a {
-  padding-left: 37px;
+.sidebar .sidebar-menu .treeview-menu > li > a {
+  padding: 5px 5px 5px 15px;
+  display: block;
+  font-size: 14px;
+  margin: 0px 0px;
 }
-.sidebar .nav-third-level li a {
-  padding-left: 52px;
+.sidebar .sidebar-menu .treeview-menu > li > a > .fa,
+.sidebar .sidebar-menu .treeview-menu > li > a > .glyphicon,
+.sidebar .sidebar-menu .treeview-menu > li > a > .ion {
+  width: 20px;
 }
+
+.sidebar-menu > li:first-of-type > a {
+  border-top: 1px solid #FFF;
+}
+
+.sidebar {
+  border-bottom: 1px solid #fff;
+}
+.sidebar .sidebar-menu > li {
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #dbdbdb;
+}
+.sidebar .sidebar-menu > li:first-of-type {
+  border-top: 1px solid #dbdbdb;
+}
+.sidebar .sidebar-menu > li:first-of-type a {
+  border-top: 1px solid #fff;
+}
+.sidebar .sidebar-menu li a {
+  margin-right: 1px;
+}
+.sidebar .sidebar-menu li a:hover,
+.sidebar .sidebar-menu li.active a {
+  background: #f9f9f9;
+}
+.sidebar .sidebar-menu li .treeview-menu {
+  margin: 0 1px;
+  background: #f9f9f9;
+}
+.sidebar a:hover {
+  text-decoration: none;
+}
+
+
 @media(min-width:768px) {
   .sidebar {
     z-index: 1;
-    position: absolute;
-    width: 250px;
-    margin-top: 51px;
   }
 }
 

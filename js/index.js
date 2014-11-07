@@ -14,7 +14,7 @@
 
         // Attach events to left menu a hrefs
         // .leftlink a, .mode a, .linkwithicon a
-        $('#leftContent').on("click", '.leftlink a, .mode a, .linkwithicon a', function(event) {
+        $('#leftContent').on("click", '.leftlink a, .treeview li a, .mode a, .linkwithicon a', function(event) {
             var target = $(this).prop('target');
             var href = $(this).prop('href');
             requestGet(href, !target ? 'left' : target);
@@ -69,15 +69,15 @@
         });
         calculateColumnsSize();
 
-        $("#leftSide").mouseleave(function () {
-            $("#leftSide .innerScroll").css({ 'padding-right': (getScrollBarWidth() + 10) + 'px', 'overflow': 'hidden' });
-        });
+//        $("#leftSide").mouseleave(function () {
+//            $("#leftSide .innerScroll").css({ 'padding-right': (getScrollBarWidth() + 10) + 'px', 'overflow': 'hidden' });
+//        });
 
-        $("#leftSide").mouseenter(function () {
-            $("#leftSide .innerScroll").css({ 'padding-right': '10px', 'overflow': 'auto' });
-        });
+//        $("#leftSide").mouseenter(function () {
+//            $("#leftSide .innerScroll").css({ 'padding-right': '10px', 'overflow': 'auto' });
+//        });
 
-        $("#leftSide").mouseleave();
+//        $("#leftSide").mouseleave();
 
         $(window).bind('popstate',
             function(event) {
@@ -348,6 +348,9 @@
             $('#leftContent').fadeTo(200, 1);
 
             lastLoadedUrlLeft = href;
+
+            // Enable treeview menu
+            $("#leftContent .treeview").tree();
         });
     };
 
@@ -367,4 +370,28 @@
         }
         return href;
     };
+  
 }(jQuery));
+
+//Loads the correct sidebar on window load,
+//collapses the sidebar on window resize.
+// Sets the min-height of #page-wrapper to window size
+//$(function() {
+//    $(window).bind("load resize", function() {
+//        topOffset = 50;
+//        width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
+//        if (width < 768) {
+//            $('div.navbar-collapse').addClass('collapse')
+//            topOffset = 100; // 2-row-menu
+//        } else {
+//            $('div.navbar-collapse').removeClass('collapse')
+//       }
+//
+//        height = (this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height;
+//        height = height - topOffset;
+//        if (height < 1) height = 1;
+//        if (height > topOffset) {
+//            $("#page-wrapper").css("min-height", (height) + "px");
+//        }
+//    })
+//})

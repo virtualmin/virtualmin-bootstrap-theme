@@ -122,7 +122,7 @@ $sid = $server ? $server->{'id'} : undef;
 #if (@has > 1) {
 if ( 0 ) { # XXX Temporarily skip this...need to re-add in index.html
 	print "<div class='mode'>";
-	foreach $m (@has) {
+	foreach my $m (@has) {
 		if ($m ne $mode) {
 			print "<a href='left.cgi?mode=$m&amp;dom=$did'>";
 			}
@@ -141,7 +141,9 @@ if ( 0 ) { # XXX Temporarily skip this...need to re-add in index.html
 	print "</div>";
 	}
 
-print "<div class='sidebar-nav'>\n";
+print "<section class='sidebar' role='navigation'>\n";
+print "<ul class='sidebar-menu' id='side-menu'>\n";
+
 if (($mode eq "webmin" || $mode eq "usermin") &&
     $gaccess{'webminsearch'} ne '0') {
 	# Left form is for searching Webmin
@@ -216,11 +218,10 @@ elsif ($mode eq "mail") {
 #	}
 #print "<hr>\n";
 
-$selwidth = (get_left_frame_width() - 80)."px";
 if ($mode eq "virtualmin" && @doms) {
 	# Show Virtualmin servers this user can edit, plus links for various
 	# functions within each
-	print "<div class='domainmenu'>\n";
+	print "<li class='domainmenu'>\n";
 	print ui_hidden("mode", $mode);
 	if ($virtual_server::config{'display_max'} &&
 	    @doms > $virtual_server::config{'display_max'}) {
@@ -243,14 +244,13 @@ if ($mode eq "virtualmin" && @doms) {
 					"style='font-style:italic'" : "" ] }
 			      @doms ],
 			1, 0, 0, 0,
-			"onChange='form.submit() $sel'".
-			"style='width:$selwidth'");
+			"onChange='form.submit() $sel'");
 		}
 	print "<input type='image' src='images/ok.gif' alt='' class='goArrow'>\n";
-	foreach $a (@admincats) {
+	foreach my $a (@admincats) {
 		print ui_hidden($a, 1),"\n" if ($in{$a});
 		}
-	print "</div>\n";
+	print "</li><!-- domainmenu -->\n";
 	if (!$d) {
 		if ($in{'dname'}) {
 			print "\n";
@@ -272,8 +272,7 @@ if ($mode eq "virtualmin" && @doms) {
 				'leftlink');
 			}
 		else {
-			print "<div class='leftlink'><b>",
-			      text('left_nomore'),"</b></div>\n";
+			print "<li><b>", text('left_nomore'),"</b></li>\n";
 			}
 		}
 
@@ -292,8 +291,6 @@ if ($mode eq "virtualmin" && @doms) {
 
 	# Show others by category (except those for creation, which appear
 	# at the top)
-	print "<div id='cats-accordion' class='panel-group'>\n";
-	print "<div class='panel panel-default'>\n";
 	my @cats = unique(map { $_->{'cat'} } @buts);
 	foreach my $c (@cats) {
 		next if ($c eq 'objects' || $c eq 'create');
@@ -312,31 +309,28 @@ if ($mode eq "virtualmin" && @doms) {
 			}
 		print_category_closer();
 		}
-
-	print "</div></div>\n"; # accordion-group accordion
-	print "<hr>\n";
 	nodomain:
 	}
 elsif ($mode eq "virtualmin") {
 	# No domains
-	print "<div class='leftlink'>";
+	print "<li class='leftlink'>";
 	if (@alldoms) {
 		print $text{'left_noaccess'};
 		}
 	else {
 		print $text{'left_nodoms'};
 		}
-	print "</div>\n";
+	print "</li>\n";
 
 	# Show domain creation link
 	if (virtual_server::can_create_master_servers() ||
 	    virtual_server::can_create_sub_servers()) {
-		print "<div class='leftlink'><a href='virtual-server/domain_form.cgi?generic=1' target=right>$text{'left_generic'}</a></div>\n";
+		print "<li class='leftlink'><a href='virtual-server/domain_form.cgi?generic=1' target=right>$text{'left_generic'}</a></li>\n";
 		}
 	}
 elsif ($mode eq "vm2" && @servers) {
 	# Show managed servers
-	print "<div class='domainmenu'>\n";
+	print "<li class='domainmenu'>\n";
 	print ui_hidden("mode", $mode);
 	print ui_select("sid", $sid,
 		[ map { [ $_->{'id'}, ("&nbsp;&nbsp;" x $_->{'indent'}).
@@ -344,7 +338,7 @@ elsif ($mode eq "vm2" && @servers) {
 		1, 0, 0, 0,
 		"onChange='form.submit()' style='width:$selwidth'");
 	print "<input type='image' src='images/ok.gif' alt='' class='goArrow'>\n";
-	print "</div>\n";
+	print "</li>\n";
 	}
 elsif ($mode eq "vm2") {
 	# No servers
@@ -362,8 +356,6 @@ if ($mode eq "virtualmin") {
 	# Show Virtualmin global links
 	my @buts = virtual_server::get_all_global_links();
 	my @tcats = unique(map { $_->{'cat'} } @buts);
-	print "<div id='global-accordion' class='panel-group'>\n";
-        print "<div class='panel panel-default'>\n";
 
 	foreach my $tc (@tcats) {
 		my @incat = grep { $_->{'cat'} eq $tc } @buts;
@@ -384,12 +376,11 @@ if ($mode eq "virtualmin") {
 				}
 			}
 		}
-		print"</div></div>\n";
 	}
 
 if ($mode eq "mail") {
 	# Work out possible folder heirarchies
-	foreach $f (@folders) {
+	foreach my $f (@folders) {
 		$sep = $f->{'name'} =~ /\// ? "/" : "\\.";
 		$sepchar = $f->{'name'} =~ /\// ? "/" : ".";
 		@w = split($sep, $f->{'name'});
@@ -404,7 +395,7 @@ if ($mode eq "mail") {
 	$heiropen{""} = 1;
 
 	# Show mail folders
-	foreach $f (@folders) {
+	foreach my $f (@folders) {
 		$fid = mailbox::folder_name($f);
 
 		# Work out if a star is needed
@@ -545,15 +536,17 @@ if ($mode eq "vm2" && $server) {
 	# Get actions for this system provided by Cloudmin
 	@actions = grep { $_ && keys(%$_) > 0 }
 			server_manager::get_server_actions($server);
-	foreach $b (@actions) {
+	foreach my $b (@actions) {
 		$b->{'desc'} = $text{'leftvm2_'.$b->{'id'}}
 			if ($text{'leftvm2_'.$b->{'id'}});
 		}
 
 	# Work out action categories, and show those under each
 	my @cats = sort { $a cmp $b } &unique(map { $_->{'cat'} } @actions);
-	print "<div id='action-accordion' class='panel-group'>\n";
-	print "<div class='panel panel-default'>\n";
+	#print "<div id='action-accordion' class='panel-group'>\n";
+	#print "<div class='panel panel-default'>\n";
+    print "<section class='sidebar role='navigation'>\n";
+    print "<ul class='sidebar-menu nav' id='side-menu'>\n";
 
 	foreach my $c (@cats) {
 		my @incat = grep { $_->{'cat'} eq $c } @actions;
@@ -588,7 +581,7 @@ if ($mode eq "vm2" && $server) {
 			}
 		}
 	}
-	print "</div></div>\n";
+	print "</ul></section> <!-- sidebar-nav -->\n";
 
 if ($mode eq "vm2") {
 	# Get global settings, add Module Config
@@ -609,10 +602,10 @@ if ($mode eq "vm2") {
 	if (@ugcats) {
 		print "<hr>\n";
 		}
-	print "<div id='vm2cats-accordion' class='accordion'>\n";
-	print "<div class='accordion-group'>\n";
+	print "<li id='vm2cats-accordion'>\n";
+	print "<ul class='accordion-group'>\n";
 
-	foreach $c (@ugcats) {
+	foreach my $c (@ugcats) {
 		print_category_opener($c, undef,
 			       $server_manager::text{'cat_'.$c} ||
 			       $text{'left_vm2'.$c},
@@ -637,7 +630,7 @@ if ($mode eq "vm2") {
 		@newlinks = ( @createlinks, @addlinks );
 		@createlinks = @addlinks = ( );
 		}
-	foreach $ml ([ "create", \@createlinks ],
+	foreach my $ml ([ "create", \@createlinks ],
 		     [ "add", \@addlinks ],
 		     [ "new", \@newlinks ]) {
 		($m, $l) = @$ml;
@@ -652,7 +645,7 @@ if ($mode eq "vm2") {
 			print_category_opener($m, undef,
 					       $text{'left_vm2'.$m});
 			#print "<div class='itemhidden' id='$m'>\n";
-			foreach $c (@$l) {
+			foreach my $c (@$l) {
 				$form = $c->{'link'} ? $c->{'link'} :
 				        $c->{'create'} ? 'create_form.cgi' :
 						         'add_form.cgi';
@@ -665,8 +658,8 @@ if ($mode eq "vm2") {
 		}
 
 	# Show list of all systems
-	print "<div class='linkwithicon'><img src='images/vm2-small.png' alt=''><b><div class='aftericon'><a href='server-manager/index.cgi' target=right>$text{'left_vm2'}</a></b></div></div>\n";
-	print "</div></div>\n";
+	print "<li class='linkwithicon'><img src='images/vm2-small.png' alt=''><b><div class='aftericon'><a href='server-manager/index.cgi' target=right>$text{'left_vm2'}</a></b></div></li>\n";
+	print "</ul></li>\n";
 	}
 
 if ($mode eq "webmin" || $mode eq "usermin") {
@@ -679,7 +672,7 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 	if ($gconfig{"notabs_${base_remote_user}"} == 2 ||
 	    $gconfig{"notabs_${base_remote_user}"} == 0 && $gconfig{'notabs'}) {
 		# Show modules in one list
-		foreach $minfo (map { @{$_->{'modules'}} } @cats) {
+		foreach my $minfo (map { @{$_->{'modules'}} } @cats) {
 			print_category_link("$minfo->{'dir'}/",
 				     $minfo->{'desc'},
 				     undef,
@@ -689,7 +682,7 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 		}
 	else {
 		# Show all modules under categories
-		foreach $c (@cats) {
+		foreach my $c (@cats) {
 			# Show category opener, plus modules under it
 			print_category_opener($c->{'code'}, \@catnames,
 				$c->{'unused'} ?
@@ -697,7 +690,7 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 				$c->{'desc'},
 			        'webmin-accordion');
 			#print "<div class='itemhidden' id='$c->{'code'}'>";
-			foreach $minfo (@{$c->{'modules'}}) {
+			foreach my $minfo (@{$c->{'modules'}}) {
 				print_category_link("$minfo->{'dir'}/",
 					     $minfo->{'desc'},
 					     undef,
@@ -707,9 +700,7 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 			print_category_closer();
 			}
 		}
-	print"</div></div>\n";
-
-	print "<hr>\n";
+	print"</section>\n";
 	}
 
 # Show system information link
@@ -808,16 +799,13 @@ $others .= "&amp;mode=$mode";
 $label = $c eq "others" ? $text{'left_others'} : $label;
 
 # Show link to close or open catgory
-print "<div class='panel-heading'>\n";
-print "<div class='panel-title'><a class='accordion-toggle' data-toggle='collapse' data-parent='#$parent' data-target='#$c'> $label </a></div>\n";
-print "</div>\n";
-print "<div id='$c' class='panel-collapse collapse'>\n";
-print "  <div class='panel-body'>\n";
+print "<li class='treeview'><a href='#'><span>$label</span><i class='pull-right glyphicon glyphicon-chevron-left'></i></a>\n";
+print "<ul class='treeview-menu'>\n";
 }
 
 sub print_category_closer
 {
-print "</div></div>\n";
+print "</ul></li>\n";
 }
 
 sub print_category_link
@@ -829,26 +817,21 @@ sub category_link
 {
 my ($link, $label, $image, $noimage, $target, $noindent) = @_;
 $target ||= "right";
-return "<div class='leftlink'>" .
-       "<a target='$target' href='$link'>$label</a></div>\n";
+return "<li class='leftlink'><a target='$target' href='$link'>$label</a></li>\n";
 }
 
 sub print_virtualmin_link
 {
 my ($l, $cls, $icon) = @_;
 my $t = $l->{'target'} || "right";
+print "<li clas='leftlink'>\n";
 if ($icon) {
-	print "<div class='linkwithicon'><img src='images/$l->{'icon'}.png' alt=''>\n";
+	print "<div class='linkwithicon $cls'><img src='images/$l->{'icon'}.png' alt=''></div>\n";
 	}
-print "<div class='$cls'>" if $cls;
 print "<b>" if ($l->{'icon'} eq 'index');
-print "<a href='$l->{'url'}' target=$t>$l->{'title'}</a><br>";
+print "<a href='$l->{'url'}' target=$t>$l->{'title'}</a>";
 print "</b>" if ($l->{'icon'} eq 'index');
-print "</div>" if $cls;
-if ($icon) {
-	print "</div>";
-	}
-print "\n";
+print "</li>\n";
 }
 
 sub shorten_hostname
