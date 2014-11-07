@@ -68,11 +68,6 @@ body {
             box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2) inset, 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
-footer {
-    color: #777777;
-    text-align: center;
-}
-
 .loading {
     background: url("../images/loading.gif") no-repeat scroll center 100px #1A1A1A;
     border-radius: 4px;
@@ -87,7 +82,11 @@ footer {
 }
 
 #rightContent {
-    padding-top: 9px;
+    //padding: 0px, 10px, 10px, 0px;
+    padding-left: 0px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 0px;
 }
 
 #leftSide .loading {
@@ -146,13 +145,13 @@ footer {
     float: right;
 }
 
-    #rightNav .hiddenTitle {
-        display: none;
-    }
+#rightNav .hiddenTitle {
+    display: none;
+}
 
-    #rightNav .hiddenTitle, #rightNav .visibleTitle {
-        margin-left: 3px;
-    }
+#rightNav .hiddenTitle, #rightNav .visibleTitle {
+    margin-left: 3px;
+}
 
 
 @media (max-width: 992px) {

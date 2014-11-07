@@ -93,12 +93,12 @@
             });
     });
 
-    // Set columns height to correct size
+    // Set columns height to correct size XXX -40 needed for footer?
     var calculateColumnsSize = function() {
         $('.innerScroll').css(
             {
-                'max-height': ($(window).height() - $('#topnav').height() - 40) + 'px',
-                'min-height': ($(window).height() - $('#topnav').height() - 40) + 'px'
+                'max-height': ($(window).height() - $('#topnav').height()) + 'px',
+                'min-height': ($(window).height() - $('#topnav').height()) + 'px'
             }
         );
     };
