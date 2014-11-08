@@ -798,8 +798,12 @@ $others .= "&amp;dom=$did";
 $others .= "&amp;mode=$mode";
 $label = $c eq "others" ? $text{'left_others'} : $label;
 
+# Lookup whether we have a category icon, if not, it'll use generic
+my $icon_class = lookup_icon($c);
+
 # Show link to close or open catgory
-print "<li class='treeview'><a href='#'><span>$label</span><i class='pull-right glyphicon glyphicon-chevron-left'></i></a>\n";
+print "<li class='treeview'><a href='#'><i class='pull-left glyphicon glyphicon-$icon_class'></i><span>$label</span><i class='pull-right glyphicon glyphicon-chevron-left'></i></a>\n";
+print "<!-- Category = $c -->\n";
 print "<ul class='treeview-menu'>\n";
 }
 
@@ -853,3 +857,23 @@ $rv =~ s/ /&nbsp;/g;
 return $rv;
 }
 
+# lookup_icon(category)
+# Checks a map for which glyphicon to use for a menu category, if none, use generic
+sub lookup_icon {
+	my ($c) = @_;
+	my %icon_map = (
+		'tmpl_setting' => 'wrench',
+		'tmpl_email' => 'envelope',
+		'tmpl_custom' => 'edit',
+		'tmpl_ip' => 'globe',
+		'tmpl_check' => 'ok-sign',
+		'tmpl_add' => 'plus',
+		'tmpl_backup' => 'hdd',
+	);
+
+	if (defined $icon_map{"$c"}) {
+		return $icon_map{"$c"};
+	} else {
+		return "flash";
+	}
+}

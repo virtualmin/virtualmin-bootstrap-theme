@@ -260,10 +260,12 @@ body {
   font-size: 14px;
   margin: 0px 0px;
 }
-.sidebar .sidebar-menu .treeview-menu > li > a > .fa,
-.sidebar .sidebar-menu .treeview-menu > li > a > .glyphicon,
-.sidebar .sidebar-menu .treeview-menu > li > a > .ion {
+.sidebar .sidebar-menu .treeview-menu > li > a .fa,
+.sidebar .sidebar-menu li.treeview a .glyphicon,
+.sidebar .sidebar-menu .treeview-menu > li > a .ion {
   width: 20px;
+  line-height: 1.42857;
+  font-size: 14px;
 }
 
 .sidebar .sidebar-menu li a {
@@ -281,10 +283,10 @@ body {
   text-decoration: none;
 }
 .sidebar ul {
-  font-weight: bold;
+  font-size: 15px;
 }
 .sidebar .treeview li {
-  font-weight: normal;
+  font-size: 15px;
 }
 
 @media(min-width:768px) {
