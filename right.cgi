@@ -357,18 +357,18 @@ if ($level == 0) {		# Master admin
 		if (!$sects->{'noupdates'} && $hasposs && !@poss && $canposs) {
 			# Re-assure the user that everything is up to date
 			push(@pkgmsgs, &text('right_upall',
-				     "security-updates/index.cgi?mode=all"));
+				     "/security-updates/index.cgi?mode=all"));
 			}
 		if (!$sects->{'noupdates'} && $hasposs && @inst && $canposs) {
 			# Tell the user about extra packages
 			push(@pkgmsgs, text('right_upinst', scalar(@inst),
-				     "security-updates/index.cgi?mode=new"));
+				     "/security-updates/index.cgi?mode=new"));
 			}
 		if (!$sects->{'noupdates'} && $hasposs && @allposs &&
 		    scalar(@allposs) != scalar(@poss) && $canposs) {
 			# Tell the user about non-virtualmin packages
 			push(@pkgmsgs, &text('right_upsys', scalar(@allposs),
-			     "security-updates/index.cgi?mode=updates&all=1"));
+			     "/security-updates/index.cgi?mode=updates&all=1"));
 			}
 		if (@pkgmsgs) {
 			print ui_table_row($text{'right_pkgupdesc'},
@@ -385,11 +385,11 @@ if ($level == 0) {		# Master admin
 		      "width=100%", 1,
               "updates", $open{'updates'});
 
-		print ui_form_start("security-updates/update.cgi");
+		print ui_form_start("/security-updates/update.cgi");
 		print text(
 			@poss > 1 ? 'right_upcount' : 'right_upcount1',
 			scalar(@poss),
-			'security-updates/index.cgi?mode=updates'),"<p>\n";
+			'/security-updates/index.cgi?mode=updates'),"<p>\n";
 		print ui_columns_start([ $text{'right_upname'},
 					  $text{'right_updesc'},
 					  $text{'right_upver'} ], "80%");

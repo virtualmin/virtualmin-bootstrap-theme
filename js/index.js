@@ -34,7 +34,7 @@
         });
 
         // Form submit buttons
-        $('.container-fluid').on('submit', 'form', function(event) {
+        $('body').on('submit', 'form', function(event) {
             var target = !$(this).prop('target') ? 'right' : $(this).prop('target');
             requestPost($(this), target);
             event.preventDefault();
@@ -231,10 +231,11 @@
         // Hiding the old content
         $('#rightContent').fadeTo(200, 0.1, function () {
             // Prevent bad HTML from halting execution - Fix edit virtual server
-            //try {
+            try {
                 $('#rightContent').html(data);
-            //} catch (e) {
-            //}
+            } catch (e) {
+                console.log("Javascript error: ".e);
+            }
 
             // Hack to fix button table broken html - Fix edit virtual server
             $('#rightContent .ui_buttons_table button[type=submit]').click(function (event) {

@@ -556,7 +556,6 @@ if ($mode eq "vm2" && $server) {
 				$server_manager::text{'cat_'.$c} ||
 				$incat[0]->{'catname'},
 			        'action-accordion');
-			#print "<div class='itemhidden' id='cat_$c'>\n";
 			}
 		foreach my $b (sort { $b->{'priority'} <=> $a->{'priority'} ||
 				      ($a->{'title'} || $a->{'desc'}) cmp
@@ -571,7 +570,6 @@ if ($mode eq "vm2" && $server) {
 				$url = "server-manager/save_serv.cgi?id=$server->{'id'}&amp;$b->{'id'}=1";
 				}
 			$title = $b->{'title'} || $b->{'desc'};
-			# XXX class=leftlink
 			print_category_link($url, $title,
 				     undef, undef, $b->{'target'}, !$c);
 			}
@@ -666,8 +664,10 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 	# Work out what modules and categories we have
 	@cats = get_visible_modules_categories();
 	@catnames = map { $_->{'code'} } @cats;
-	print "<div id='webmin-accordion' class='panel-group'>\n";
-	print "<div class='panel panel-default'>\n";
+	#print "<div id='webmin-accordion' class='panel-group'>\n";
+	#print "<div class='panel panel-default'>\n";
+    print "<section class='sidebar role='navigation'>\n";
+    print "<ul class='sidebar-menu nav' id='side-menu'>\n";
 
 	if ($gconfig{"notabs_${base_remote_user}"} == 2 ||
 	    $gconfig{"notabs_${base_remote_user}"} == 0 && $gconfig{'notabs'}) {
