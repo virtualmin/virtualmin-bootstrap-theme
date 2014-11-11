@@ -664,7 +664,7 @@ if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
     $rv .= "</div>\n";
     $main::ui_table_pos = 0;
     }
-$rv .= "<div class='row ui_table_row'>\n" if ($main::ui_table_pos%$main::ui_table_cols == 0);
+$rv .= "<div class='row ui_table_row'>\n" if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0);
 
 $rv .= "<div class='col-md-6 form-group ui_form_pair'>\n";
 if (defined($label)) {
@@ -674,7 +674,7 @@ $rv .= "<div class='ui_form_value'>$value</div>\n";
 $rv .= "</div>\n";
 
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
-if ($main::ui_table_pos%$main::ui_table_cols == 0) {
+if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0) {
     $rv .= "</div> <!-- row --> \n";
     $main::ui_table_pos = 0;
     }

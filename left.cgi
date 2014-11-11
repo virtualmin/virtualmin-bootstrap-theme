@@ -269,7 +269,7 @@ if ($mode eq "virtualmin" && @doms) {
 				{ 'url' => "virtual-server/domain_form.cgi?".
 					   "generic=1&amp;gparent=$d->{'id'}",
 				  'title' => $text{'left_generic'} },
-				'leftlink');
+				'leftlink', 'plus');
 			}
 		else {
 			print "<li><b>", text('left_nomore'),"</b></li>\n";
@@ -286,7 +286,7 @@ if ($mode eq "virtualmin" && @doms) {
 	# Show 'objects' category actions at top level
 	my @incat = grep { $_->{'cat'} eq 'objects' } @buts;
 	foreach my $b (@incat) {
-		print_virtualmin_link($b, 'leftlink');
+		print_virtualmin_link($b, 'leftlink', 'list');
 		}
 
 	# Show others by category (except those for creation, which appear
@@ -305,7 +305,7 @@ if ($mode eq "virtualmin" && @doms) {
                                         ($b->{'title'} || $b->{'desc'})} @incat;
 			}
 		foreach my $b (@incat) {
-			print_virtualmin_link($b, 'leftlink');
+			print_virtualmin_link($b, 'leftlink', 'flash');
 			}
 		print_category_closer();
 		}
@@ -325,7 +325,10 @@ elsif ($mode eq "virtualmin") {
 	# Show domain creation link
 	if (virtual_server::can_create_master_servers() ||
 	    virtual_server::can_create_sub_servers()) {
-		print "<li class='leftlink'><a href='virtual-server/domain_form.cgi?generic=1' target=right>$text{'left_generic'}</a></li>\n";
+		print_virtualmin_link(
+			{ 'url' => "virtual-server/domain_form.cgi?generic=1",
+				'title' => $text{'left_generic'}},
+			'leftlink', 'plus');
 		}
 	}
 elsif ($mode eq "vm2" && @servers) {
@@ -824,16 +827,26 @@ $target ||= "right";
 return "<li class='leftlink'><a target='$target' href='$link'>$label</a></li>\n";
 }
 
+# $l = reference
+# $cls extra classes
+# $icon glyphicon name
 sub print_virtualmin_link
 {
 my ($l, $cls, $icon) = @_;
 my $t = $l->{'target'} || "right";
-print "<li clas='leftlink'>\n";
-if ($icon) {
-	print "<div class='linkwithicon $cls'><img src='images/$l->{'icon'}.png' alt=''></div>\n";
-	}
+my $glyphicon;
+if (defined $icon) {
+	$glyphicon = "glyphicon glyphicon-$icon";
+} else {
+	$glyphicon = "glyphicon glyphicon-flash";
+}
+print "<li class='leftlink'>\n";
 print "<b>" if ($l->{'icon'} eq 'index');
-print "<a href='$l->{'url'}' target=$t>$l->{'title'}</a>";
+print "<a href='$l->{'url'}' target='$t'>";
+if ($icon) {
+	print "<i class='pull-left linkwithicon $glyphicon'></i>";
+	}
+print "$l->{'title'}</a>";
 print "</b>" if ($l->{'icon'} eq 'index');
 print "</li>\n";
 }
@@ -867,7 +880,7 @@ sub lookup_icon {
 		'tmpl_custom' => 'edit',
 		'tmpl_ip' => 'globe',
 		'tmpl_check' => 'ok-sign',
-		'tmpl_add' => 'plus',
+		'tmpl_add' => 'plus-sign',
 		'tmpl_backup' => 'hdd',
 	);
 

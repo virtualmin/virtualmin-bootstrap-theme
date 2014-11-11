@@ -240,6 +240,26 @@ body {
   padding: 12px 5px 12px 15px;
   display: block;
 }
+.sidebar .sidebar-menu li .treeview-menu {
+  margin: 0 1px;
+  background: #f9f9f9;
+}
+.sidebar a:hover {
+  text-decoration: none;
+}
+.sidebar ul {
+  font-size: 15px;
+}
+.sidebar .treeview li {
+  font-size: 15px;
+}
+.sidebar .leftlink .linkwithicon a {
+  padding: 5px 5px 5px 15px;
+  font-size: 15px;
+}
+.sidebar .leftlink .linkwithicon a.active {
+  background: #f9f9f9;
+}
 .sidebar .sidebar-menu > li > a > .fa,
 .sidebar .sidebar-menu > li > a > .glyphicon,
 .sidebar .sidebar-menu > li > a > .ion {
@@ -262,6 +282,7 @@ body {
 }
 .sidebar .sidebar-menu .treeview-menu > li > a .fa,
 .sidebar .sidebar-menu li.treeview a .glyphicon,
+.sidebar a .glyphicon,
 .sidebar .sidebar-menu .treeview-menu > li > a .ion {
   width: 20px;
   line-height: 1.42857;
@@ -274,19 +295,6 @@ body {
 .sidebar .sidebar-menu li a:hover,
 .sidebar .sidebar-menu li.active a {
   background: #f9f9f9;
-}
-.sidebar .sidebar-menu li .treeview-menu {
-  margin: 0 1px;
-  background: #f9f9f9;
-}
-.sidebar a:hover {
-  text-decoration: none;
-}
-.sidebar ul {
-  font-size: 15px;
-}
-.sidebar .treeview li {
-  font-size: 15px;
 }
 
 @media(min-width:768px) {
