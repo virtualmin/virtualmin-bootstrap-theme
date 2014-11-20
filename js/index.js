@@ -41,8 +41,8 @@
         });
 
         // Config section select dropdown menu XXX make prev and next buts work.
-        $('#rightContent').on('change', '#config_section', function () {
-            $('#config_section_form').trigger('submit');
+        $('#rightContent').on('change', '#config_section, .reload-on-change', function () {
+            $('#rightContent select').trigger('submit');
         });
 
         // Attach events to navbar hrefs

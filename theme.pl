@@ -1355,10 +1355,14 @@ sub theme_ui_select
 {
 my ($name, $value, $opts, $size, $multiple, $missing, $dis, $js) = @_;
 my $rv;
-$rv .= "<select class='form-control ui_select' name=\"".quote_escape($name)."\"".
+my $extraclass;
+if ( $js =~ /onChange='form.submit/ ) {
+	$extraclass = "reload-on-change";
+}
+$rv .= "<select class='form-control ui_select $extraclass' name=\"".quote_escape($name)."\"".
        ($size ? " size=$size" : "").
        ($multiple ? " multiple" : "").
-       ($dis ? " disabled=true" : "")." ".$js.">\n";
+       ($dis ? " disabled=true" : "").">\n";
 my ($o, %opt, $s);
 my %sel = ref($value) ? ( map { $_, 1 } @$value ) : ( $value, 1 );
 foreach $o (@$opts) {
@@ -1453,6 +1457,35 @@ $rv .= "<form class='form-horizontal ui_form' role='form' action='".html_escape(
     ($target ? " target=$target" : "").
         " ".$tags.
        ">\n";
+return $rv;
+}
+
+# vui-lib.pl funtion overrides
+
+sub theme_virtualmin_ui_rating_selector
+{
+my ($name, $value, $max, $cgi) = @_;
+$value ||= 0;
+my $rv;
+if (!$main::done_virtualmin_ui_rating_selector++) {
+    # Generate highlighting Javascript code
+    #$rv .= &virtualmin_ui_rating_selector_javascript();
+    }
+for($i=1; $i<=$max; $i++) {
+    local $img = $i <= $value ? "staron.gif" : "staroff.gif";
+    if ($cgi) {
+        local $cgiv = $cgi;
+        $cgiv .= ($cgi =~ /\?/ ? "&" : "?");
+        $cgiv .= $name."=".$i;
+        $rv .= "<a href='$cgiv' id=$name$i ".
+#         "onMouseOver='rating_selector_entry(\"$name\", $i, $max)' ".
+#         "onMouseOut='rating_selector_exit(\"$name\", $value, $max)' ".
+          ">" . ui_img("images/$img") . "</a>";
+        }
+    else {
+        $rv .= ui_img("images/$img");
+        }
+    }
 return $rv;
 }
 

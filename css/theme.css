@@ -70,7 +70,6 @@ body {
 
 .loading {
     background: url("../images/loading.gif") no-repeat scroll center 100px #1A1A1A;
-    border-radius: 4px;
     height: 100%;
     opacity: 0.3;
     position: absolute;
@@ -237,7 +236,7 @@ body {
   padding: 0;
 }
 .sidebar .sidebar-menu li > a {
-  padding: 12px 5px 12px 15px;
+  padding: 12px 5px 6px 15px;
   display: block;
 }
 .sidebar .sidebar-menu li .treeview-menu {
@@ -248,14 +247,14 @@ body {
   text-decoration: none;
 }
 .sidebar ul {
-  font-size: 15px;
+  font-size: 14px;
 }
 .sidebar .treeview li {
-  font-size: 15px;
+  font-size: 14px;
 }
 .sidebar .leftlink .linkwithicon a {
   padding: 5px 5px 5px 15px;
-  font-size: 15px;
+  font-size: 14px;
 }
 .sidebar .leftlink .linkwithicon a.active {
   background: #f9f9f9;
@@ -285,8 +284,8 @@ body {
 .sidebar a .glyphicon,
 .sidebar .sidebar-menu .treeview-menu > li > a .ion {
   width: 20px;
-  line-height: 1.42857;
-  font-size: 14px;
+  line-height: 1.2;
+  font-size: 15px;
 }
 
 .sidebar .sidebar-menu li a {

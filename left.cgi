@@ -305,7 +305,7 @@ if ($mode eq "virtualmin" && @doms) {
                                         ($b->{'title'} || $b->{'desc'})} @incat;
 			}
 		foreach my $b (@incat) {
-			print_virtualmin_link($b, 'leftlink', 'flash');
+			print_virtualmin_link($b, 'leftlink');
 			}
 		print_category_closer();
 		}
@@ -703,7 +703,6 @@ if ($mode eq "webmin" || $mode eq "usermin") {
 			print_category_closer();
 			}
 		}
-	print"</section>\n";
 	}
 
 # Show system information link
@@ -723,9 +722,14 @@ else {
 
 # Show refresh modules like
 if ($mode eq "webmin" && foreign_available("webmin")) {
-        print "<div class='linkwithicon'><img src='images/reload.png' alt=''>\n";
-        print "<div class='aftericon'><a target=right href='webmin/refresh_modules.cgi'>$text{'main_refreshmods'}</a></div></div>\n";
+	print_virtualmin_link(
+        { 'url' => "webmin/refresh_modules.cgi",
+          'title' => $text{'main_refreshmods'} },
+          'leftlink', 'refresh');
+
 	}
+
+print"</section>\n"; # .sidebar
 
 # Show logout link
 # XXX Move logic into index navbar logout icon
@@ -834,21 +838,27 @@ sub print_virtualmin_link
 {
 my ($l, $cls, $icon) = @_;
 my $t = $l->{'target'} || "right";
+if (defined $l->{'icon'} && defined($icon)) {
+	$icon = lookup_icon($l->{'icon'});
+}
 my $glyphicon;
 if (defined $icon) {
 	$glyphicon = "glyphicon glyphicon-$icon";
-} else {
-	$glyphicon = "glyphicon glyphicon-flash";
+}
+if ($l->{'icon'} eq 'index') {
+	$glyphicon = "glyphicon glyphicon-list-alt";
 }
 print "<li class='leftlink'>\n";
-print "<b>" if ($l->{'icon'} eq 'index');
 print "<a href='$l->{'url'}' target='$t'>";
-if ($icon) {
+if ($glyphicon) {
 	print "<i class='pull-left linkwithicon $glyphicon'></i>";
 	}
 print "$l->{'title'}</a>";
-print "</b>" if ($l->{'icon'} eq 'index');
 print "</li>\n";
+if (!$icon) {
+	use Data::Dumper;
+	print "<!-- " . Dumper($l) . "-->\n";
+}
 }
 
 sub shorten_hostname
@@ -877,16 +887,27 @@ sub lookup_icon {
 	my %icon_map = (
 		'tmpl_setting' => 'wrench',
 		'tmpl_email' => 'envelope',
-		'tmpl_custom' => 'edit',
+		'tmpl_custom' => 'cog',
 		'tmpl_ip' => 'globe',
 		'tmpl_check' => 'ok-sign',
 		'tmpl_add' => 'plus-sign',
 		'tmpl_backup' => 'hdd',
+		'graph' => 'stats',
+		'edit' => 'pencil',
+		'group' => 'user',
+		'email_go' => 'envelope',
+		'page_code' => 'save',
+		'page_edit' => 'edit',
+		'cat_admin' => 'inbox',
+		'cat_server' => 'th-list',
+		'cat_logs' => 'flag',
+		'cat_delete' => 'warning-sign',
+		'cat_services' => 'star',
 	);
 
 	if (defined $icon_map{"$c"}) {
 		return $icon_map{"$c"};
 	} else {
-		return "flash";
+		return "";
 	}
 }
