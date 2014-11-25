@@ -199,11 +199,13 @@ my ($d, $action) = @_;
 print "<script>\n";
 if ($action eq 'create') {
 	# Select the new domain
-	print "top.left.location = '$gconfig{'webprefix'}/left.cgi?dom=$d->{'id'}';\n";
+	print "<div id='refreshLeft'></div>\n";
+	#print "\$(document).ready(function() {requestGet('$gconfig{'webprefix'}/left.cgi?dom=$d->{'id'}', 'left');});\n";
 	}
 else {
 	# Just refresh left
-	print "top.left.location = top.left.location;\n";
+	#print "\$(document).ready(function() {requestGet('/left.cgi', 'left');});\n";
+	print "<div id='refreshLeft'></div>\n";
 	}
 print "</script>\n";
 }

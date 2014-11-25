@@ -21,7 +21,7 @@
             event.preventDefault();
         });
 
-        // Attach events to hrefs so they load in the right div (mostly right),
+        // Attach events to hrefs so they load in the correct div (mostly right),
         // without interfering with accordions, tabs, tables, etc.
         $('#rightContent').on("click", 'a:not([href^=""],[href^="mailto:"],[href^="#"],[href^="javascript:"])', function (event) {
             var target = $(this).prop('target');
@@ -321,7 +321,7 @@
 
         // Hiding the old content
         $('#leftContent').fadeTo(200, 0.1, function () {
-            // Prevent bad HTML to break our function - enable for production
+            // Prevent bad HTML to break our function - XXX enable for production
             //try {
                 $('#leftContent').html(data);
             //} catch (e) {
