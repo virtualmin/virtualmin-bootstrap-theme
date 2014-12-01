@@ -49,11 +49,11 @@ if (@sections > 1) {
 	print &ui_hidden("module", $m),"\n";
 	print $text{'config_section'},"\n";
 	print &ui_select("section", $in{'section'}, \@sections,
-			 1, 0, 0, 0, "id='config_section'");
+			 1, 0, 0, 0, "onChange='form.submit()'"); # # XXX This is ugly ui_select needs work
          #print &ui_submit($text{'config_change'}); #XXX Simplify this?
          #print "&nbsp;&nbsp;\n";
-         #print &ui_submit($text{'config_nprev'}, "nprev");
-         #print &ui_submit($text{'config_nnext'}, "nnext");
+         print &ui_submit($text{'config_nprev'}, "nprev");
+         print &ui_submit($text{'config_nnext'}, "nnext");
 	print &ui_form_end();
 	($s) = grep { $_->[0] eq $in{'section'} } @sections;
 	$sname = " ($s->[1])";
