@@ -580,7 +580,7 @@ if (defined($main::ui_table_cols)) {
   push(@main::ui_table_default_tds_stack, $main::ui_table_default_tds);
   }
 my $rv;
-my $colspan = 1;
+my $colspan = 2;
 
 $rv .= "<div class='panel panel-default' $tabletags>\n";
 if (defined($heading) || defined($rightheading)) {
@@ -616,15 +616,15 @@ $tds ||= $main::ui_table_default_tds;
 # 2 cols with label and value would be row, md-4, md-8, /row
 # If tds has widths, we need to fit that into grid sizes, somehow.
 # Bootstrap grid has 12 slots.
-my $colwidth = 6; # XXX This is messy. I keep finding edge cases where fails.
+my $colwidth = 12; # XXX This is messy. I keep finding edge cases where fails.
 if (defined ($label)) {
-	$colwidth = 4;
+	$colwidth = 6;
 }
 if ($main::ui_table_cols == 4 && defined ($label)) {
-	$colwidth = 2;
+	$colwidth = 6;
 }
 elsif ($main::ui_table_cols == 2) {
-	$colwidth = 4;
+	$colwidth = 6;
 }
 elsif ($main::ui_table_cols == 1) {
 	$colwidth = 12;
@@ -689,7 +689,7 @@ return $rv;
 sub theme_ui_table_end
 {
 my $rv;
-if ($main::ui_table_cols == 4 && $main::ui_table_pos) {
+if ($main::ui_table_cols == 6 && $main::ui_table_pos) {
   # Add an empty block to balance the table
   $rv .= ui_table_row(" ", " ");
   }
@@ -703,7 +703,7 @@ else {
   $main::ui_table_pos = undef;
   $main::ui_table_default_tds = undef;
   }
-$rv .= "</div></div>\n";
+$rv .= "</div></div> <!-- ui_table_end -->\n";
 return $rv;
 }
 
@@ -743,7 +743,7 @@ return "</div>\n";
 
 sub theme_ui_tabs_end
 {
-return "</div>\n";
+return "</div><!-- theme_ui_tabs_end -->\n";
 }
 
 # theme_ui_columns_start(&headings, [width-percent], [noborder], [&tdtags], [title])
@@ -900,6 +900,41 @@ sub theme_ui_hidden_end
 my ($name) = @_;
 return "</div> <!-- $name hidden_end -->\n";
 }
+
+# Not needed. We have classes to indicate when we need tabs or other hidden elements
+sub theme_ui_hidden_javascript
+{
+my $rv;
+my $imgdir = "$gconfig{'webprefix'}/images";
+my ($jscb, $jstb) = ($cb, $tb);
+$jscb =~ s/'/\\'/g;
+$jstb =~ s/'/\\'/g;
+
+return <<EOF;
+<style type='text/css'>
+.opener_shown {display:inline}
+.opener_hidden {display:none}
+</style>
+<script type='text/javascript'>
+// Open or close a hidden section
+function hidden_opener(divid, openerid)
+{
+var divobj = document.getElementById(divid);
+var openerobj = document.getElementById(openerid);
+if (divobj.className == 'opener_shown') {
+  divobj.className = 'opener_hidden';
+  openerobj.innerHTML = '<img border=0 src=$imgdir/closed.gif>';
+  }
+else {
+  divobj.className = 'opener_shown';
+  openerobj.innerHTML = '<img border=0 src=$imgdir/open.gif>';
+  }
+}
+</script>
+EOF
+}
+
+
 
 # theme_select_all_link(field, form, text)
 # Adds support for row highlighting to the normal select all
