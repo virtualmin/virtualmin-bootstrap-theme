@@ -596,7 +596,7 @@ if (defined($heading) || defined($rightheading)) {
         }
 $rv .= "<div class='panel-body'>\n";
 # XXX fixme see where cols makes a difference at this level and fix it somehow
-$main::ui_table_cols = $cols || 4;
+$main::ui_table_cols = $cols || 2;
 $main::ui_table_pos = 0;
 $main::ui_table_default_tds = $tds;
 return $rv;
@@ -673,7 +673,7 @@ if (defined($label)) {
 	$rv .= "<label class='ui_form_label'><strong>$label</strong></label><br>\n";
 } 
 $rv .= "<div class='ui_form_value'>$value</div>\n";
-$rv .= "</div>\n";
+$rv .= "</div><!-- ui_table_row -->\n";
 
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
 if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0) {
@@ -738,12 +738,12 @@ return $rv;
 
 sub theme_ui_tabs_end_tab
 {
-return "</div>\n";
+return "</div><!-- ui_tabs_end_tab -->\n";
 }
 
 sub theme_ui_tabs_end
 {
-return "</div><!-- theme_ui_tabs_end -->\n";
+return "</div><!-- ui_tabs_end -->\n";
 }
 
 # theme_ui_columns_start(&headings, [width-percent], [noborder], [&tdtags], [title])
@@ -885,6 +885,7 @@ my $rv = "</div></div></div></div>\n";
 return $rv;
 }
 
+# XXX Should this be a button, or a panel heading? (Currently a button.)
 sub theme_ui_hidden_start
 {
 my ($title, $name, $status, $url) = @_;
@@ -901,37 +902,37 @@ my ($name) = @_;
 return "</div> <!-- $name hidden_end -->\n";
 }
 
-# Not needed. We have classes to indicate when we need tabs or other hidden elements
+# XXX Should this be a button, or a panel heading?
+sub theme_ui_hidden_table_row_start
+{
+my ($title, $name, $status, $url) = @_;
+my ($rv, $rrv);
+my $divid = "hiddendiv_$name";
+if ($title) {
+	$rv .= "<button type='button' data-toggle='collapse' data-target='\#$divid'>$title</button>\n";
+} else {
+	$rv .= "<button type='button' data-toggle='collapse' data-target='\#$divid'><i class='glyphicon glyphicon-chevron-right'></i></button>\n";
+    }
+$rv .= "<div class='ui_hidden_table_row collapse' id='$divid'>\n";
+return $rv;
+}
+
+=head2 ui_hidden_table_row_end(name)
+
+Returns HTML to end a block started by ui_hidden_table_start.
+
+=cut
+sub theme_ui_hidden_table_row_end
+{
+my ($name) = @_;
+return "</div><!-- ui_hidden_table_row -->\n";
+}
+
+
+# XXX Not needed. We have classes to indicate when we need hidden elements
 sub theme_ui_hidden_javascript
 {
-my $rv;
-my $imgdir = "$gconfig{'webprefix'}/images";
-my ($jscb, $jstb) = ($cb, $tb);
-$jscb =~ s/'/\\'/g;
-$jstb =~ s/'/\\'/g;
-
-return <<EOF;
-<style type='text/css'>
-.opener_shown {display:inline}
-.opener_hidden {display:none}
-</style>
-<script type='text/javascript'>
-// Open or close a hidden section
-function hidden_opener(divid, openerid)
-{
-var divobj = document.getElementById(divid);
-var openerobj = document.getElementById(openerid);
-if (divobj.className == 'opener_shown') {
-  divobj.className = 'opener_hidden';
-  openerobj.innerHTML = '<img border=0 src=$imgdir/closed.gif>';
-  }
-else {
-  divobj.className = 'opener_shown';
-  openerobj.innerHTML = '<img border=0 src=$imgdir/open.gif>';
-  }
-}
-</script>
-EOF
+return;
 }
 
 
