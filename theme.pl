@@ -14,6 +14,7 @@ $main::mailbox_no_addressbook_button = 1;
 $main::mailbox_no_folder_button = 1;
 
 $main::basic_virtualmin_menu = 1;
+$main::basic_virtualmin_domain = 1; # XXX Remove once typo is fixed in virtual-server/edit_domain.cgi
 $main::nocreate_virtualmin_menu = 1;
 $main::nosingledomain_virtualmin_mode = 1;
 use warnings;
@@ -27,6 +28,9 @@ our $ui_formcount;
 our $user_module_config_directory;
 our $script_name;
 our $cb; # XXX Kill this. It's old UI crap and is very clunky to use in CSS-based theme.
+
+# Virtualmin globals
+our $done_virtualmin_ui_rating_selector;
 
 # Cloudmin globals?
 our $done_theme_post_save_server;
@@ -857,8 +861,8 @@ my $rv;
 my $divid = "hiddendiv_$name";
 my $defclass = $status ? 'in' : ''; # Open or closed
 
+#<div class="panel-group" id='#$divid'>
 $rv .= <<EOL;
-<div class="panel-group" id='#$divid'>
 <div class="panel panel-default">
 <div class="panel-heading">
 <h4 class="panel-title">
@@ -881,6 +885,7 @@ return $rv;
 sub theme_ui_hidden_table_end
 {
 my ($name) = @_;
+#my $rv = "</div></div></div></div>\n";
 my $rv = "</div></div></div></div>\n";
 return $rv;
 }
@@ -1509,10 +1514,10 @@ if (!$main::done_virtualmin_ui_rating_selector++) {
     # Generate highlighting Javascript code
     #$rv .= &virtualmin_ui_rating_selector_javascript();
     }
-for($i=1; $i<=$max; $i++) {
-    local $img = $i <= $value ? "staron.gif" : "staroff.gif";
+for(my $i=1; $i<=$max; $i++) {
+    my $img = $i <= $value ? "staron.gif" : "staroff.gif";
     if ($cgi) {
-        local $cgiv = $cgi;
+        my $cgiv = $cgi;
         $cgiv .= ($cgi =~ /\?/ ? "&" : "?");
         $cgiv .= $name."=".$i;
         $rv .= "<a href='$cgiv' id=$name$i ".

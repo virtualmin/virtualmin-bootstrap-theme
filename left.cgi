@@ -903,6 +903,7 @@ sub lookup_icon {
 		'cat_logs' => 'flag',
 		'cat_delete' => 'warning-sign',
 		'cat_services' => 'star',
+		'lang' => 'globe',
 	);
 
 	if (defined $icon_map{"$c"}) {
