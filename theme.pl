@@ -819,7 +819,8 @@ return $rv;
 	{
 	my ($elements, $cols, $width, $tds, $tabletags, $title) = @_;
 	return "" if (!@$elements);
-	if ($inside_table == 1) { $class = "table table-striped"; }
+	my $class;
+	if ($inside_grid_table == 1) { $class = "table table-striped"; }
 	my $rv .= "<table class='ui_table ui_grid_table $class'"
     	 . ($width ? " width=$width%" : "")
     	 . ($tabletags ? " ".$tabletags : "")
