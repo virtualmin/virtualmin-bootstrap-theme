@@ -812,42 +812,42 @@ return $rv;
 # Given a list of HTML elements, formats them into a table with the given
 # number of columns. However, themes are free to override this to use fewer
 # columns where space is limited.
-sub theme_ui_grid_table
 {
-my ($elements, $cols, $width, $tds, $tabletags, $title) = @_;
-return "" if (!@$elements);
-
-#my $rv = "<table class='well' " 
-#       . ($width ? " width=$width%" : " width=100%")
-#       . ($tabletags ? " ".$tabletags : "")
-#       . "><tr><td>\n";
-my $rv .= "<table class='ui_table ui_grid_table table table-striped'"
-     . ($width ? " width=$width%" : "")
-     . ($tabletags ? " ".$tabletags : "")
-     . ">\n";
-if ($title) {
-	$rv .= "<thead><tr class='ui_grid_heading'> ".
-	       "<td colspan=$cols><b>$title</b></td> </tr></thead>\n";
-	}
-$rv .= "<tbody>\n";
-my $i;
-for($i=0; $i<@$elements; $i++) {
-  $rv .= "<tr class='ui_grid_row'>" if ($i%$cols == 0);
-  $rv .= "<td ".$tds->[$i%$cols]." valign=top class='ui_grid_cell'>".
-	 $elements->[$i]."</td>\n";
-  $rv .= "</tr>" if ($i%$cols == $cols-1);
-  }
-if ($i%$cols) {
-  while($i%$cols) {
-    $rv .= "<td ".$tds->[$i%$cols]." class='ui_grid_cell'><br></td>\n";
-    $i++;
-    }
-  $rv .= "</tr>\n";
-  }
-$rv .= "</table>\n";
-$rv .= "</tbody>\n";
-#$rv .= "</td></tr></table>\n"; # wrapper
-return $rv;
+	# State variable for figuring out whether we need extra styling or to inherent from parent grid_table
+	my $inside_grid_table = 0;
+	sub theme_ui_grid_table
+	{
+	my ($elements, $cols, $width, $tds, $tabletags, $title) = @_;
+	return "" if (!@$elements);
+	if ($inside_table == 1) { $class = "table table-striped"; }
+	my $rv .= "<table class='ui_table ui_grid_table $class'"
+    	 . ($width ? " width=$width%" : "")
+    	 . ($tabletags ? " ".$tabletags : "")
+    	 . ">\n";
+	if ($title) {
+		$rv .= "<thead><tr class='ui_grid_heading'> ".
+		       "<td colspan=$cols><b>$title</b></td> </tr></thead>\n";
+		}
+	$rv .= "<tbody>\n";
+	my $i;
+	for($i=0; $i<@$elements; $i++) {
+  		$rv .= "<tr class='ui_grid_row'>" if ($i%$cols == 0);
+  		$rv .= "<td ".$tds->[$i%$cols]." valign=top class='ui_grid_cell'>".
+			 $elements->[$i]."</td>\n";
+  		$rv .= "</tr>" if ($i%$cols == $cols-1);
+ 	 	}
+	if ($i%$cols) {
+  		while($i%$cols) {
+    		$rv .= "<td ".$tds->[$i%$cols]." class='ui_grid_cell'><br></td>\n";
+    		$i++;
+    	}
+  		$rv .= "</tr>\n";
+  	}
+	$rv .= "</tbody>\n";
+	$rv .= "</table>\n";
+	#$rv .= "</td></tr></table>\n"; # wrapper
+	return $rv;
+}
 }
 
 # theme_ui_hidden_table_start(heading, [tabletags], [cols], name, status,
