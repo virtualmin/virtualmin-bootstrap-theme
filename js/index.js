@@ -2,9 +2,9 @@
     "use strict";
 
     $(document).ready(function() {
-        requestGet("/left.cgi", 'left');
+        requestGet("/newleft.cgi", 'left');
         var uri = new URI();
-        if (uri.fragment() != "") {
+        if (uri.fragment() !== "") {
             var newUri = new URI(uri.fragment());
             requestGet(uri.pathname(newUri.pathname()).query(newUri.query()).hash('').toString(), 'right');
         } else {
@@ -27,7 +27,7 @@
             var target = $(this).prop('target');
             var href = $(this).prop('href');
             var onClick = $(this).attr('onclick');
-            if ((href.indexOf('http') < 0 || href.indexOf(getCurrentDomain()) > -1) && (!onClick || onClick == "")) {
+            if ((href.indexOf('http') < 0 || href.indexOf(getCurrentDomain()) > -1) && (!onClick || onClick === "")) {
                 requestGet(href, !target ? 'right' : target);
                 event.preventDefault();
             }
@@ -82,7 +82,7 @@
         $(window).bind('popstate',
             function(event) {
                 var state = event.originalEvent.state;
-                if (state != null) {
+                if (state !== null) {
                     if (state.type == 'get') {
                         requestGet(state.url, state.panel, true);
                     } else if (state.type == 'post') {
@@ -140,6 +140,7 @@
 
     // Send a POST request for a form and update the panel
     var requestPost = function (form, target, noHistory) {
+        console.log(form);
         showLoading(target);
         if (requestInProgress[target]) {
             return;
@@ -220,7 +221,7 @@
             scrollWidthCache = 100 - widthWithScroll;
         }
         return scrollWidthCache;
-    };
+    }
 
     // Change right panel html
     // handle modifying links, and attaching events
@@ -239,7 +240,7 @@
 
             // Hack to fix button table broken html - Fix edit virtual server
             $('#rightContent .ui_buttons_table button[type=submit]').click(function (event) {
-                if ($(this).parents("form").length == 0) {
+                if ($(this).parents("form").length === 0) {
                     var form = $(this).closest('tr').prevAll('form').first();
                     var input = $(this).closest('tr').prevAll('input[type=hidden]').first();
                     if (form.is("*")) {
@@ -247,14 +248,14 @@
                             form.append('<input type="hidden" name="' + input.attr('name') + '" value="' + input.attr('value') + '" />');
                         }
                         form.append('<input type="hidden" name="' + $(this).attr('name') + '" value="' + $(this).attr('value') + '" />');
-                        form.submit();
-                        event.preventDefault();
                     }
                 }
+                form.submit();
+                event.preventDefault();
             });
 
             // Hack to fix submit button value when using ajax - Fix multiple submit button for same form
-            $('#rightContent form button[type=submit]').click(function (event) {
+            $('#rightContent button[type=submit]').click(function (event) {
                 if ($(this).parents("form").length > 0) {
                     var form = $(this).closest('form');
                     form.append('<input type="hidden" name="' + $(this).attr('name') + '" value="' + $(this).attr('value') + '" />');
@@ -289,7 +290,7 @@
             });
 
             // We need to refresh left panel
-            if (data.indexOf('top.left.location = top.left.location;') > -1 && lastLoadedUrlLeft != "") {
+            if (data.indexOf('top.left.location = top.left.location;') > -1 && lastLoadedUrlLeft !== "") {
                 requestGet(lastLoadedUrlLeft, 'left');
             }
 
@@ -328,19 +329,19 @@
             //}
 
             // Hack to fix domain changer drop down menu
-            $('.domainmenu select').removeAttr('onchange')
-                .off('change')
+            $('select.domainmenu').off('change')
                 .change(
                     function(event) {
                         var form = $(this).closest('form');
-                        requestPost(form, 'left');
+                        console.log($(this).val());
+                        requestGet("/newleft.cgi?dom=" + $(this).val(), 'left');
                         var rightHref = "/virtual-server/summary_domain.cgi?dom=" + $(this).val();
                         requestGet(rightHref, 'right');
                         event.preventDefault();
                     });
 
             // We need to refresh right panel
-            if (data.indexOf('top.right.location = top.right.location;') > -1 && lastLoadedUrlRight != "") {
+            if (data.indexOf('top.right.location = top.right.location;') > -1 && lastLoadedUrlRight !== "") {
                 requestGet(lastLoadedUrlRight, 'right');
             }
 
@@ -363,7 +364,7 @@
     // Makes request URL absolute
     var fixHrefAddress = function(href) {
         var currentDomain = getCurrentDomain();
-        if (href.indexOf('/') == 0) {
+        if (href.indexOf('/') === 0) {
             href = currentDomain + href;
         }
         if (href.indexOf('://') == -1) {

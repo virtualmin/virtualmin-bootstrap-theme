@@ -760,7 +760,7 @@ my $rv;
 $theme_ui_columns_row_toggle = 0;
 my @classes;
 #push(@classes, "ui_table") if (!$noborder);
-push(@classes, "sortable") if (!$href);
+#push(@classes, "sortable") if (!$href);
 #push(@classes, "ui_columns");
 push(@classes, "table table-striped");
 $rv .= "<table".(@classes ? " class='".join(" ", @classes)."'" : "").
@@ -1397,11 +1397,15 @@ return "<a class='ui_hlink' onClick='window.open(\"$gconfig{'webprefix'}/help.cg
 
 sub theme_ui_select
 {
-my ($name, $value, $opts, $size, $multiple, $missing, $dis, $js) = @_;
+my ($name, $value, $opts, $size, $multiple, $missing, $dis, $tags) = @_;
 my $rv;
 my $extraclass;
-if ( $js =~ /onChange='form.submit/ ) {
+if ( $tags =~ /onChange='form.submit/ ) {
 	$extraclass = "reload-on-change";
+}
+# XXX This is ugly as hell. We need to handle reloading forms more effectively.
+if ( $tags =~ /domainmenu/ ) {
+	$extraclass .= " domainmenu";
 }
 $rv .= "<select class='form-control ui_select $extraclass' name=\"".quote_escape($name)."\"".
        ($size ? " size=$size" : "").

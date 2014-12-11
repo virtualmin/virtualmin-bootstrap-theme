@@ -186,7 +186,7 @@ elsif ($mode eq "mail") {
 	print ui_hidden("simple", 1);
 	print ui_hidden("folder", $dfolder->{'index'});
 	print ui_hidden("id", undef);
-	$doneform = 1;
+	print "</form>\n";
 	}
 
 # Show login and Virtualmin access level XXX Roll into index, so it can be
@@ -759,8 +759,6 @@ if ($ENV{'HTTP_WEBMIN_SERVERS'}) {
 #	print $text{'left_search'},"&nbsp;";
 #	print ui_textbox("search", undef, 15);
 #	}
-
-print "</form>\n" if ($doneform);
 
 # Search form for Virtualmin modules only
 # XXX Move logic into navbar in index.cgi
