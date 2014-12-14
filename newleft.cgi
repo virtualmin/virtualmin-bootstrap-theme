@@ -73,6 +73,7 @@ if ($mode eq "modules") {
 			}
 		}
 	push(@leftitems, { 'type' => 'hr' });
+		print "<li role='presentation' class='divider'></li>\n";
 	}
 
 # Show system information link
