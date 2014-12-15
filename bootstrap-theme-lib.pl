@@ -1,13 +1,13 @@
 # Functions used by theme CGIs
 
-eval "use WebminCore;";
+eval "use WebminCore;"; ## no critic
 if ($@) {
 	do '../web-lib.pl';
 	do '../ui-lib.pl';
-	}
-&init_config();
-&load_theme_library();
-%text = &load_language($current_theme);
+}
+init_config();
+load_theme_library();
+%text = WebminCore::load_language($current_theme);
 $right_frame_sections_file = "$config_directory/$current_theme/sections";
 $default_domains_to_show = 10;
 
@@ -81,7 +81,7 @@ else {
 sub save_right_frame_sections
 {
 local ($sects) = @_;
-&make_dir("$config_directory/$current_theme", 0700);
+make_dir("$config_directory/$current_theme", "0700");
 if ($sects->{'global'}) {
 	# Update global settings, for all users
 	&write_file($right_frame_sections_file, $sects);
@@ -172,6 +172,28 @@ else {
 	$level = 0;
 	}
 return ($hasvirt, $level, $hasvm2);
+}
+
+# XXX Copy something like this into ui-lib.pl
+=head2 simple_header($title)
+
+Outputs the most basic/simple header, for use in modern single page app themes.
+
+=cut
+
+sub simple_header
+{
+    my ($title) = @_;
+    my $rv;
+	$rv .= "Content-Type: text/html\n\n\n";
+    $rv .= "<!doctype html>\n";
+    $rv .= "<html lang='$current_lang'>\n";
+    $rv .= "<head>\n";
+	$rv .= "<meta http-equiv=\"Content-Type\" \"content=\"text/html\">\n";
+    $rv .= "<title>$title</title>\n";
+    $rv .= "</head>\n";
+    $rv .= "<body>\n";
+    return $rv;
 }
 
 1;

@@ -2,6 +2,9 @@
 # Show the left-side menu of Virtualmin domains, plus modules
 use warnings;
 use strict;
+use Cwd;
+use lib cwd;
+
 
 # Globals
 our %gconfig;
@@ -12,12 +15,23 @@ our $base_remote_user;
 our %miniserv;
 our %gaccess;
 our $session_id;
+our $charset;
 
 our $trust_unknown_referers = 1;
 require "bootstrap-theme/bootstrap-theme-lib.pl";
+#require BootstrapTheme;
+
+# If run as CGI or command line, print the HTML and exit. If loaded as a module, just initialize functions.
+exit print sidebar(1, @ARGV) unless caller();
+
+# Produce the HTML for a left hand side bar with menus
+sub sidebar {
+my ($CGI) = @_;
+my $rv;
+if ($CGI) { PrintHeader($charset); }
 ReadParse();
 
-popup_header("Virtualmin");
+$rv = simple_header("Virtualmin");
 
 my $is_master;
 # Is this user root?
@@ -35,16 +49,13 @@ my $sects = get_right_frame_sections();
 my @leftitems = list_combined_webmin_menu($sects, \%in);
 my ($lefttitle) = grep { $_->{'type'} eq 'title' } @leftitems;
 
-use Data::Dumper;
-print "<!-- leftitems = " . Dumper(@leftitems) . " -->\n";
-
 # Default left-side mode
 my $mode = $in{'mode'} ? $in{'mode'} :
 	$sects->{'tab'} =~ /vm2|virtualmin|mail/ ? "items" :
 	@leftitems ? "items" : "modules";
 
-print "<section class='sidebar' role='navigation'>\n";
-print "<ul class='sidebar-menu' id='side-menu'>\n";
+$rv = "<section class='sidebar' role='navigation'>\n";
+$rv .= "<ul class='sidebar-menu' id='side-menu'>\n";
 
 if ($mode eq "modules") {
 	# Work out what modules and categories we have
@@ -73,7 +84,7 @@ if ($mode eq "modules") {
 			}
 		}
 	push(@leftitems, { 'type' => 'hr' });
-		print "<li role='presentation' class='divider'></li>\n";
+		$rv .= "<li role='presentation' class='divider'></li>\n";
 	}
 
 # Show system information link
@@ -93,7 +104,8 @@ if ($mode eq "modules" && foreign_available("webmin")) {
 	}
 
 # Show Webmin search form
-my $cansearch = $gaccess{'webminsearch'} ne '0' && !$sects->{'nosearch'};
+my $cansearch;
+if ( defined $gaccess{'webminsearch'} && !$sects->{'nosearch'} ) { $cansearch++; };
 if ($mode eq "modules" && $cansearch) {
 	push(@leftitems, { 'type' => 'input',
 			   'desc' => $text{'left_search'},
@@ -101,104 +113,112 @@ if ($mode eq "modules" && $cansearch) {
 			   'cgi' => '/webmin_search.cgi', });
 	}
 
-show_menu_items_list(\@leftitems, 0);
+$rv .= menu_items_list(\@leftitems, 0);
 
-print "</ul>\n";
-print "<section>\n";
+$rv .= "</ul>\n";
+$rv .= "</section>\n";
 
-popup_footer();
+#$rv .= popup_footer();
 
-# show_menu_items_list(&list, indent)
+return $rv;
+} # sidebar
+
+# menu_items_list(&list, indent)
 # Actually prints the HTML for menu items
-sub show_menu_items_list
+sub menu_items_list
 {
 my ($items, $indent) = @_;
+my $rv;
 foreach my $item (@$items) {
 	my $icon;
 	if ($item->{'type'} eq 'item') {
 		# Link to some page
-		my $t = $item->{'target'} eq 'new' ? '_blank' :
-			$item->{'target'} eq 'window' ? '_top' : 'right';
-		if ($item->{'icon'}) {
+		my $t;
+		if (defined $item->{'target'}) {
+			$t = $item->{'target'} eq 'new' ? '_blank' : '_top';
+			}
+		else { $t = 'right'; }
+		if (defined $item->{'icon'}) {
 			$icon = lookup_icon(add_webprefix($item->{'icon'}));
 			}
-		print "<li class='leftlink'>\n";
+		$rv .= "<li class='leftlink'>\n";
 		my $link = add_webprefix($item->{'link'});
-		print "  <a href='$link' target=$t>";
-		print "<i class='pull-left linkwithicon glyphicon glyphicon-$icon'></i>";
-		print "$item->{'desc'}</a>\n";
-		print "</li>\n";
+		$rv .= "  <a href='$link' target=$t>";
+		if ( $icon ) { $rv .= "<i class='pull-left linkwithicon glyphicon glyphicon-$icon'></i>"; }
+		$rv .= "$item->{'desc'}</a>\n";
+		$rv .= "</li>\n";
 		}
 	elsif ($item->{'type'} eq 'cat') {
 		# Start of a new category
 		my $c = $item->{'id'};
-		print "<li class='treeview'>\n";
-		print "<a href='#'>";
+		$rv .= "<li class='treeview'>\n";
+		$rv .= "<a href='#'>";
 		if ($item->{'icon'}) { print "<i class='pull-left glyphicon glyphicon-$item->{'icon'}'></i>"; }
-		print "<span>$item->{'desc'}</span>";
-		print "<i class='pull-right glyphicon glyphicon-chevron-left'></i>";
-		print "</a>\n";
-		print "<ul class='treeview-menu' id='cat$c'>\n";
+		$rv .= "<span>$item->{'desc'}</span>";
+		$rv .= "<i class='pull-right glyphicon glyphicon-chevron-left'></i>";
+		$rv .= "</a>\n";
+		$rv .= "<ul class='treeview-menu' id='cat$c'>\n";
 		use Data::Dumper;
-		print "<!-- " . Dumper($item->{'members'}) . "-->\n";
-		show_menu_items_list($item->{'members'}, $indent+1);
-		print "</ul></li><!-- treeview-menu cat$c -->\n";
+		$rv .= "<!-- " . Dumper($item->{'members'}) . "-->\n";
+		$rv .= menu_items_list($item->{'members'}, $indent+1);
+		$rv .= "</ul></li><!-- treeview-menu cat$c -->\n";
 		}
 	elsif ($item->{'type'} eq 'html') {
 		# Some HTML block
-		print "<li class='leftlink'>",$item->{'html'},"</li>\n";
+		$rv.= "<li class='leftlink'>" . $item->{'html'} . "</li>\n";
 		}
 	elsif ($item->{'type'} eq 'text') {
 		# A line of text
-		print "<li class='leftlink'>",
-		      html_escape($item->{'desc'}),"</li>\n";
+		$rv .= "<li class='leftlink'>" . 
+		      html_escape($item->{'desc'}) . "</li>\n";
 		}
 	elsif ($item->{'type'} eq 'hr') {
 		# Separator line
-		print "<li class='divider'></li>\n";
+		$rv .= "<li class='divider'></li>\n";
 		}
 	elsif ($item->{'type'} eq 'menu' || $item->{'type'} eq 'input') {
 		# For with an input of some kind
-		print "<li class='leftlink'>";
+		$rv .= "<li class='leftlink'>";
 		if ($item->{'cgi'}) {
-			print "<form action='$item->{'cgi'}' target=right>\n";
+			$rv .= "<form action='$item->{'cgi'}' target=right>\n";
 			}
 		else {
-			print "<form>\n";
+			$rv .= "<form>\n";
 			}
 		foreach my $h (@{$item->{'hidden'}}) {
-			print ui_hidden(@$h);
+			$rv .= ui_hidden(@$h);
 			}
-		print $item->{'desc'},"\n";
+		$rv .= $item->{'desc'}."\n" if $item->{'desc'};
 		if ($item->{'type'} eq 'menu') {
 			my $sel = "";
 			if ($item->{'onchange'}) {
 				$sel = "window.parent.frames[1].location = ".
 				       "\"$item->{'onchange'}\" + this.value";
 				}
-			print ui_select($item->{'name'}, $item->{'value'},
+			$rv .= ui_select($item->{'name'}, $item->{'value'},
 					 $item->{'menu'}, 1, 0, 0, 0,
 					 "class='domainmenu' onChange='form.submit(); $sel' ");
 			}
 		elsif ($item->{'type'} eq 'input') {
-			print ui_textbox($item->{'name'}, $item->{'value'},
+			$rv .= ui_textbox($item->{'name'}, $item->{'value'},
 					  $item->{'size'});
 			}
 		if ($item->{'icon'}) {
 			my $icon = add_webprefix($item->{'icon'});
 			#print "<input type=image src='$icon'>\n";
 			}
-		print "</form>\n";
-		print "</li>";
+		$rv .= "</form>\n";
+		$rv .= "</li>";
 		}
 	elsif ($item->{'type'} eq 'title') {
 		# Nothing to print here, as it is used for the tab title
 		}
 	}
+	return $rv;
 }
 
 # module_to_menu_item(&module)
-# Converts a module to the hash ref format expected by show_menu_items_list
+# Converts a module to the hash ref format expected by menu_items_list
 sub module_to_menu_item
 {
 my ($minfo) = @_;

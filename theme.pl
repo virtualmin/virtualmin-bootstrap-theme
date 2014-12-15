@@ -17,6 +17,7 @@ $main::basic_virtualmin_menu = 1;
 $main::basic_virtualmin_domain = 1; # XXX Remove once typo is fixed in virtual-server/edit_domain.cgi
 $main::nocreate_virtualmin_menu = 1;
 $main::nosingledomain_virtualmin_mode = 1;
+
 use warnings;
 
 # Globals from web-lib and ui-lib XXX Needs encapsulation in Webmin 2.0
@@ -28,6 +29,7 @@ our $ui_formcount;
 our $user_module_config_directory;
 our $script_name;
 our $cb; # XXX Kill this. It's old UI crap and is very clunky to use in CSS-based theme.
+our $current_lang;
 
 # Virtualmin globals
 our $done_virtualmin_ui_rating_selector;
@@ -143,15 +145,13 @@ return $rv;
 # Returns HTML to appear directly before a standard footer() call
 sub theme_ui_pre_footer
 {
-my $rv;
-$rv .= "</div><!--.module-content -->\n";
+return "</div><!--.module-content -->\n";
 # XXX figure out where this ought to be... get rid of all the extras.
 #$rv .= <<EOL;
 #    <script src="/bootstrap/js/jquery-1.8.0.min.js"></script>
 #    <script src="/bootstrap/js/bootstrap.js"></script>
 #EOL
 #$rv .= "</body></html>\n";
-return $rv;
 }
 
 # theme_ui_print_footer(args...)
@@ -725,7 +725,7 @@ foreach my $t (@$tabs) {
 	my $tabid = "tab_".$t->[0];
 	my $defclass = $t->[0] eq $main::ui_tabs_selected ?
                         'active' : '';
-	$rv .= "<li class='ui_tab $defclass'><a href='#$tabid' data-toggle='tab'>$t->[1]</a></li>\n";
+	$rv = "<li class='ui_tab $defclass'><a href='#$tabid' data-toggle='tab'>$t->[1]</a></li>\n";
 }
 $rv .= "</ul>\n<div class='tab-content'>\n";
 return $rv;
@@ -756,26 +756,23 @@ sub theme_ui_columns_start
 {
 my ($heads, $width, $noborder, $tdtags, $title) = @_;
 my ($href) = grep { $_ =~ /<a\s+href/i } @$heads;
-my $rv;
 $theme_ui_columns_row_toggle = 0;
 my @classes;
-#push(@classes, "ui_table") if (!$noborder);
-#push(@classes, "sortable") if (!$href);
-#push(@classes, "ui_columns");
 push(@classes, "table table-striped");
-$rv .= "<table".(@classes ? " class='".join(" ", @classes)."'" : "").
+my $rv = "<table".(@classes ? " class='".join(" ", @classes)."'" : "").
     (defined($width) ? " width=$width%" : "").">\n";
 if ($title) {
-  $rv .= "<thead> <tr class='ui_columns_heading'>".
-	 "<td colspan=".scalar(@$heads)."><b>$title</b></td>".
-	 "</tr> </thead> <tbody>\n";
-  }
+	$rv .= "<thead> <tr class='ui_columns_heading'>".
+		   "<td colspan=".scalar(@$heads)."><b>$title</b></td>".
+		   "</tr> </thead> <tbody>\n";
+	}
 $rv .= "<thead> <tr class='ui_columns_heads'>\n";
-my $i;
-for($i=0; $i<@$heads; $i++) {
-  $rv .= "<td ".$tdtags->[$i]."><b>".
-         ($heads->[$i] eq "" ? "<br>" : $heads->[$i])."</b></td>\n";
-  }
+for (my $i=0; $i<@$heads; $i++ ) {
+	my $tags;
+	if ($tdtags->[$i]) { $tags = $tdtags->[$i] };
+	$rv .= "<td ".$tags."><b>".
+           ($heads->[$i] eq "" ? "<br>" : $heads->[$i])."</b></td>\n";
+	}
 $rv .= "</tr></thead> <tbody>\n";
 $theme_ui_columns_count++;
 return $rv;
@@ -788,9 +785,8 @@ sub theme_ui_columns_row
 $theme_ui_columns_row_toggle = $theme_ui_columns_row_toggle ? '0' : '1';
 my ($cols, $tdtags) = @_;
 my $rv;
-$rv .= "<tr class='ui_columns_row row$theme_ui_columns_row_toggle' onMouseOver=\"this.className='mainhigh'\" onMouseOut=\"this.className='mainbody row$theme_ui_columns_row_toggle'\">\n";
-my $i;
-for($i=0; $i<@$cols; $i++) {
+$rv = "<tr class='ui_columns_row row$theme_ui_columns_row_toggle' onMouseOver=\"this.className='mainhigh'\" onMouseOut=\"this.className='mainbody row$theme_ui_columns_row_toggle'\">\n";
+for(my $i=0; $i<@$cols; $i++) {
 	$rv .= "<td ".$tdtags->[$i].">".
 	       ($cols->[$i] !~ /\S/ ? "<br>" : $cols->[$i])."</td>\n";
 	}
@@ -802,9 +798,7 @@ return $rv;
 # Returns HTML to end a table started by ui_columns_start
 sub theme_ui_columns_end
 {
-my $rv;
-$rv = "</tbody> </table>\n";
-return $rv;
+return "</tbody> </table>\n";
 }
 
 # theme_ui_grid_table(&elements, columns, [width-percent], [tds], [tabletags],
@@ -886,7 +880,6 @@ return $rv;
 sub theme_ui_hidden_table_end
 {
 my ($name) = @_;
-#my $rv = "</div></div></div></div>\n";
 my $rv = "</div></div></div></div>\n";
 return $rv;
 }
@@ -1412,18 +1405,19 @@ $rv .= "<select class='form-control ui_select $extraclass' name=\"".quote_escape
        ($multiple ? " multiple" : "").
        ($dis ? " disabled=true" : "").">\n";
 my ($o, %opt, $s);
-my %sel = ref($value) ? ( map { $_, 1 } @$value ) : ( $value, 1 );
-foreach $o (@$opts) {
+my %sel;
+if (defined $value) { %sel = ref($value) ? ( map { $_, 1 } @$value ) : ( $value, 1 ); }
+foreach my $o (@$opts) {
     $o = [ $o ] if (!ref($o));
     $rv .= "<option value=\"".quote_escape($o->[0])."\"".
            ($sel{$o->[0]} ? " selected" : "")." ".$o->[2].">".
-           ($o->[1] || $o->[0])."\n";
+           ($o->[1] || $o->[0])."</option>\n";
     $opt{$o->[0]}++;
     }
-foreach $s (keys %sel) {
+foreach my $s (keys %sel) {
     if (!$opt{$s} && $missing) {
         $rv .= "<option value=\"".quote_escape($s)."\"".
-               "selected>".($s eq "" ? "&nbsp;" : $s)."\n";
+               "selected>".($s eq "" ? "&nbsp;" : $s)."</option>\n";
         }
     }
 $rv .= "</select>\n";
