@@ -179,8 +179,8 @@ for($i=0; $i<@{$_[0]}; $i++) {
 	print "</li>\n";
     }
 print "</ul>\n";
-print "</div>\n"; # .panel-body
-print "</div>\n"; # .icons_table .panel-default
+print "</div><!-- panel-body -->\n"; # .panel-body
+print "</div><!-- icons_table panel-defalt -->\n"; # .icons_table .panel-default
 }
 
 sub theme_generate_icon
@@ -677,11 +677,11 @@ if (defined($label)) {
 	$rv .= "<label class='ui_form_label'><strong>$label</strong></label><br>\n";
 } 
 $rv .= "<div class='ui_form_value'>$value</div>\n";
-$rv .= "</div><!-- ui_table_row -->\n";
+$rv .= "</div><!-- form-group ui_form_pair -->\n";
 
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
 if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0) {
-    $rv .= "</div> <!-- row --> \n";
+    $rv .= "</div> <!-- row ui_table_row --> \n";
     $main::ui_table_pos = 0;
     }
 
@@ -773,7 +773,7 @@ for (my $i=0; $i<@$heads; $i++ ) {
 	$rv .= "<td ".$tags."><b>".
            ($heads->[$i] eq "" ? "<br>" : $heads->[$i])."</b></td>\n";
 	}
-$rv .= "</tr></thead> <tbody>\n";
+$rv .= "</tr></thead><tbody>\n";
 $theme_ui_columns_count++;
 return $rv;
 }
@@ -798,7 +798,7 @@ return $rv;
 # Returns HTML to end a table started by ui_columns_start
 sub theme_ui_columns_end
 {
-return "</tbody> </table>\n";
+return "</tbody></table>\n";
 }
 
 # theme_ui_grid_table(&elements, columns, [width-percent], [tds], [tabletags],
@@ -880,7 +880,7 @@ return $rv;
 sub theme_ui_hidden_table_end
 {
 my ($name) = @_;
-my $rv = "</div></div></div></div>\n";
+my $rv = "</div></div></div>\n";
 return $rv;
 }
 
