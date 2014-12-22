@@ -13,7 +13,6 @@ our %text;
 our $did;
 our $base_remote_user;
 our %miniserv;
-our %gaccess;
 our $session_id;
 our $charset;
 
@@ -28,6 +27,7 @@ exit print sidebar(1, @ARGV) unless caller();
 sub sidebar {
 my ($CGI) = @_;
 my $rv;
+my %gaccess = get_module_acl(undef, "");
 if ($CGI) { PrintHeader($charset); }
 ReadParse();
 
@@ -84,7 +84,7 @@ if ($mode eq "modules") {
 			}
 		}
 	push(@leftitems, { 'type' => 'hr' });
-		$rv .= "<li role='presentation' class='divider'></li>\n";
+	#$rv .= "<li role='presentation' class='divider'></li>\n";
 	}
 
 # Show system information link
@@ -139,7 +139,7 @@ foreach my $item (@$items) {
 			}
 		else { $t = 'right'; }
 		if (defined $item->{'icon'}) {
-			$icon = lookup_icon(add_webprefix($item->{'icon'}));
+			$icon = lookup_icon($item->{'icon'});
 			}
 		$rv .= "<li class='leftlink'>\n";
 		my $link = add_webprefix($item->{'link'});
@@ -158,8 +158,6 @@ foreach my $item (@$items) {
 		$rv .= "<i class='pull-right glyphicon glyphicon-chevron-left'></i>";
 		$rv .= "</a>\n";
 		$rv .= "<ul class='treeview-menu' id='cat$c'>\n";
-		use Data::Dumper;
-		$rv .= "<!-- " . Dumper($item->{'members'}) . "-->\n";
 		$rv .= menu_items_list($item->{'members'}, $indent+1);
 		$rv .= "</ul></li><!-- treeview-menu cat$c -->\n";
 		}
@@ -204,7 +202,8 @@ foreach my $item (@$items) {
 					  $item->{'size'});
 			}
 		if ($item->{'icon'}) {
-			my $icon = add_webprefix($item->{'icon'});
+			my $icon = add_webprefix(lookup_icon($item->{'icon'}));
+			$rv .= "<i class='pull-left glypicon glyphicon-$icon'></i>";
 			#print "<input type=image src='$icon'>\n";
 			}
 		$rv .= "</form>\n";

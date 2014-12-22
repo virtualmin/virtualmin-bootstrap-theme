@@ -720,14 +720,14 @@ my ($tabs, $name, $sel, $border) = @_;
 my $rv;
 $main::ui_tabs_selected = $sel;
 
-print "<ul class='nav nav-tabs'>\n";
+$rv = "<ul class='nav nav-tabs' role='tablist'>\n";
 foreach my $t (@$tabs) {
 	my $tabid = "tab_".$t->[0];
 	my $defclass = $t->[0] eq $main::ui_tabs_selected ?
                         'active' : '';
-	$rv = "<li class='ui_tab $defclass'><a href='#$tabid' data-toggle='tab'>$t->[1]</a></li>\n";
+	$rv .= "<li class='ui_tab $defclass' role='presentation'><a href='#$tabid' data-toggle='tab'>$t->[1]</a></li>\n";
 }
-$rv .= "</ul>\n<div class='tab-content'>\n";
+$rv .= "</ul><!-- /nav nav-tabs -->\n<div class='tab-content'>\n";
 return $rv;
 }
 
