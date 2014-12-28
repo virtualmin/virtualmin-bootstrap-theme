@@ -1,6 +1,6 @@
-cs_header=D0E0FC class='maintitle'
-cs_table=f5f5f5 class='mainbody'
-cs_link=376ebd
+cs_header=eeeeee class='table-bordered'
+cs_table=f5f5f5 class='table-bordered'
+#cs_link=376ebd
 texttitles=1
 functions=theme.pl
 applet_body=e8e8ea

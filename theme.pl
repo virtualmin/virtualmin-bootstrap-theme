@@ -1,5 +1,5 @@
 # Virtualmin Bootstrap Theme
-# Icons copyright David Vignoni, all other theme elements copyright 2005-2013
+# Icons copyright David Vignoni, all other theme elements copyright 2005-2014
 # Virtualmin, Inc.
 
 use warnings;
@@ -17,11 +17,10 @@ $main::basic_virtualmin_menu = 1;
 $main::basic_virtualmin_domain = 1; # XXX Remove once typo is fixed in virtual-server/edit_domain.cgi
 $main::nocreate_virtualmin_menu = 1;
 $main::nosingledomain_virtualmin_mode = 1;
-
 use warnings;
 
 # Globals from web-lib and ui-lib XXX Needs encapsulation in Webmin 2.0
-our %gconfig;
+our %gconfig; # XXX Where does $gconfig{'sysinfo'} come from? It shows up as undefined.
 our %tconfig;
 our %text;
 our $remote_user;
@@ -60,18 +59,18 @@ if (@_ > 0) {
 
 if (@_ > 1) {
     print "<div class='header'>\n";
-    if ($gconfig{'sysinfo'} == 2 && $remote_user) {
-		print "<div class='row'>\n";
+    if (defined($gconfig{'sysinfo'}) && $gconfig{'sysinfo'} == 2 && $remote_user) {
+	print "<div class='row'>\n";
         print "<div id='headln1' class='col-md-12'>\n";
         print get_html_status_line(1);
         print "</div></div>\n";
         }
-    	print "<div class='row'>\n";
-    	# Title is just text
-    	print "<div id='headln2l' class='col-md-8'><h2>",$_[0],"</h2>";
-        print "<h4>$_[9]</h4>\n" if ($_[9]);
-        print "</div>\n";
-        }
+    print "<div class='row'>\n";
+    # Title is just text
+    print "<div id='headln2l' class='col-md-8'><h2>",$_[0],"</h2>";
+    print "<h4>$_[9]</h4>\n" if ($_[9]);
+    print "</div>\n";
+    }
     print "<div id='headln2r' class='col-md4 pull-right'>";
     if ($ENV{'HTTP_WEBMIN_SERVERS'} && !$tconfig{'framed'}) {
         print "<a href='$ENV{'HTTP_WEBMIN_SERVERS'}'>",
@@ -127,7 +126,7 @@ if (@_ > 1) {
 	print "$_[6]\n" if ($_[6]);
     print "</div>\n";
     print "</div></div>\n"; # .header
-	print "<div class='module-content'>\n"; # to allow selection of links
+    print "<div class='module-content'>\n"; # to allow selection of links
 }
 
 # theme_ui_post_header([subtext])
@@ -179,18 +178,15 @@ for($i=0; $i<@{$_[0]}; $i++) {
 	print "</li>\n";
     }
 print "</ul>\n";
-print "</div><!-- panel-body -->\n"; # .panel-body
-print "</div><!-- icons_table panel-defalt -->\n"; # .icons_table .panel-default
+print "</div><!-- panel-body -->\n";
+print "</div><!-- icons_table panel-defalt -->\n";
 }
 
+# generate_icon(image, title, link, [href], [width], [height], [before-title], [after-title])
 sub theme_generate_icon
 {
-my $w = !defined($_[4]) ? "width=48" : $_[4] ? "width=$_[4]" : "";
-my $h = !defined($_[5]) ? "height=48" : $_[5] ? "height=$_[5]" : "";
-
-print "<a href=\"/".get_module_name()."/$_[2]\" $_[3]>",
-	  "<img class='ui_icon' src=\"/".get_module_name()."/$_[0]\" alt=\"\" border=0 ",
-      "$w $h><br>\n";
+print "<a href=\"/".get_module_name()."/$_[2]\">".
+	  "<img class='ui_icon' src=\"/".get_module_name()."/$_[0]\" alt=\"\"></img><br>\n";
 print "$_[1]</a>\n";
 }
 
@@ -266,6 +262,7 @@ EOF
 sub theme_ui_link
 {
 my ($href, $text, $class) = @_;
+unless (defined($class)) { $class = ""; }
 return ("<a class='ui_link $class' href='".get_module_name()."/$href'>$text</a>");
 }
 
@@ -323,7 +320,7 @@ if (@$data) {
     foreach my $h (@$hiddens) {
         $rv .= ui_hidden(@$h);
         }
-    $rv .= $links;
+    $rv .= $links if defined $links;
     }
 
 # Add the table
@@ -331,7 +328,7 @@ $rv .= ui_columns_table($heads, $width, $data, $types, $nosort, $title,
              $emptymsg);
 
 # Add form end
-$rv .= $links;
+$rv .= $links if defined $links;
 if (@$data) {
     $rv .= ui_form_end($buttons);
     }
@@ -343,6 +340,8 @@ sub theme_ui_textbox
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
 $size = ui_max_text_width($size);
+$tags = "" unless defined $tags;
+$value = "" unless defined $value;
 return "<input type='text' class='form-control ui_textbox' name=\"".quote_escape($name)."\" ".
        "value=\"".quote_escape($value)."\" ".
        "size=$size ".($dis ? "disabled=true" : "").
@@ -355,6 +354,10 @@ sub theme_ui_password
 {
 my ($name, $value, $size, $dis, $max, $tags) = @_;
 $size = ui_max_text_width($size);
+$tags = "" unless defined $tags;
+$dis = 0 unless defined($dis);
+$max = "" unless defined($max);
+$value = "" unless defined($value);
 return "<input class='form-control ui_password' ".
        "type=password name=\"".quote_escape($name)."\" ".
        "value=\"".quote_escape($value)."\" ".
@@ -400,6 +403,7 @@ my ($script, $label, $desc, $hiddens, $after, $before) = @_;
 if (ref($hiddens)) {
     $hiddens = join("\n", map { ui_hidden(@$_) } @$hiddens);
     }
+$hiddens = "" unless defined $hiddens;
 return "<form action='$script' class='ui_buttons_form'>\n".
        $hiddens.
        "<div class='ui_buttons_row row'> ".
@@ -586,6 +590,7 @@ if (defined($main::ui_table_cols)) {
 my $rv;
 my $colspan = 2;
 
+$tabletags = "" unless defined $tabletags;
 $rv .= "<div class='panel panel-default' $tabletags>\n";
 if (defined($heading) || defined($rightheading)) {
 		$rv .= "<div class='panel-heading'>\n";
@@ -667,7 +672,7 @@ if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
     $main::ui_table_pos != 0) {
     # If the requested number of cols won't fit in the number
     # remaining, start a new row
-    $rv .= "</div>\n";
+    $rv .= "</div><!-- ui_table_row -->\n";
     $main::ui_table_pos = 0;
     }
 $rv .= "<div class='row ui_table_row'>\n" if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0);
@@ -685,6 +690,19 @@ if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0) {
     $main::ui_table_pos = 0;
     }
 
+return $rv;
+}
+
+=head2 ui_table_hr
+
+Returns HTML for a row in a block started by ui_table_row, with a horizontal
+line inside it to separate sections.
+
+=cut
+sub theme_ui_table_hr
+{
+my $rv;
+$rv = "<div class='divider ui_table_hr'></div>\n";
 return $rv;
 }
 
@@ -769,7 +787,8 @@ if ($title) {
 $rv .= "<thead> <tr class='ui_columns_heads'>\n";
 for (my $i=0; $i<@$heads; $i++ ) {
 	my $tags;
-	if ($tdtags->[$i]) { $tags = $tdtags->[$i] };
+	if ($tdtags->[$i]) { $tags = $tdtags->[$i] }
+	else { $tags = ""; }
 	$rv .= "<td ".$tags."><b>".
            ($heads->[$i] eq "" ? "<br>" : $heads->[$i])."</b></td>\n";
 	}
@@ -787,7 +806,9 @@ my ($cols, $tdtags) = @_;
 my $rv;
 $rv = "<tr class='ui_columns_row row$theme_ui_columns_row_toggle' onMouseOver=\"this.className='mainhigh'\" onMouseOut=\"this.className='mainbody row$theme_ui_columns_row_toggle'\">\n";
 for(my $i=0; $i<@$cols; $i++) {
-	$rv .= "<td ".$tdtags->[$i].">".
+	my $tags = "";
+	if (defined($tdtags->[$i])) { $tags = $tdtags->[$i]; }
+	$rv .= "<td ".$tags.">".
 	       ($cols->[$i] !~ /\S/ ? "<br>" : $cols->[$i])."</td>\n";
 	}
 $rv .= "</tr>\n";
@@ -815,11 +836,12 @@ return "</tbody></table>\n";
 	return "" if (!@$elements);
 	my $class;
 	if ($inside_grid_table == 1) { $class = "table table-striped"; }
+	else { $class = ""; }
 	my $rv .= "<table class='ui_table ui_grid_table $class'"
     	 . ($width ? " width=$width%" : "")
     	 . ($tabletags ? " ".$tabletags : "")
     	 . ">\n";
-	if ($title) {
+	if (defined $title) {
 		$rv .= "<thead><tr class='ui_grid_heading'> ".
 		       "<td colspan=$cols><b>$title</b></td> </tr></thead>\n";
 		}
@@ -1007,12 +1029,17 @@ if ($checked) {
 	}
 $mycb =~ s/class='/class='row$theme_ui_columns_row_toggle ui_checked_columns /;
 $rv .= "<tr id=\"$ridtr\" $mycb onMouseOver=\"this.className = document.getElementById('$cbid').checked ? 'mainhighsel' : 'mainhigh'\" onMouseOut=\"this.className = document.getElementById('$cbid').checked ? 'mainsel' : 'mainbody row$theme_ui_columns_row_toggle'\">\n";
-$rv .= "<td class='ui_checked_checkbox' ".$tdtags->[0].">".
+my $tdtagfirst;
+if (defined($tdtags->[0])) { $tdtagfirst = $tdtags->[0]; }
+else { $tdtagfirst = "";} # XXX Hard to read. Name tdtags->[*] something sane at beginning of sub
+unless (defined($tags)) { $tags = ""; }
+$rv .= "<td class='ui_checked_checkbox' ".$tdtagfirst.">".
        ui_checkbox($checkname, $checkvalue, undef, $checked, $tags." "."onClick=\"document.getElementById('$rid').className = this.checked ? 'mainhighsel' : 'mainhigh';\"", $disabled).
        "</td>\n";
 my $i;
 for($i=0; $i<@$cols; $i++) {
-	$rv .= "<td ".$tdtags->[$i+1].">";
+	if (defined($tdtags->[$i+1])) { $rv .= "<td ".$tdtags->[$i+1].">"; }
+	else { $rv .= "<td>"; }
 	if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
 		$rv .= "<label for=\"".
 			quote_escape("${checkname}_${checkvalue}")."\">";
@@ -1157,6 +1184,7 @@ print "Location: $url\n\n";
 sub theme_ui_submit
 {
 my ($label, $name, $dis, $tags) = @_; 
+$name = "" unless defined $name;
 return "<button class='btn ui_submit' type='submit'".
        ($name ne '' ? " name=\"".quote_escape($name)."\"" : "").
        " value=\"".quote_escape($label)."\"".
@@ -1171,14 +1199,16 @@ my ($name, $value, $size, $opt1, $opt2, $dis, $extra, $max, $tags) = @_;
 my $dis1 = js_disable_inputs([ $name, @{ $extra // [] } ], [ ]);
 my $dis2 = js_disable_inputs([ ], [ $name, @{ $extra // [] } ]);
 my $rv;
+if (!defined($tags)) { $tags = ""; };
 $size = ui_max_text_width($size);
+$value = "" unless defined $value;
 $rv .= ui_radio($name."_def", $value eq '' ? 1 : 0,
                  [ [ 1, $opt1, "onClick='$dis1'" ],
                    [ 0, $opt2 || " ", "onClick='$dis2'" ] ], $dis)."\n";
 $rv .= "<input class='form-control ui_opt_textbox' name=\"".quote_escape($name)."\" ".
        "type='text' size=$size value=\"".quote_escape($value)."\" ".
-       ($dis ? "disabled=true" : "").
-       ($max ? " maxlength=$max" : "").
+       (defined($dis) ? "disabled=true" : "").
+       (defined($max) ? " maxlength=$max" : "").
        " ".$tags.
        ">\n";
 $rv .= "<script>if ($ui_formcount < document.forms.length) { document.forms[$ui_formcount].$name.disabled = document.forms[$ui_formcount].${name}_def[0].checked; }</script>\n";
@@ -1187,14 +1217,16 @@ return $rv;
 
 sub theme_file_chooser_button
 {
+my $type = defined($_[1]) ? $_[1] : "";
 my $form = defined($_[2]) ? $_[2] : 0;
 my $chroot = defined($_[3]) ? $_[3] : "/";
-my $add = int($_[4]);
+my $add = defined($_[4]) ? int($_[4]) : ""; # XXX is this right? chooser.cgi is opaque to me
+
 my ($w, $h) = (400, 300);
 if ($gconfig{'db_sizefile'}) {
         ($w, $h) = split(/x/, $gconfig{'db_sizefile'});
         }
-return "<button class='btn' type='button' onClick='ifield = form.$_[0]; chooser = window.open(\"$gconfig{'webprefix'}/chooser.cgi?add=$add&type=$_[1]&chroot=$chroot&file=\"+escape(ifield.value), \"chooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=$w,height=$h\"); chooser.ifield = ifield; window.ifield = ifield' value=\"...\">...</button>\n";
+return "<button class='btn' type='button' onClick='ifield = form.$_[0]; chooser = window.open(\"$gconfig{'webprefix'}/chooser.cgi?add=$add&type=$type&chroot=$chroot&file=\"+escape(ifield.value), \"chooser\", \"toolbar=no,menubar=no,scrollbars=no,resizable=yes,width=$w,height=$h\"); chooser.ifield = ifield; window.ifield = ifield' value=\"...\">...</button>\n";
 }
 
 # XXX Temporary until ui-lib.pl valign stuff gets cleaned up
@@ -1392,12 +1424,12 @@ sub theme_ui_select
 {
 my ($name, $value, $opts, $size, $multiple, $missing, $dis, $tags) = @_;
 my $rv;
-my $extraclass;
-if ( $tags =~ /onChange='form.submit/ ) {
+my $extraclass = "";
+if ( defined($tags) && $tags =~ /onChange='form.submit/ ) {
 	$extraclass = "reload-on-change";
 }
 # XXX This is ugly as hell. We need to handle reloading forms more effectively.
-if ( $tags =~ /domainmenu/ ) {
+if ( defined($tags) && $tags =~ /domainmenu/ ) {
 	$extraclass .= " domainmenu";
 }
 $rv .= "<select class='form-control ui_select $extraclass' name=\"".quote_escape($name)."\"".
@@ -1409,9 +1441,12 @@ my %sel;
 if (defined $value) { %sel = ref($value) ? ( map { $_, 1 } @$value ) : ( $value, 1 ); }
 foreach my $o (@$opts) {
     $o = [ $o ] if (!ref($o));
+    my $extraopts;
+    if (defined $o->[2]) { $extraopts = $o->[2]; }
+    else { $extraopts = ""; }
     $rv .= "<option value=\"".quote_escape($o->[0])."\"".
-           ($sel{$o->[0]} ? " selected" : "")." ".$o->[2].">".
-           ($o->[1] || $o->[0])."</option>\n";
+            ($sel{$o->[0]} ? " selected" : "")."$extraopts>".
+            ($o->[1] || $o->[0])."</option>\n";
     $opt{$o->[0]}++;
     }
 foreach my $s (keys %sel) {
@@ -1485,17 +1520,22 @@ sub theme_ui_form_start
 {
 $ui_formcount ||= 0;
 my ($script, $method, $target, $tags) = @_;
+if (!defined($tags)) { $tags = ""; }
 # add directory, unless already starts with a /
 unless ( $script =~ /^\// )
 {
   $script = "/" . get_module_name() . "/$script";
 }
 my $rv;
+my $reqmethod;
+if (defined($method)) {
+    if ($method eq "post") { $reqmethod = "method=post"; }
+    elsif ($method eq "form-data") { $reqmethod = "method=post enctype=multipart/form-data"; }
+} else {
+    $reqmethod = "method=get";
+}
 $rv .= "<form class='form-horizontal ui_form' role='form' action='".html_escape($script)."' ".
-    ($method eq "post" ? "method=post" :
-     $method eq "form-data" ?
-        "method=post enctype=multipart/form-data" :
-        "method=get").
+    $reqmethod.
     ($target ? " target=$target" : "").
         " ".$tags.
        ">\n";
