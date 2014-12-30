@@ -10,7 +10,6 @@
         } else {
             requestGet("/right.cgi", 'right');
         }
-        
 
         // Attach events to left menu a hrefs
         // .leftlink a, .mode a, .linkwithicon a
@@ -69,28 +68,17 @@
         });
         calculateColumnsSize();
 
-//        $("#leftSide").mouseleave(function () {
-//            $("#leftSide .innerScroll").css({ 'padding-right': (getScrollBarWidth() + 10) + 'px', 'overflow': 'hidden' });
-//        });
-
-//        $("#leftSide").mouseenter(function () {
-//            $("#leftSide .innerScroll").css({ 'padding-right': '10px', 'overflow': 'auto' });
-//        });
-
-//        $("#leftSide").mouseleave();
-
-        $(window).bind('popstate',
-            function(event) {
-                var state = event.originalEvent.state;
-                if (state !== null) {
-                    if (state.type == 'get') {
-                        requestGet(state.url, state.panel, true);
-                    } else if (state.type == 'post') {
-                        // We don't want user to accidentally send the data already posted by hitting back button
-                        printError('As a security precaution, we will not resend posted data.');
-                    }
+        $(window).bind('popstate', function(event) {
+            var state = event.originalEvent.state;
+            if (state !== null) {
+                if (state.type == 'get') {
+                    requestGet(state.url, state.panel, true);
+                } else if (state.type == 'post') {
+                    // We don't want user to accidentally send the data already posted by hitting back button
+                    printError('As a security precaution, we will not resend posted data.');
                 }
-            });
+            }
+        });
     });
 
     // Set columns height to correct size XXX -40 needed for footer?
@@ -198,6 +186,7 @@
         }
     };
 
+
     // Make loading hud visible on the desired panel
     var showLoading = function(target) {
         if (!$('#' + target + 'Side .loading').is("*")) {
@@ -293,6 +282,21 @@
             if (data.indexOf('top.left.location = top.left.location;') > -1 && lastLoadedUrlLeft !== "") {
                 requestGet(lastLoadedUrlLeft, 'left');
             }
+
+            // Enable ui_select_all and ui_select_invert links to check and invert
+            // the selection of a group of checkboxes on a form
+            $('a.ui_select_all').on('click', function(event){
+                event.preventDefault();
+                $(this).parents('form').find(':checkbox').each(function() { 
+                    this.checked = true;
+                });
+            });
+            $('a.ui_select_invert').on('click', function(event){
+                event.preventDefault();
+                $(this).parents('form').find(':checkbox').each(function() { 
+                    this.checked = !this.checked;
+                });
+            });
 
             calculateColumnsSize();
             $("#rightSide .innerScroll").animate({ scrollTop: 0 }, "slow");
