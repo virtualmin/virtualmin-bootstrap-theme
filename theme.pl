@@ -655,7 +655,7 @@ if (defined($label)) {
 $rv .= "<div class='ui_form_value col-md-" . $colwidth*2 . "'>$value</div>\n";
 $main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
 if ($main::ui_table_pos%$main::ui_table_cols == 0) {
-    $rv .= "</div>\n";
+    $rv .= "</div> <!-- ui_form_value -->\n";
     $main::ui_table_pos = 0;
     }
 return $rv;
@@ -668,28 +668,13 @@ $cols ||= 1;
 $tds ||= $main::ui_table_default_tds;
 
 my $rv;
-if ($main::ui_table_pos+$cols+1 > $main::ui_table_cols &&
-    $main::ui_table_pos != 0) {
-    # If the requested number of cols won't fit in the number
-    # remaining, start a new row
-    $rv .= "</div><!-- ui_table_row -->\n";
-    $main::ui_table_pos = 0;
-    }
-$rv .= "<div class='row ui_table_row'>\n" if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0);
 
-$rv .= "<div class='col-md-6 form-group ui_form_pair'>\n";
+$rv .= "<div class='col-md-12 form-group ui_form_pair'>\n";
 if (defined($label)) {
 	$rv .= "<label class='ui_form_label'><strong>$label</strong></label><br>\n";
 } 
 $rv .= "<div class='ui_form_value'>$value</div>\n";
 $rv .= "</div><!-- form-group ui_form_pair -->\n";
-
-$main::ui_table_pos += $cols+(defined($label) ? 1 : 0);
-if ($main::ui_table_cols > 0 && $main::ui_table_pos%$main::ui_table_cols == 0) {
-    $rv .= "</div> <!-- row ui_table_row --> \n";
-    $main::ui_table_pos = 0;
-    }
-
 return $rv;
 }
 
@@ -711,10 +696,10 @@ return $rv;
 sub theme_ui_table_end
 {
 my $rv;
-if ($main::ui_table_cols == 6 && $main::ui_table_pos) {
+#if ($main::ui_table_cols == 6 && $main::ui_table_pos) {
   # Add an empty block to balance the table
-  $rv .= ui_table_row(" ", " ");
-  }
+#  $rv .= ui_table_row(" ", " ");
+#  }
 if (@main::ui_table_cols_stack) {
   $main::ui_table_cols = pop(@main::ui_table_cols_stack);
   $main::ui_table_pos = pop(@main::ui_table_pos_stack);
@@ -725,7 +710,7 @@ else {
   $main::ui_table_pos = undef;
   $main::ui_table_default_tds = undef;
   }
-$rv .= "</div></div> <!-- ui_table_end -->\n";
+$rv .= "</div></div> <!-- panel-body ui_table_end -->\n";
 return $rv;
 }
 
@@ -738,7 +723,8 @@ my ($tabs, $name, $sel, $border) = @_;
 my $rv;
 $main::ui_tabs_selected = $sel;
 
-$rv = "<ul class='nav nav-tabs' role='tablist'>\n";
+$rv .= "<div role='tabpanel'>\n";
+$rv .= "<ul class='nav nav-tabs' role='tablist'>\n";
 foreach my $t (@$tabs) {
 	my $tabid = "tab_".$t->[0];
 	my $defclass = $t->[0] eq $main::ui_tabs_selected ?
@@ -754,7 +740,7 @@ sub theme_ui_tabs_start_tab
 my ($name, $tab) = @_;
 my $defclass = $tab eq $main::ui_tabs_selected ?
                         'active' : '';
-my $rv = "<div id='tab_$tab' class='tab-pane $defclass ui_tabs_start'>\n";
+my $rv = "<div role='tabpanel' id='tab_$tab' class='tab-pane $defclass ui_tabs_start'>\n";
 return $rv;
 }
 
@@ -765,12 +751,12 @@ return "</div><!-- ui_tabs_end_tab -->\n";
 
 sub theme_ui_tabs_end
 {
-return "</div><!-- ui_tabs_end -->\n";
+return "</div><!-- tab-content ui_tabs_end -->\n</div><!-- tabpanel -->";
 }
 
 # theme_ui_columns_start(&headings, [width-percent], [noborder], [&tdtags], [title])
 # Returns HTML for a multi-column table, with the given headings
-sub theme_ui_columns_start
+sub old_theme_ui_columns_start
 {
 my ($heads, $width, $noborder, $tdtags, $title) = @_;
 my ($href) = grep { $_ =~ /<a\s+href/i } @$heads;
@@ -978,41 +964,25 @@ $text ||= $text{'ui_selinv'};
 return "<a class='ui_select_invert' href='#'>$text</a>";
 }
 
-# theme_select_status_link(name, form, &folder, &mails, start, end, status, label)
-# Adds support for row highlighting to read mail module selector
-# XXX can delete after Usermin 1.400
-sub theme_select_status_link
+sub theme_ui_columns_start
 {
-my ($name, $formno, $folder, $mail, $start, $end, $status, $label) = @_;
-$formno = int($formno);
-my @sel;
-for(my $i=$start; $i<=$end; $i++) {
-	my $read = get_mail_read($folder, $mail->[$i]);
-	if ($status == 0) {
-		push(@sel, ($read&1) ? 0 : 1);
-		}
-	elsif ($status == 1) {
-		push(@sel, ($read&1) ? 1 : 0);
-		}
-	elsif ($status == 2) {
-		push(@sel, ($read&2) ? 1 : 0);
-		}
-	}
-my $js = "var sel = [ ".join(",", @sel)." ]; ";
-$js .= "var f = document.forms[$formno]; ";
-$js .= "for(var i=0; i<sel.length; i++) { document.forms[$formno].${name}[i].checked = sel[i]; var ff = f.${name}[i]; var r = document.getElementById(\"row_\"+ff.id); if (r) { r.className = ff.checked ? \"mainsel\" : \"mainbody row\"+((i+1)%2) } }";
-$js .= "return false;";
-return "<a class='select_status' href='#' onClick='$js'>$label</a>";
+my ($heads, $width, $noborder, $tdtags, $title) = @_;
+my $rv;
+if (defined $title) {
+  $rv .= "<h3>$title</h3>\n";
 }
-
-sub theme_select_rows_link
-{
-my ($field, $form, $text, $rows) = @_;
-$form = int($form);
-my $js = "var sel = { ".join(",", map { "\"".quote_escape($_)."\":1" } @$rows)." }; ";
-$js .= "for(var i=0; i<document.forms[$form].${field}.length; i++) { var ff = document.forms[$form].${field}[i]; var r = document.getElementById(\"row_\"+ff.id); ff.checked = sel[ff.value]; if (r) { r.className = ff.checked ? \"mainsel\" : \"mainbody row\"+((i+1)%2) } } ";
-$js .= "return false;";
-return "<a class='select_rows' href='#' onClick='$js'>$text</a>";
+$rv .= "<table class='table table-hover table-striped ".($noborder ? "" : "table-bordered'").
+                (defined($width) ? " width=$width%" : "")." class='ui_columns'>\n";
+$rv .= "<thead>\n";
+$rv .= "<tr class='ui_columns_heads'>\n";
+for(my $i=0; $i<@$heads; $i++) {
+	$tdtags->[$i] = "" unless defined $tdtags->[$i];
+	$heads->[$i] = "<br>" unless defined $heads->[$i];
+        $rv .= "<th ".$tdtags->[$i].">".
+               $heads->[$i]."</th>\n";
+        }
+$rv .= "</tr>\n";
+return $rv;
 }
 
 sub theme_ui_checked_columns_row
@@ -1463,10 +1433,20 @@ sub theme_ui_textarea
 {
 my ($name, $value, $rows, $cols, $wrap, $dis, $tags) = @_;
 $cols = ui_max_text_width($cols, 1);
+if (defined $wrap) {
+  $wrap = "wrap=$wrap";
+} else {
+  $wrap = "";
+}
+$tags = "" unless defined $tags;
+$dis = "disabled=true"
+if (defined $dis && $dis) {
+  $dis = "disabled=true"
+} else {
+  $dis = "";
+}
 return "<textarea class='form-control ui_textarea' name=\"".quote_escape($name)."\" ".
-       "rows=$rows cols=$cols".($wrap ? " wrap=$wrap" : "").
-       ($dis ? " disabled=true" : "").
-       ($tags ? " $tags" : "").">".
+       "rows=$rows cols=$cols $wrap $dis $tags>".
        html_escape($value).
        "</textarea>";
 }
