@@ -1,7 +1,7 @@
 virtualmin-bootstrap-theme
 ==========================
 
-NOTE: This theme is not complete or functional. Authentic Theme is where your attention should be directed for a feature-complete, responsive, and fully functional, Bootstrap-based theme for Webmin, Virtualmin, Usermin, and Cloudmin.
+This repo is deprecated. Please go to: https://github.com/webmin/authentic-theme for a feature-complete, responsive, and fully functional, Bootstrap-based theme for Webmin, Virtualmin, Usermin, and Cloudmin.
 
 Responsive Bootstrap theme for Webmin, Virtualmin, Cloudmin, and Usermin
 
